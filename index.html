@@ -22,54 +22,56 @@
         nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(0,0,0,0.95); position: fixed; width: 100%; box-sizing: border-box; z-index: 100; border-bottom: 1px solid #222; margin-top: 45px; }
         nav .logo { font-weight: 900; font-size: 26px; color: #ff5e00; letter-spacing: 2px; text-transform: uppercase; text-decoration: none; }
         nav ul { list-style: none; display: flex; margin: 0; padding: 0; }
-        nav ul li a { margin-left: 30px; font-size: 13px; font-weight: 600; color: #999; text-decoration: none; transition: 0.3s; text-transform: uppercase; }
+        nav ul li a { margin-left: 20px; font-size: 12px; font-weight: 600; color: #999; text-decoration: none; transition: 0.3s; text-transform: uppercase; }
         nav ul li a:hover { color: #ff5e00; }
 
-        /* [5. 섹션 공통] */
+        /* [5. 섹션 공통 스타일] */
         .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1920&q=80'); background-size: cover; background-position: center; }
-        .hero h1 { font-size: 8rem; margin: 0; letter-spacing: 20px; font-weight: 900; text-shadow: 0 0 30px rgba(255, 94, 0, 0.5); }
+        .hero h1 { font-size: 8rem; margin: 0; letter-spacing: 20px; font-weight: 900; text-shadow: 0 0 30px rgba(255, 94, 0, 0.5); text-transform: uppercase; }
         .section { padding: 120px 8%; max-width: 1200px; margin: 0 auto; }
-        .section-title { font-size: 2.8rem; font-weight: 800; margin-bottom: 80px; text-align: center; letter-spacing: 8px; color: #ff5e00; text-transform: uppercase; }
+        .section-title { font-size: 2.8rem; font-weight: 800; margin-bottom: 60px; text-align: center; letter-spacing: 8px; color: #ff5e00; text-transform: uppercase; }
 
         /* [6. ABOUT & MAPS] */
         .about-container { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
-        .map-box { background: #111; border: 1px solid #222; border-radius: 10px; overflow: hidden; margin-top: 50px; }
+        .map-box { background: #111; border: 1px solid #222; border-radius: 10px; overflow: hidden; }
         .map-nav { display: flex; background: #1a1a1a; }
         .map-nav-btn { flex: 1; padding: 20px; border: none; background: none; color: #666; font-weight: 800; cursor: pointer; transition: 0.3s; }
         .map-nav-btn.active { background: #ff5e00; color: #fff; }
-        .map-display { padding: 40px; text-align: center; min-height: 200px; }
+        .map-display { padding: 40px; text-align: center; min-height: 150px; }
 
-        /* [7. GEAR SETTINGS] */
+        /* [7. GEAR & SENSITIVITY] */
         .settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
         .setting-card { background: #111; padding: 30px; border: 1px solid #222; border-top: 4px solid #ff5e00; }
-        .setting-row { display: flex; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid #222; padding-bottom: 5px; }
+        .setting-row { display: flex; justify-content: space-between; border-bottom: 1px solid #222; padding: 8px 0; }
         .setting-value { color: #ff5e00; font-weight: 800; }
 
-        /* [8. MEMBERS 스탯] */
-        .member-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+        /* [8. MEMBERS 최신 전적 - K/D 1.25, 0.08, 0.30 반영] */
+        .member-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
         .member-card { background: #151515; border: 1px solid #222; padding: 40px; position: relative; transition: 0.4s; }
         .rank-badge { position: absolute; top: 25px; right: 25px; font-size: 0.75rem; font-weight: 900; padding: 5px 12px; border: 1px solid; }
         .tier-platinum { color: #4ee29d; border-color: #4ee29d; }
         .tier-gold { color: #ffcc00; border-color: #ffcc00; }
         .tier-bronze { color: #cd7f32; border-color: #cd7f32; }
-        .stats-box { display: flex; justify-content: space-between; border-top: 1px solid #222; padding-top: 25px; }
+        .stats-box { display: flex; justify-content: space-between; border-top: 1px solid #222; padding-top: 25px; margin-top: 10px; }
 
-        /* [9. 전적 사이트 검색 섹션] */
-        .search-container { background: #151515; padding: 60px; border-radius: 15px; border: 1px solid #222; text-align: center; }
-        .search-btns { display: flex; justify-content: center; gap: 25px; margin-top: 30px; }
-        .search-link { padding: 18px 40px; background: #222; color: #fff; text-decoration: none; font-weight: 800; border: 1px solid #333; transition: 0.3s; }
-        .search-link:hover { background: #ff5e00; border-color: #ff5e00; transform: translateY(-5px); }
+        /* [9. NOTICE 공지사항] */
+        .notice-board { background: #111; border: 1px solid #222; border-radius: 10px; }
+        .notice-item { padding: 20px 30px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
+        .notice-tag { background: #ff5e00; color: #fff; padding: 3px 10px; font-size: 0.7rem; font-weight: 800; border-radius: 3px; margin-right: 15px; }
 
-        /* [10. JOIN 가입 양식] */
+        /* [10. BOARD 게시판] */
+        .board-container { background: #111; padding: 40px; border-radius: 10px; border: 1px solid #222; min-height: 300px; }
+
+        /* [11. JOIN 가입 양식 - 상세 내용 복구] */
         #join { background-color: #0d0d0d; border-top: 1px solid #222; }
-        .join-container { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+        .join-container { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-bottom: 40px; }
         .info-box h3 { color: #ff5e00; font-size: 1.6rem; font-weight: 900; border-left: 5px solid #ff5e00; padding-left: 20px; margin-bottom: 30px; }
         .info-box ul { list-style: none; padding: 0; }
-        .info-box ul li { margin-bottom: 18px; padding-left: 30px; position: relative; color: #bbb; }
+        .info-box ul li { margin-bottom: 15px; padding-left: 30px; position: relative; color: #bbb; }
         .info-box ul li::before { content: '✓'; position: absolute; left: 0; color: #ff5e00; font-weight: 900; }
-        .recruit-btn { display: inline-block; width: 100%; text-align: center; padding: 30px; background: #ff5e00; color: white; text-decoration: none; font-weight: 900; font-size: 1.4rem; transition: 0.4s; }
+        .recruit-btn { display: block; width: 100%; text-align: center; padding: 30px; background: #ff5e00; color: white; text-decoration: none; font-weight: 900; font-size: 1.4rem; transition: 0.4s; }
 
-        footer { padding: 80px; text-align: center; color: #444; border-top: 1px solid #222; text-transform: uppercase; }
+        footer { padding: 80px; text-align: center; color: #444; border-top: 1px solid #222; text-transform: uppercase; letter-spacing: 2px; }
         
         @media (max-width: 900px) { .about-container, .join-container { grid-template-columns: 1fr; } .hero h1 { font-size: 4rem; } }
     </style>
@@ -77,9 +79,7 @@
 <body>
 
     <div class="live-status-bar">
-        <span class="status-tag">LIVE</span> 
-        서버 상태: <span style="color: #4ee29d;">정상</span> | 
-        맵 로테이션: <span style="color: #fff;">에란겔 / 미라마 / 비켄디 / 테이고 / 론도</span>
+        <span class="status-tag">LIVE</span> 서버 상태: <span style="color: #4ee29d;">정상</span> | 오늘의 맵: <span style="color: #fff;">에란겔 / 미라마 / 비켄디 / 테이고 / 론도</span>
     </div>
 
     <div id="lock-overlay">
@@ -93,8 +93,8 @@
         <a href="#" class="logo">CLAN CLIX</a>
         <ul>
             <li><a href="#about">ABOUT</a></li>
-            <li><a href="#map-info">MAPS</a></li>
-            <li><a href="#settings">GEAR</a></li>
+            <li><a href="#notice">NOTICE</a></li>
+            <li><a href="#board">BOARD</a></li>
             <li><a href="#members">STATS</a></li>
             <li><a href="members.html">MEMBERS</a></li>
             <li><a href="#join">JOIN</a></li>
@@ -111,19 +111,19 @@
             <div class="about-text">
                 <h3>Who We Are</h3>
                 <h2>WE ARE THE<br><span style="color: #ff5e00;">CLIX CLAN.</span></h2>
-                <p>CLIX는 성숙한 매너와 체계적인 전술을 지향하는 배틀그라운드 성인 클랜입니다.</p>
-                <div class="feature-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <p>성숙한 매너와 체계적인 전술을 지향하는 배틀그라운드 성인 클랜입니다.</p>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                     <div style="background:#111; padding:20px; border-left:3px solid #ff5e00;"><h4>Manner First</h4></div>
                     <div style="background:#111; padding:20px; border-left:3px solid #ff5e00;"><h4>Adult Only</h4></div>
                 </div>
             </div>
-            <div id="map-info" class="map-box" style="margin-top:0;">
+            <div class="map-box">
                 <div class="map-nav">
                     <button class="map-nav-btn active" onclick="showMap('erangel', this)">ERANGEL</button>
                     <button class="map-nav-btn" onclick="showMap('miramar', this)">MIRAMAR</button>
                 </div>
                 <div class="map-display" id="map-content">
-                    <h3 style="color: #ff5e00;">ERANGEL 전략</h3>
+                    <h3 style="color:#ff5e00;">ERANGEL 전략</h3>
                     <p style="color:#888;">주요 차량 스폰: 강남, 포친키. 1페 중앙 점령 추천.</p>
                 </div>
             </div>
@@ -136,15 +136,31 @@
             <div class="setting-card">
                 <h4>CLIX_0dB SENS</h4>
                 <div class="setting-row"><span>DPI</span><span class="setting-value">800</span></div>
-                <div class="setting-row"><span>수직 감도</span><span class="setting-value">1.2</span></div>
+                <div class="setting-row"><span>수직 감도 배수</span><span class="setting-value">1.2</span></div>
                 <div class="setting-row"><span>일반 감도</span><span class="setting-value">45</span></div>
             </div>
             <div class="setting-card">
                 <h4>RECOMMENDED GEAR</h4>
                 <div class="setting-row"><span>MOUSE</span><span class="setting-value">G-PRO Superlight 2</span></div>
                 <div class="setting-row"><span>MONITOR</span><span class="setting-value">BenQ XL2546 240Hz</span></div>
-                <div class="setting-row"><span>SOUND</span><span class="setting-value">Loudness ON</span></div>
+                <div class="setting-row"><span>SOUND</span><span class="setting-value">Loudness Equalization ON</span></div>
             </div>
+        </div>
+    </section>
+
+    <section class="section" id="notice">
+        <h2 class="section-title">Notice</h2>
+        <div class="notice-board">
+            <div class="notice-item"><div><span class="notice-tag">중요</span> CLIX 클랜 홈페이지 정식 오픈 안내</div><div style="color:#444;">2026-04-07</div></div>
+            <div class="notice-item"><div><span class="notice-tag">공지</span> 4월 내부 스크림 일정 안내</div><div style="color:#444;">2026-04-05</div></div>
+        </div>
+    </section>
+
+    <section class="section" id="board">
+        <h2 class="section-title">Guest Board</h2>
+        <div class="board-container">
+            <p style="text-align:center; color:#666;">클랜원 자유 소통 공간입니다.</p>
+            <div id="disqus_thread"></div>
         </div>
     </section>
 
@@ -153,42 +169,35 @@
         <div class="member-grid">
             <div class="member-card">
                 <span class="rank-badge tier-platinum">Platinum</span>
-                <h3>CLIX_0dB</h3><span style="color:#666; font-size:0.8rem;">Main Order</span>
+                <h3>CLIX_0dB</h3><span style="color:#444; font-size:0.8rem; text-transform:uppercase;">Main Order</span>
                 <div class="stats-box">
-                    <div class="stat-item"><span style="display:block; font-size:11px; color:#444;">K/D</span><span class="stat-value">1.25</span></div>
-                    <div class="stat-item"><span style="display:block; font-size:11px; color:#444;">AVG DMG</span><span class="stat-value">208</span></div>
-                    <div class="stat-item"><span style="display:block; font-size:11px; color:#444;">WIN</span><span class="stat-value">7.7%</span></div>
+                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">K/D</span><span style="color:#ddd; font-weight:800;">1.25</span></div>
+                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">AVG DMG</span><span style="color:#ddd; font-weight:800;">208</span></div>
+                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">WIN</span><span style="color:#ddd; font-weight:800;">7.7%</span></div>
                 </div>
             </div>
             <div class="member-card">
                 <span class="rank-badge tier-gold">Gold</span>
-                <h3>Viper789456</h3><span style="color:#666; font-size:0.8rem;">Sub Order</span>
+                <h3>Viper789456</h3><span style="color:#444; font-size:0.8rem; text-transform:uppercase;">Sub Order</span>
                 <div class="stats-box">
-                    <div class="stat-item"><span style="display:block; font-size:11px; color:#444;">K/D</span><span class="stat-value">0.08</span></div>
-                    <div class="stat-item"><span style="display:block; font-size:11px; color:#444;">AVG DMG</span><span class="stat-value">105</span></div>
-                    <div class="stat-item"><span style="display:block; font-size:11px; color:#444;">WIN</span><span class="stat-value">8.3%</span></div>
+                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">K/D</span><span style="color:#ddd; font-weight:800;">0.08</span></div>
+                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">AVG DMG</span><span style="color:#ddd; font-weight:800;">105</span></div>
+                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">WIN</span><span style="color:#ddd; font-weight:800;">8.3%</span></div>
                 </div>
             </div>
             <div class="member-card">
                 <span class="rank-badge tier-bronze">Bronze</span>
-                <h3>joa1013</h3><span style="color:#666; font-size:0.8rem;">Back Up</span>
+                <h3>joa1013</h3><span style="color:#444; font-size:0.8rem; text-transform:uppercase;">Back Up</span>
                 <div class="stats-box">
-                    <div class="stat-item"><span style="display:block; font-size:11px; color:#444;">K/D</span><span class="stat-value">0.30</span></div>
-                    <div class="stat-item"><span style="display:block; font-size:11px; color:#444;">AVG DMG</span><span class="stat-value">57</span></div>
-                    <div class="stat-item"><span style="display:block; font-size:11px; color:#444;">WIN</span><span class="stat-value">9.1%</span></div>
+                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">K/D</span><span style="color:#ddd; font-weight:800;">0.30</span></div>
+                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">AVG DMG</span><span style="color:#ddd; font-weight:800;">57</span></div>
+                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">WIN</span><span style="color:#ddd; font-weight:800;">9.1%</span></div>
                 </div>
             </div>
         </div>
-    </section>
-
-    <section class="section" id="stats-search">
-        <h2 class="section-title">PLAYER SEARCH</h2>
-        <div class="search-container">
-            <p>실시간 상세 전적 확인은 아래 공식 사이트를 이용하세요.</p>
-            <div class="search-btns">
-                <a href="https://pubg.op.gg" target="_blank" class="search-link">PUBG.OP.GG</a>
-                <a href="https://dak.gg/pubg" target="_blank" class="search-link">DAK.GG</a>
-            </div>
+        <div style="margin-top:50px; text-align:center;">
+            <a href="https://pubg.op.gg" target="_blank" style="color:#ff5e00; text-decoration:none; margin-right:20px; font-weight:800;">PUBG.OP.GG 바로가기</a>
+            <a href="https://dak.gg/pubg" target="_blank" style="color:#ff5e00; text-decoration:none; font-weight:800;">DAK.GG 바로가기</a>
         </div>
     </section>
 
@@ -200,7 +209,7 @@
                 <ul>
                     <li>23세 이상 성인 (2004년생부터 가입 가능)</li>
                     <li>핵 및 비인가 프로그램 사용 이력 절대 금지</li>
-                    <li>디스코드 및 마이크 사용 필수</li>
+                    <li>디스코드 및 마이크 사용 필수 (듣톡 불가)</li>
                     <li>이중 클랜 및 비매너 행위 금지</li>
                 </ul>
             </div>
@@ -208,8 +217,9 @@
                 <h3>가입 신청 안내</h3>
                 <ul>
                     <li>하단 버튼을 눌러 구글 신청 양식을 제출해 주세요.</li>
-                    <li>제출 후 홈페이지 하단에 나오는 코드(1541)를 꼭 기억하세요.</li>
+                    <li>제출 후 홈페이지 입장 코드(1541)를 꼭 기억하세요.</li>
                     <li>운영진 확인 후 기재하신 연락처로 개별 연락드립니다.</li>
+                    <li>테스트 매치는 개별 연락 후 진행됩니다.</li>
                 </ul>
             </div>
         </div>
@@ -239,7 +249,7 @@
 
         function checkAccess() {
             var correctCode = "1541"; 
-            var input = prompt("입장 코드를 입력하세요.");
+            var input = prompt("가입 신청 완료 후 받은 입장 코드를 입력하세요.");
             if (input === correctCode) {
                 alert("인증되었습니다.");
                 sessionStorage.setItem("clix_auth", "true");
@@ -248,6 +258,14 @@
                 alert("잘못된 코드입니다.");
             }
         }
+
+        // Disqus 설정 (숏네임 필요)
+        (function() {
+            var d = document, s = d.createElement('script');
+            s.src = 'https://clix-clan.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
     </script>
 </body>
 </html>
