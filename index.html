@@ -10,14 +10,15 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 
     <style>
+        /* 1. 기본 스타일 및 복사 방지 */
         body { 
             margin: 0; font-family: 'Inter', 'Segoe UI', sans-serif; background-color: #0a0a0a; color: #ffffff; 
             line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth;
             -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
         }
         
-        /* 전체 잠금 레이어 */
-        #lock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        /* 로그인 레이어 (잠금 화면) */
+        #lock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; overflow-y: auto; padding: 20px 0; }
         #lock-overlay h2 { font-size: 3.5rem; color: #ff5e00; margin-bottom: 20px; letter-spacing: 5px; font-weight: 900; text-transform: uppercase; }
         
         .auth-container { background: #111; padding: 40px; border-radius: 8px; border: 1px solid #222; width: 350px; box-sizing: border-box; }
@@ -25,20 +26,16 @@
         .auth-btn { width: 100%; padding: 15px; background: #ff5e00; color: white; border: none; font-weight: 800; cursor: pointer; margin-bottom: 10px; font-size: 1rem; text-transform: uppercase; }
         .auth-switch { font-size: 0.8rem; color: #666; cursor: pointer; text-decoration: underline; margin-top: 10px; }
 
-        /* 이메일 인증 대기 화면 (별도 분리) */
-        #verify-screen { display: none; }
-        .verify-box { background: #1a1a1a; padding: 30px; border-radius: 8px; border: 1px solid #ff3333; margin-top: 20px; }
-        .verify-text { color: #ff3333; font-weight: bold; margin-bottom: 15px; font-size: 0.9rem; line-height: 1.5; }
-
+        /* 회원가입 전용 필드 (가입 시에만 노출) */
         #signup-extra-fields { display: none; margin-bottom: 10px; }
 
         .live-status-bar { background: #1a1a1a; padding: 12px; text-align: center; border-bottom: 2px solid #ff5e00; font-size: 0.9rem; position: fixed; width: 100%; z-index: 101; top: 0; }
         .status-tag { background: #ff5e00; color: #fff; padding: 2px 8px; border-radius: 3px; font-weight: 800; margin-right: 10px; }
 
         nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(0,0,0,0.95) !important; position: fixed; width: 100%; box-sizing: border-box; z-index: 100; border-bottom: 1px solid #222; margin-top: 45px; }
-        nav .logo { font-weight: 900; font-size: 26px; color: #ff5e00 !important; letter-spacing: 2px; text-transform: uppercase; text-decoration: none !important; }
+        nav .logo { font-weight: 900; font-size: 26px; color: #ff5e00 !important; letter-spacing: 2px; text-transform: uppercase; text-decoration: none !important; background: none !important; padding: 0 !important; }
         nav ul { list-style: none; display: flex; margin: 0; padding: 0; align-items: center; }
-        nav ul li a { margin-left: 20px; font-size: 12px; font-weight: 600; color: #999 !important; text-decoration: none !important; text-transform: uppercase; transition: 0.3s; }
+        nav ul li a { margin-left: 20px; font-size: 12px; font-weight: 600; color: #999 !important; text-decoration: none !important; transition: 0.3s; text-transform: uppercase; padding: 5px 10px !important; }
         nav ul li a:hover { color: #ff5e00 !important; }
         .logout-link { margin-left: 20px; font-size: 10px; color: #ff3333 !important; cursor: pointer; border: 1px solid #444; padding: 5px 10px; border-radius: 4px; font-weight: bold; }
 
@@ -47,6 +44,7 @@
         .section { padding: 120px 8%; max-width: 1200px; margin: 0 auto; }
         .section-title { font-size: 2.8rem; font-weight: 800; margin-bottom: 60px; text-align: center; letter-spacing: 8px; color: #ff5e00; text-transform: uppercase; }
 
+        /* ABOUT 전략 섹션 스타일 */
         .about-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
         .tag { padding: 15px 25px; background: #111; border-left: 3px solid #ff5e00; font-weight: 700; margin-right: 10px; display: inline-block; }
         .map-dashboard { background: #111; border: 1px solid #222; border-radius: 12px; overflow: hidden; }
@@ -57,15 +55,48 @@
         .map-image-wrapper { width: 100%; background: #000; border: 2px solid #333; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         .map-image-wrapper img { width: 100%; height: auto; display: block; object-fit: cover; }
 
-        .member-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
-        .member-card { background: #151515; border: 1px solid #222; padding: 40px; position: relative; }
-        .stats-box { display: flex; justify-content: space-between; border-top: 1px solid #222; padding-top: 25px; margin-top: 10px; }
+        /* 🔥 MEMBERS STATS 섹션 디자인 혁신 */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 50px; }
+        .stat-card { background: rgba(17, 17, 17, 0.9); border: 1px solid #222; border-radius: 12px; padding: 35px; transition: 0.3s; position: relative; overflow: hidden; }
+        .stat-card:hover { border-color: #ff5e00; transform: translateY(-5px); box-shadow: 0 10px 30px rgba(255, 94, 0, 0.1); }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #ff5e00; }
+        
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #222; }
+        .player-name { font-size: 1.5rem; font-weight: 900; color: #fff; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
+        .player-role { font-size: 0.8rem; color: #ff5e00; font-weight: 700; text-transform: uppercase; background: rgba(255, 94, 0, 0.1); padding: 5px 10px; border-radius: 4px; }
+        
+        .data-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .data-item { background: #000; border: 1px solid #222; padding: 20px; border-radius: 8px; text-align: center; }
+        .data-label { font-size: 0.75rem; color: #666; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; display: block; }
+        .data-value { font-size: 2rem; font-weight: 900; color: #ff5e00; line-height: 1; }
+        .data-unit { font-size: 0.9rem; color: #fff; font-weight: 700; margin-left: 2px; }
+
+        /* 스탯 하단 링크 버튼 */
+        .link-btn-wrapper { margin-top: 50px; text-align: center; display: flex; justify-content: center; gap: 20px; }
+        .pubg-link-btn { display: inline-block; padding: 15px 30px; background: none; border: 2px solid #ff5e00; color: #ff5e00; text-decoration: none; font-weight: 800; font-size: 0.9rem; border-radius: 4px; transition: 0.3s; text-transform: uppercase; }
+        .pubg-link-btn:hover { background: #ff5e00; color: #fff; }
+
+        /* 가입 신청서 섹션 스타일 */
+        #join { background-color: #0d0d0d; border-top: 1px solid #222; }
+        .join-container { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-bottom: 40px; }
+        .info-box h3 { color: #ff5e00; font-size: 1.6rem; font-weight: 900; border-left: 5px solid #ff5e00; padding-left: 20px; margin-bottom: 30px; }
+        .info-box ul { list-style: none; padding: 0; }
+        .info-box ul li { margin-bottom: 15px; padding-left: 30px; position: relative; color: #bbb; }
+        .info-box ul li::before { content: '✓'; position: absolute; left: 0; color: #ff5e00; font-weight: 900; }
+        
+        .apply-form { background: #111; border: 1px solid #222; padding: 40px; border-radius: 8px; margin-top: 40px; }
+        .apply-form h3 { color: #ff5e00; margin-top: 0; margin-bottom: 25px; font-weight: 900; text-transform: uppercase; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 0.8rem; color: #666; margin-bottom: 8px; font-weight: bold; }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: #fff; box-sizing: border-box; font-family: inherit; }
+        .btn-submit { background: #ff5e00; color: white; border: none; padding: 18px; width: 100%; font-weight: 900; font-size: 1.1rem; cursor: pointer; text-transform: uppercase; }
 
         footer { padding: 80px; text-align: center; color: #444; border-top: 1px solid #222; text-transform: uppercase; }
-        @media (max-width: 900px) { .about-wrapper { grid-template-columns: 1fr; } .hero h1 { font-size: 4rem; } }
+        @media (max-width: 900px) { .about-wrapper, .join-container, .form-grid { grid-template-columns: 1fr; } .hero h1 { font-size: 4rem; } }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
 
     <div class="live-status-bar">
         <span class="status-tag">LIVE</span> 서버 상태: <span style="color: #4ee29d;">정상</span> | 오늘의 맵: <span style="color: #fff;">에란겔 / 미라마 / 비켄디 / 테이고 / 론도</span>
@@ -73,8 +104,7 @@
 
     <div id="lock-overlay">
         <h2 id="auth-title">CLIX MEMBERS ONLY</h2>
-        
-        <div class="auth-container" id="auth-form-screen">
+        <div class="auth-container">
             <input type="email" id="auth-email" class="auth-input" placeholder="이메일 주소">
             <input type="password" id="auth-password" class="auth-input" placeholder="비밀번호 (6자 이상)">
             
@@ -86,15 +116,7 @@
             <button id="auth-main-btn" class="auth-btn" onclick="handleAuth()">로그인</button>
             <p id="auth-toggle-text" class="auth-switch" onclick="toggleAuthMode()">계정이 없으신가요? 회원가입</p>
         </div>
-
-        <div class="auth-container" id="verify-screen">
-            <div class="verify-box">
-                <p class="verify-text">이메일 인증이 필요합니다.<br>메일함에 발송된 링크를 클릭해주세요.</p>
-                <button class="auth-btn" onclick="location.reload()">인증 완료 후 새로고침</button>
-                <button class="auth-btn" style="background:#333;" onclick="resendEmail()">인증 메일 재발송</button>
-                <p class="auth-switch" onclick="logout()">다른 계정으로 로그인</p>
-            </div>
-        </div>
+        <p style="margin-top:20px; font-size:0.8rem; color:#444;">승인된 멤버만 입장이 가능합니다.</p>
     </div>
 
     <nav>
@@ -105,12 +127,16 @@
             <li><a href="board.html">BOARD</a></li>
             <li><a href="#members">STATS</a></li>
             <li><a href="members.html">MEMBERS</a></li>
+            <li><a href="#join">JOIN</a></li>
             <li id="nav-user-info" style="color:#ff5e00; font-size:10px; margin-left:20px; font-weight: bold;"></li>
             <li><span class="logout-link" onclick="logout()">LOGOUT</span></li>
         </ul>
     </nav>
 
-    <section class="hero" id="home"><h1>CLIX</h1><p>BATTLEGROUND KOR CLIX</p></section>
+    <section class="hero" id="home">
+        <h1>CLIX</h1>
+        <p>BATTLEGROUND KOR CLIX</p>
+    </section>
 
     <section class="section" id="about">
         <div class="about-wrapper">
@@ -118,7 +144,8 @@
                 <h3 style="color:#888; letter-spacing:2px;">Who We Are</h3>
                 <h2 style="font-size:3.5rem; margin:10px 0;">WE ARE THE<br><span style="color: #ff5e00;">CLIX CLAN</span></h2>
                 <p style="color:#aaa; margin-bottom:30px;">성숙한 매너와 체계적인 전술을 지향하는 배틀그라운드 성인 클랜입니다.</p>
-                <div class="tag">매너 중요시</div><div class="tag">재미와 웃음</div>
+                <div class="tag">매너 중요시</div>
+                <div class="tag">재미와 웃음</div>
             </div>
             <div class="map-dashboard">
                 <div class="map-nav">
@@ -145,27 +172,111 @@
 
     <section class="section" id="members">
         <h2 class="section-title">CLIX SQUAD STATS</h2>
-        <div class="member-grid">
-            <div class="member-card">
-                <h3>CLIX_0dB</h3>
-                <div class="stats-box">
-                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">K/D</span><span style="color:#ddd; font-weight:800;">1.25</span></div>
-                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">AVG DMG</span><span style="color:#ddd; font-weight:800;">208</span></div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="card-header">
+                    <h3 class="player-name">CLIX_0dB</h3>
+                    <span class="player-role">Main Order</span>
+                </div>
+                <div class="data-row">
+                    <div class="data-item">
+                        <span class="data-label">Kill/Death</span>
+                        <span class="data-value">1.25</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Avg Damage</span>
+                        <span class="data-value">208</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Win Rate</span>
+                        <span class="data-value">7.7<span class="data-unit">%</span></span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Top 10</span>
+                        <span class="data-value">25.3<span class="data-unit">%</span></span>
+                    </div>
                 </div>
             </div>
-            <div class="member-card">
-                <h3>Viper789456</h3>
-                <div class="stats-box">
-                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">K/D</span><span style="color:#ddd; font-weight:800;">0.08</span></div>
-                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">AVG DMG</span><span style="color:#ddd; font-weight:800;">105</span></div>
+
+            <div class="stat-card">
+                <div class="card-header">
+                    <h3 class="player-name">Viper789456</h3>
+                    <span class="player-role">Sub Order</span>
+                </div>
+                <div class="data-row">
+                    <div class="data-item">
+                        <span class="data-label">Kill/Death</span>
+                        <span class="data-value">0.08</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Avg Damage</span>
+                        <span class="data-value">105</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Win Rate</span>
+                        <span class="data-value">8.3<span class="data-unit">%</span></span>
+                    </div>
+                    <div class="data-item">
+                        <span class="data-label">Top 10</span>
+                        <span class="data-value">22.1<span class="data-unit">%</span></span>
+                    </div>
                 </div>
             </div>
+        </div>
+
+        <div class="link-btn-wrapper">
+            <a href="https://pubg.op.gg" target="_blank" class="pubg-link-btn">PUBG.OP.GG 바로가기</a>
+            <a href="https://dak.gg/pubg" target="_blank" class="pubg-link-btn">DAK.GG 바로가기</a>
+        </div>
+    </section>
+
+    <section class="section" id="join">
+        <h2 class="section-title">JOIN THE CLAN</h2>
+        <div class="join-container">
+            <div class="info-box">
+                <h3>가입 조건</h3>
+                <ul>
+                    <li>23세 이상 성인 (2004년생부터 가입 가능)</li>
+                    <li>핵 및 비인가 프로그램 사용 이력 절대 금지</li>
+                    <li>디스코드 및 마이크 사용 필수</li>
+                    <li>이중 클랜 및 비매너 행위 금지</li>
+                </ul>
+            </div>
+            <div class="info-box">
+                <h3>가입 신청 안내</h3>
+                <ul>
+                    <li>상단 회원가입 기능을 이용해 계정을 생성해 주세요.</li>
+                    <li>생성한 계정으로 로그인 후 하단 신청서를 제출해 주세요.</li>
+                    <li>운영진 확인 후 기재하신 연락처로 개별 연락드립니다.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="apply-form">
+            <h3>클랜 가입 신청서 작성</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>배그 닉네임</label>
+                    <input type="text" id="apply-nick" placeholder="게임 내 닉네임">
+                </div>
+                <div class="form-group">
+                    <label>나이</label>
+                    <input type="number" id="apply-age" placeholder="숫자만 입력">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>자기소개 및 각오</label>
+                <textarea id="apply-memo" rows="5" placeholder="매너 플레이를 약속하시나요? 간단히 적어주세요."></textarea>
+            </div>
+            <button class="btn-submit" onclick="submitApplication()">가입 신청서 제출하기</button>
         </div>
     </section>
 
     <footer>&copy; 2026 CLAN CLIX. ALL RIGHTS RESERVED.</footer>
 
     <script>
+        // image_08b2d6.png 정보 기준 (사용자 전용 설정값)
         const firebaseConfig = {
             apiKey: "AIzaSyAFSAu2aynX6YPiJEatWy9IQgWgUuTx8ds",
             authDomain: "korclix.firebaseapp.com",
@@ -180,32 +291,22 @@
 
         let isLoginMode = true;
 
+        // 실시간 로그인 상태 감지
         auth.onAuthStateChanged((user) => {
-            const formScreen = document.getElementById('auth-form-screen');
-            const verifyScreen = document.getElementById('verify-screen');
-
             if (user) {
-                if (user.emailVerified) {
-                    // 인증 완료: 홈페이지 입장
-                    document.getElementById('lock-overlay').style.display = 'none';
-                    db.collection("users").doc(user.uid).get().then((doc) => {
-                        const nick = doc.exists ? doc.data().nickname : user.email.split('@')[0];
-                        document.getElementById('nav-user-info').innerText = nick + "님 반갑습니다";
-                    });
-                } else {
-                    // 인증 미완료: 인증 대기 화면 표시
-                    document.getElementById('lock-overlay').style.display = 'flex';
-                    formScreen.style.display = 'none';
-                    verifyScreen.style.display = 'block';
-                }
+                document.getElementById('lock-overlay').style.display = 'none';
+                // DB에서 회원가입시 입력한 닉네임 가져오기
+                db.collection("users").doc(user.uid).get().then((doc) => {
+                    const nick = doc.exists ? doc.data().nickname : user.email.split('@')[0];
+                    document.getElementById('nav-user-info').innerText = nick + "님 반갑습니다";
+                });
             } else {
-                // 로그아웃 상태: 로그인 입력창 표시
                 document.getElementById('lock-overlay').style.display = 'flex';
-                formScreen.style.display = 'block';
-                verifyScreen.style.display = 'none';
+                document.getElementById('nav-user-info').innerText = "";
             }
         });
 
+        // 로그인/회원가입 모드 전환
         function toggleAuthMode() {
             isLoginMode = !isLoginMode;
             document.getElementById('auth-title').innerText = isLoginMode ? "CLIX MEMBERS ONLY" : "CLIX SIGN UP";
@@ -214,48 +315,85 @@
             document.getElementById('signup-extra-fields').style.display = isLoginMode ? "none" : "block";
         }
 
+        // 인증 핸들러 (로그인 및 회원가입)
         function handleAuth() {
             const email = document.getElementById('auth-email').value;
             const password = document.getElementById('auth-password').value;
+            if(!email || !password) return alert("이메일과 비밀번호를 입력하세요.");
 
             if (isLoginMode) {
-                auth.signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    if (!userCredential.user.emailVerified) {
-                        alert("이메일 인증이 필요합니다. 메일함을 확인해주세요.");
-                    }
-                })
-                .catch(err => alert("로그인 오류: " + err.message));
+                // 로그인
+                auth.signInWithEmailAndPassword(email, password).catch(err => alert("로그인 실패: " + err.message));
             } else {
+                // 회원가입 (추가 정보 포함)
                 const nickname = document.getElementById('auth-nickname').value;
                 const age = document.getElementById('auth-age').value;
                 if(!nickname || !age) return alert("닉네임과 나이를 입력해주세요.");
 
                 auth.createUserWithEmailAndPassword(email, password)
                 .then((res) => {
-                    // 회원가입 직후 바로 인증 메일 발송
-                    return res.user.sendEmailVerification().then(() => {
-                        alert(email + " 주소로 인증 메일을 보냈습니다. 확인 후 로그인해주세요!");
-                        // DB 정보 저장
-                        return db.collection("users").doc(res.user.uid).set({
-                            nickname: nickname, age: age, email: email, joinedAt: firebase.firestore.FieldValue.serverTimestamp()
-                        });
+                    // 가입 성공 시 DB에 추가 정보 저장
+                    return db.collection("users").doc(res.user.uid).set({
+                        nickname: nickname,
+                        age: age,
+                        email: email,
+                        joinedAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 })
-                .catch(err => alert("가입 및 메일 발송 실패: " + err.message));
+                .then(() => alert("회원가입 성공! 이제 로그인해 주세요."))
+                .catch(err => alert("회원가입 실패: " + err.message));
             }
         }
-        function resendEmail() { auth.currentUser.sendEmailVerification().then(() => alert("인증 메일이 재발송되었습니다.")); }
+
         function logout() { if(confirm("로그아웃 하시겠습니까?")) auth.signOut(); }
 
+        // 가입 신청서 제출 로직 (Firestore)
+        function submitApplication() {
+            if(!auth.currentUser) return alert("먼저 로그인 또는 회원가입을 완료해주세요.");
+            
+            const nick = document.getElementById('apply-nick').value;
+            const age = document.getElementById('apply-age').value;
+            const memo = document.getElementById('apply-memo').value;
+
+            if(!nick || !age || !memo) return alert("모든 신청 항목을 채워주세요.");
+
+            db.collection("applications").add({
+                nickname: nick,
+                age: age,
+                memo: memo,
+                userEmail: auth.currentUser.email,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                alert("가입 신청서가 성공적으로 제출되었습니다. 운영진 확인을 기다려주세요!");
+                location.reload(); // 양식 초기화
+            }).catch(err => alert("제출 오류: " + err.message));
+        }
+
+        // 맵 전환 로직
         function showMap(mapName, btn) {
-            const btns = document.querySelectorAll('.map-nav-btn'); btns.forEach(b => b.classList.remove('active')); btn.classList.add('active');
-            const data = { 
-                'erangel': ['erangel.jpg', 'ERANGEL 전략', '- 주요 차량 스폰: 강남, 포친키. 1페 중앙 점령 추천<br>- 외곽 강하: 밀타 파워 보트 필수<br>- 밀베 자기장: 다리 검문 대비 및 해안가 시야 확보<br>- 대도시: 옥상 선점 및 투척물 활용'],
-                'miramar': ['miramar.jpg', 'MIRAMAR 전략', '- 고지대 능선 점령 필수 시야 확보가 핵심.<br>- 무기 구성: DMR/SR 필수<br>- 차량: 픽업트럭 확보']
+            const btns = document.querySelectorAll('.map-nav-btn');
+            btns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const mapData = {
+                'erangel': [
+                    'erangel.jpg', 'ERANGEL 전략', 
+                    '- 주요 차량 스폰: 강남, 포친키. 1페 중앙 점령 추천<br>- 외곽 강하: 밀타 파워, 노보 파밍 시 보트/차량 선점 필수<br>- 밀베 자기장: 다리 검문 대비 및 해안가 둔덕 시야 확보<br>- 대도시: 야스나야, 포친키 시가전 시 옥상 선점 및 투척물 활용<br>- 평야 교전: 볏짚과 해우소를 활용한 거점 방어<br>- 기습 포인트: 해우소 지붕 위 등 예상치 못한 고지대 점령으로 통행세 징수'
+                ],
+                'miramar': [
+                    'miramar.jpg', 'MIRAMAR 전략', 
+                    '- 고지대 능선 점령 필수 시야 확보가 핵심.<br>- 무기 구성: 광활한 개활지 대비 DMR/SR 장거리 무기 필수<br>- 차량 및 이동: 오프로드에 유리한 픽업트럭 확보 및 능선 하단 회전<br>- 도심지 진입: 페카도, 로스 레오네스 진입 시 창문/옥상 클리어링 최우선<br>- 지형 활용: 분지 지형 굴곡을 활용한 하이딩 및 기습 전술'
+                ]
             };
-            const m = data[mapName];
-            document.getElementById('map-content').innerHTML = `<div class="map-image-wrapper"><img src="${m[0]}" onerror="this.src='${m[0].toUpperCase()}'"></div><div class="map-strategy-box"><h3>${m[1]}</h3><p>${m[2]}</p></div>`;
+            
+            const data = mapData[mapName];
+            document.getElementById('map-content').innerHTML = `
+                <div class="map-image-wrapper"><img src="${data[0]}" alt="Map" onerror="this.src='${data[0].toUpperCase()}'"></div>
+                <div class="map-strategy-box">
+                    <h3 style="color:#ff5e00; margin-top:0;">${data[1]}</h3>
+                    <p style="color:#888; font-size:0.9rem; line-height: 1.8;">${data[2]}</p>
+                </div>
+            `;
         }
     </script>
 </body>
