@@ -3,52 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLIX CLAN | FREE BOARD</title>
-    <style>
-        /* 기본 레이아웃 스타일 */
-        body { margin: 0; font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: #ffffff; line-height: 1.6; padding: 50px 8%; }
-        
-        /* 헤더 디자인 (NOTICE와 통일) */
-        .header { border-bottom: 2px solid #ff5e00; padding-bottom: 20px; margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; }
-        h1 { color: #ff5e00; letter-spacing: 5px; margin: 0; font-size: 2rem; text-transform: uppercase; }
-        .back-btn { color: #888; text-decoration: none; font-weight: 800; border: 1px solid #333; padding: 10px 25px; transition: 0.3s; border-radius: 4px; font-size: 0.9rem; }
-        .back-btn:hover { background: #ff5e00; color: #fff; border-color: #ff5e00; }
+    <title>CLIX BOARD</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 
-        /* 게시판 안내 문구 */
-        .board-info { background: #111; padding: 20px; border-left: 5px solid #ff5e00; margin-bottom: 40px; color: #aaa; font-size: 0.9rem; }
+    <style>
+        body { 
+            margin: 0; padding: 120px 8% 50px 8%; background-color: #0a0a0a; color: #ffffff; 
+            font-family: 'Inter', sans-serif; line-height: 1.6;
+        }
+
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(0,0,0,0.95) !important; position: fixed; width: 100%; top: 0; left: 0; box-sizing: border-box; z-index: 100; border-bottom: 1px solid #222; }
+        nav .logo { font-weight: 900; font-size: 26px; color: #ff5e00 !important; text-decoration: none; }
+        nav ul { list-style: none; display: flex; margin: 0; padding: 0; }
+        nav ul li a { margin-left: 20px; font-size: 12px; color: #999; text-decoration: none; text-transform: uppercase; }
+
+        .header { border-bottom: 2px solid #ff5e00; padding-bottom: 20px; margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; }
+        h1 { color: #ff5e00; letter-spacing: 3px; margin: 0; font-size: 2rem; text-transform: uppercase; font-weight: 900; }
+        .back-btn { color: #888; text-decoration: none; border: 1px solid #333; padding: 10px 25px; border-radius: 4px; font-weight: bold; }
+
+        /* 게시판 작성 폼 (누구나 작성 가능) */
+        .write-section { border: 1px solid #333; padding: 25px; margin-bottom: 40px; border-radius: 4px; background: #111; }
+        input, textarea { width: 100%; padding: 12px; margin-bottom: 10px; background: #1a1a1a; border: 1px solid #333; color: #fff; box-sizing: border-box; font-family: inherit; }
+        .btn-post { background: #ff5e00; color: #fff; padding: 12px; border: none; font-weight: bold; cursor: pointer; width: 100%; text-transform: uppercase; }
+
+        /* 게시글 목록 */
+        .post-card { background: #111; border: 1px solid #222; border-radius: 8px; padding: 25px; margin-bottom: 20px; position: relative; }
+        .post-header { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #222; padding-bottom: 10px; }
+        .post-author { color: #ff5e00; font-weight: bold; font-size: 0.9rem; }
+        .post-date { color: #555; font-size: 0.8rem; }
+        .post-content { color: #ccc; white-space: pre-wrap; font-size: 1rem; }
         
-        /* Disqus 게시판 영역 박스 */
-        #disqus_thread { background: #111; padding: 30px; border-radius: 8px; border: 1px solid #222; min-height: 300px; }
+        /* 관리자 전용 삭제 버튼 */
+        .btn-del { color: #ff3333; cursor: pointer; font-size: 0.8rem; position: absolute; top: 25px; right: 25px; display: none; text-decoration: underline; }
+        
+        #admin-auth { position: fixed; bottom: 10px; left: 10px; font-size: 10px; color: #111; cursor: pointer; }
     </style>
 </head>
 <body>
 
+    <nav>
+        <a href="index.html" class="logo">CLAN CLIX</a>
+        <ul>
+            <li><a href="index.html#about">ABOUT</a></li>
+            <li><a href="notice.html">NOTICE</a></li>
+            <li><a href="board.html" style="color: #ff5e00;">BOARD</a></li>
+        </ul>
+    </nav>
+
     <div class="header">
-        <h1>FREE BOARD</h1>
+        <h1>CLIX BOARD</h1>
         <a href="index.html" class="back-btn">BACK TO HOME</a>
     </div>
 
-    <div class="board-info">
-        💬 <b>커뮤니티:</b> 클랜원들과 자유롭게 소통하세요! 사진 첨부(카메라 아이콘)도 가능합니다.
+    <div class="write-section">
+        <input type="text" id="nickname" placeholder="닉네임" style="width: 30%;">
+        <textarea id="post-content" rows="3" placeholder="자유롭게 글을 남겨주세요."></textarea>
+        <button class="btn-post" onclick="savePost()">등록하기</button>
     </div>
 
-    <div id="disqus_thread"></div>
+    <div id="board-container">
+        <p style="text-align:center; color:#555;">글을 불러오는 중...</p>
+    </div>
+
+    <div id="admin-auth" onclick="authAdmin()">ADMIN</div>
 
     <script>
-        var disqus_config = function () {
-            this.page.url = window.location.href;  
-            this.page.identifier = 'clix_free_board_v1'; 
+        const firebaseConfig = {
+            apiKey: "AIzaSyAFSAu2aynX6YPiJEatWy9IQgWgUuTxBds",
+            authDomain: "korclix.firebaseapp.com",
+            projectId: "korclix",
+            storageBucket: "korclix.firebasestorage.app",
+            messagingSenderId: "472792477536",
+            appId: "1:472792477536:web:14907e228c343b72fd7005"
         };
 
-        (function() { 
-            var d = document, s = d.createElement('script');
-            // ⚠️ 주의: 'clix-clan'이 본인의 Disqus Shortname과 일치해야 합니다.
-            s.src = 'https://clix-clan.disqus.com/embed.js'; 
-            s.setAttribute('data-timestamp', +new Date());
-            (d.head || d.body).appendChild(s);
-        })();
-    </script>
-    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
+        window.onload = function() {
+            loadPosts();
+            if(sessionStorage.getItem('clix_master') === 'true') {
+                showAdminUI();
+            }
+        };
+
+        function authAdmin() {
+            if(prompt("관리자 코드를 입력하세요.") === "1541") {
+                sessionStorage.setItem('clix_master', 'true');
+                showAdminUI();
+                location.reload();
+            }
+        }
+
+        function showAdminUI() {
+            document.querySelectorAll('.btn-del').forEach(b => b.style.display = 'block');
+        }
+
+        function loadPosts() {
+            db.collection("board").orderBy("timestamp", "desc").onSnapshot((querySnapshot) => {
+                const container = document.getElementById('board-container');
+                container.innerHTML = "";
+                
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const date = data.timestamp ? data.timestamp.toDate().toLocaleString() : '방금 전';
+                    const adminDisplay = sessionStorage.getItem('clix_master') === 'true' ? 'block' : 'none';
+
+                    container.innerHTML += `
+                        <div class="post-card">
+                            <div class="post-header">
+                                <span class="post-author">${data.nickname}</span>
+                                <span class="post-date">${date}</span>
+                            </div>
+                            <div class="post-content">${data.content}</div>
+                            <div class="btn-del" style="display:${adminDisplay}" onclick="deletePost('${doc.id}')">삭제</div>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        function savePost() {
+            const nick = document.getElementById('nickname').value || "익명";
+            const cont = document.getElementById('post-content').value;
+
+            if(!cont) { return alert("내용을 입력하세요."); }
+
+            db.collection("board").add({
+                nickname: nick,
+                content: cont,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                document.getElementById('post-content').value = "";
+            });
+        }
+
+        function deletePost(id) {
+            if(confirm("이 게시글을 삭제하시겠습니까?")) {
+                db.collection("board").doc(id).delete();
+            }
+        }
+    </script>
 </body>
 </html>
