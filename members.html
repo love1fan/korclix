@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CLIX CLAN | 멤버 명단</title>
     <style>
-        /* 기본 스타일 */
         body { margin: 0; font-family: 'Inter', 'Segoe UI', sans-serif; background-color: #0a0a0a; color: #ffffff; line-height: 1.6; }
         
         /* 네비게이션 */
@@ -19,23 +18,30 @@
         .container { padding: 150px 8% 80px; max-width: 1000px; margin: 0 auto; }
         .page-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 50px; text-align: center; letter-spacing: 6px; color: #ff5e00; text-transform: uppercase; }
 
-        /* 멤버 테이블 디자인 */
+        /* 멤버 테이블 */
         .member-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #111; border: 1px solid #222; }
-        .member-table th { background: #181818; padding: 20px; text-align: left; color: #ff5e00; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; border-bottom: 2px solid #222; }
+        .member-table th { background: #181818; padding: 20px; text-align: left; color: #ff5e00; text-transform: uppercase; font-size: 0.85rem; border-bottom: 2px solid #222; }
         .member-table td { padding: 20px; border-bottom: 1px solid #222; font-size: 1rem; color: #ddd; }
         .member-table tr:hover { background: #1a1a1a; }
         
-        /* 등급/포지션 태그 */
+        /* 포지션 태그 */
         .role-tag { padding: 4px 12px; background: #222; border-radius: 4px; font-size: 0.75rem; color: #999; text-transform: uppercase; font-weight: 700; }
-        .tier-master { color: #ff5e00; font-weight: 800; }
-        .tier-diamond { color: #00e5ff; font-weight: 800; }
+
+        /* [티어별 고유 색상] */
+        .survivor { color: #ff4444; font-weight: 900; text-shadow: 0 0 5px rgba(255, 68, 68, 0.3); }
+        .master { color: #ff5e00; font-weight: 800; }
+        .diamond { color: #00e5ff; font-weight: 800; }
+        .platinum { color: #4ee29d; font-weight: 700; } /* 플래티넘: 연녹색 */
+        .gold { color: #ffcc00; font-weight: 700; }
+        .silver { color: #c0c0c0; font-weight: 600; }
+        .bronze { color: #cd7f32; font-weight: 600; } /* 브론즈: 구리색 */
 
         /* 하단 버튼 */
         .btn-box { text-align: center; margin-top: 60px; }
         .back-btn { padding: 15px 30px; border: 1px solid #444; color: #777; text-decoration: none; font-weight: 600; transition: 0.3s; text-transform: uppercase; font-size: 0.8rem; }
         .back-btn:hover { border-color: #ff5e00; color: #ff5e00; }
 
-        footer { padding: 60px; text-align: center; border-top: 1px solid #222; background-color: #080808; color: #555; font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; }
+        footer { padding: 60px; text-align: center; border-top: 1px solid #222; background-color: #080808; color: #555; font-size: 13px; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -64,22 +70,22 @@
                 <tr>
                     <td><strong>CLIX_0dB</strong></td>
                     <td><span class="role-tag">Main Order</span></td>
-                    <td><span class="tier-master">MASTER</span></td>
+                    <td><span class="platinum">PLATINUM</span></td>
                     <td>2025-12-20</td>
                 </tr>
                 <tr>
                     <td><strong>Viper789456</strong></td>
                     <td><span class="role-tag">Sub Order</span></td>
-                    <td><span class="tier-diamond">DIAMOND 1</span></td>
+                    <td><span class="platinum">PLATINUM</span></td>
                     <td>2026-01-05</td>
                 </tr>
                 <tr>
                     <td><strong>joa1013</strong></td>
                     <td><span class="role-tag">Back Up</span></td>
-                    <td><span class="tier-diamond">DIAMOND 2</span></td>
+                    <td><span class="bronze">BRONZE</span></td>
                     <td>2026-02-14</td>
                 </tr>
-                </tbody>
+            </tbody>
         </table>
 
         <div class="btn-box">
