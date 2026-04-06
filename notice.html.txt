@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>CLIX CLAN | NOTICE</title>
+    <style>
+        body { background: #0a0a0a; color: #fff; font-family: 'Inter', sans-serif; margin: 0; padding: 50px 8%; }
+        .header { border-bottom: 2px solid #ff5e00; padding-bottom: 20px; margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; }
+        h1 { color: #ff5e00; letter-spacing: 5px; margin: 0; }
+        .back-btn { color: #888; text-decoration: none; font-weight: 800; border: 1px solid #333; padding: 10px 20px; transition: 0.3s; }
+        .back-btn:hover { background: #ff5e00; color: #fff; }
+        .notice-card { background: #111; border: 1px solid #222; padding: 30px; margin-bottom: 20px; }
+        .tag { background: #ff5e00; color: #fff; padding: 3px 10px; font-size: 0.7rem; font-weight: 800; margin-right: 15px; }
+        .date { color: #444; float: right; }
+        .content { margin-top: 15px; color: #aaa; line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>NOTICE</h1>
+        <a href="index.html" class="back-btn">BACK TO HOME</a>
+    </div>
+
+    <div class="notice-card">
+        <span class="tag">중요</span> <span style="font-size: 1.2rem; font-weight: 800;">CLIX 클랜 홈페이지 정식 오픈</span>
+        <span class="date">2026-04-07</span>
+        <p class="content">클랜원들을 위한 공식 홈페이지가 개설되었습니다. 공지사항과 게시판을 통해 원활한 소통 바랍니다.</p>
+    </div>
+</body>
+</html>
