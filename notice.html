@@ -21,7 +21,7 @@
             const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S\w]+)\)/)[1]);
             const rows = json.table.rows;
             let html = '';
-            for (let i = 1; i < rows.length; i++) { // 1행 건너뛰고 2행부터
+            for (let i = 0; i < rows.length; i++) { // 1행 건너뛰고 2행부터
                 const r = rows[i].c;
                 if(!r || !r[1]) continue;
                 html += `<div class="notice-card"><span class="tag">${r[0]?r[0].v:''}</span><strong>${r[1]?r[1].v:''}</strong><p>${r[3]?r[3].v:''}</p></div>`;
