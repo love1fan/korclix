@@ -2,66 +2,93 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>CLIX CLAN | NOTICE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PUBG CLIX CLAN | NOTICE</title>
     <style>
-        body { background: #0a0a0a; color: #fff; font-family: 'Inter', sans-serif; margin: 0; padding: 50px 8%; }
+        /* 기본 스타일 */
+        body { margin: 0; font-family: 'Inter', 'Segoe UI', sans-serif; background-color: #0a0a0a; color: #ffffff; line-height: 1.6; padding: 50px 8%; }
+        
+        /* 헤더 영역 */
         .header { border-bottom: 2px solid #ff5e00; padding-bottom: 20px; margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; }
-        h1 { color: #ff5e00; letter-spacing: 5px; margin: 0; }
-        .back-btn { color: #888; text-decoration: none; font-weight: 800; border: 1px solid #333; padding: 10px 20px; transition: 0.3s; }
-        .notice-card { background: #111; border: 1px solid #222; padding: 30px; margin-bottom: 20px; border-left: 5px solid #ff5e00; }
-        .tag { background: #ff5e00; color: #fff; padding: 4px 12px; font-size: 0.75rem; font-weight: 800; border-radius: 3px; margin-right: 15px; }
-        .date { color: #555; float: right; font-weight: 600; }
-        .content { margin-top: 15px; color: #ccc; line-height: 1.8; white-space: pre-wrap; }
+        h1 { color: #ff5e00; letter-spacing: 5px; margin: 0; font-size: 2rem; text-transform: uppercase; }
+        .back-btn { color: #888; text-decoration: none; font-weight: 800; border: 1px solid #333; padding: 10px 25px; transition: 0.3s; border-radius: 4px; font-size: 0.9rem; }
+        .back-btn:hover { background: #ff5e00; color: #fff; border-color: #ff5e00; }
+
+        /* 공지사항 카드 디자인 */
+        #notice-container { max-width: 1000px; margin: 0 auto; }
+        .notice-card { background: #111; border: 1px solid #222; padding: 35px; margin-bottom: 25px; border-left: 6px solid #ff5e00; position: relative; transition: 0.3s; }
+        .notice-card:hover { border-color: #ff5e00; transform: translateY(-3px); }
+        
+        .tag { background: #ff5e00; color: #fff; padding: 4px 12px; font-size: 0.75rem; font-weight: 900; border-radius: 3px; margin-right: 15px; vertical-align: middle; }
+        .title { font-size: 1.3rem; font-weight: 800; vertical-align: middle; color: #fff; }
+        .date { color: #555; float: right; font-weight: 600; font-size: 0.9rem; }
+        .content { margin-top: 20px; color: #bbb; line-height: 1.8; white-space: pre-wrap; font-size: 1rem; border-top: 1px solid #222; padding-top: 15px; }
+
+        /* 로딩 및 에러 메시지 */
+        .msg { text-align: center; color: #444; padding: 50px; font-weight: 700; }
     </style>
 </head>
 <body>
+
     <div class="header">
         <h1>NOTICE</h1>
         <a href="index.html" class="back-btn">BACK TO HOME</a>
     </div>
 
     <div id="notice-container">
-        <p style="color:#666; text-align:center;">데이터를 불러오는 중입니다...</p>
+        <p class="msg">데이터를 실시간으로 불러오는 중입니다...</p>
     </div>
 
     <script>
-        // ⚠️ 여기서 틀리면 끝장입니다. 시트 ID만 정확히 넣으세요!
-        // 예: https://docs.google.com/spreadsheets/d/1abc123.../edit 에서 1abc123... 부분만 복사
+        // ⚠️ 본인의 구글 스프레드시트 ID를 아래 따옴표 안에 입력하세요.
         const sheetId = '11iF6vZJag6R8CC0VzRqezK0HzK7GbMtqRBEmSsIfGec'; 
-        
         const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
 
         fetch(url)
             .then(res => res.text())
             .then(text => {
-                // 구글 데이터 가공 (이 부분은 건드리지 마세요)
+                // 구글 JSON 데이터 정제
                 const jsonText = text.match(/google\.visualization\.Query\.setResponse\(([\s\S\w]+)\)/);
+                if (!jsonText) throw new Error('데이터 형식이 올바르지 않습니다.');
+                
                 const json = JSON.parse(jsonText[1]);
                 const rows = json.table.rows;
                 let html = '';
                 
-                // 💡 i = 1 (2행부터 읽기), 만약 제목줄이 없다면 i = 0으로 바꾸세요.
-                for (let i = 1; i < rows.length; i++) {
-                    const row = rows[i].c;
-                    if (!row) continue;
+                // 데이터가 있는지 확인
+                if (!rows || rows.length <= 1) {
+                    html = '<p class="msg">등록된 최신 공지사항이 없습니다.</p>';
+                } else {
+                    // 💡 i = 1로 시작하여 1행(제목줄: 1열, 2열...)은 무시하고 2행부터 가져옵니다.
+                    for (let i = 1; i < rows.length; i++) {
+                        const row = rows[i].c;
+                        
+                        // 데이터 안전하게 추출 (비어있을 경우 대비)
+                        const tag     = (row[0] && row[0].v) ? row[0].v : '공지';
+                        const title   = (row[1] && row[1].v) ? row[1].v : '';
+                        const date    = (row[2] && row[2].v) ? row[2].v : '-';
+                        const content = (row[3] && row[3].v) ? row[3].v : '';
 
-                    const tag = row[0] ? row[0].v : '공지';
-                    const title = row[1] ? row[1].v : '제목 없음';
-                    const date = row[2] ? row[2].v : '-';
-                    const content = row[3] ? row[3].v : '';
-                    
-                    html += `
+                        // 제목이 비어있는 행은 출력하지 않음
+                        if (!title) continue;
+
+                        html += `
                         <div class="notice-card">
-                            <span class="tag">${tag}</span> 
-                            <span style="font-size: 1.25rem; font-weight: 800;">${title}</span>
-                            <span class="date">${date}</span>
-                            <p class="content">${content}</p>
+                            <div style="margin-bottom: 10px;">
+                                <span class="tag">${tag}</span>
+                                <span class="title">${title}</span>
+                                <span class="date">${date}</span>
+                            </div>
+                            <div class="content">${content}</div>
                         </div>`;
+                    }
                 }
-                document.getElementById('notice-container').innerHTML = html || '<p style="text-align:center; color:#444;">표시할 데이터가 없습니다.</p>';
+                document.getElementById('notice-container').innerHTML = html || '<p class="msg">표시할 공지사항이 없습니다.</p>';
             })
-            .catch(err => {
-                document.getElementById('notice-container').innerHTML = '<p style="color:red; text-align:center;">시트 ID 혹은 공유 설정을 확인하세요.</p>';
+            .catch(error => {
+                console.error(error);
+                document.getElementById('notice-container').innerHTML = 
+                    `<p class="msg" style="color:#ff5e00;">오류: 시트 공유 설정(링크가 있는 모든 사용자)을 확인해주세요.<br><small>${error.message}</small></p>`;
             });
     </script>
 </body>
