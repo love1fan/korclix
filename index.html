@@ -16,7 +16,8 @@
             -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
         }
         
-        #lock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; overflow-y: auto; padding: 20px 0; }
+        /* 전체 잠금 레이어 */
+        #lock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
         #lock-overlay h2 { font-size: 3.5rem; color: #ff5e00; margin-bottom: 20px; letter-spacing: 5px; font-weight: 900; text-transform: uppercase; }
         
         .auth-container { background: #111; padding: 40px; border-radius: 8px; border: 1px solid #222; width: 350px; box-sizing: border-box; }
@@ -24,7 +25,11 @@
         .auth-btn { width: 100%; padding: 15px; background: #ff5e00; color: white; border: none; font-weight: 800; cursor: pointer; margin-bottom: 10px; font-size: 1rem; text-transform: uppercase; }
         .auth-switch { font-size: 0.8rem; color: #666; cursor: pointer; text-decoration: underline; margin-top: 10px; }
 
-        #verify-notice { display: none; color: #ff3333; font-size: 0.85rem; margin-bottom: 15px; background: #221111; padding: 10px; border-radius: 4px; border: 1px solid #442222; line-height: 1.4; }
+        /* 이메일 인증 대기 화면 (별도 분리) */
+        #verify-screen { display: none; }
+        .verify-box { background: #1a1a1a; padding: 30px; border-radius: 8px; border: 1px solid #ff3333; margin-top: 20px; }
+        .verify-text { color: #ff3333; font-weight: bold; margin-bottom: 15px; font-size: 0.9rem; line-height: 1.5; }
+
         #signup-extra-fields { display: none; margin-bottom: 10px; }
 
         .live-status-bar { background: #1a1a1a; padding: 12px; text-align: center; border-bottom: 2px solid #ff5e00; font-size: 0.9rem; position: fixed; width: 100%; z-index: 101; top: 0; }
@@ -54,16 +59,13 @@
 
         .member-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
         .member-card { background: #151515; border: 1px solid #222; padding: 40px; position: relative; }
-        .rank-badge { position: absolute; top: 25px; right: 25px; font-size: 0.75rem; font-weight: 900; padding: 5px 12px; border: 1px solid; }
-        .tier-platinum { color: #4ee29d; border-color: #4ee29d; }
-        .tier-gold { color: #ffcc00; border-color: #ffcc00; }
         .stats-box { display: flex; justify-content: space-between; border-top: 1px solid #222; padding-top: 25px; margin-top: 10px; }
 
         footer { padding: 80px; text-align: center; color: #444; border-top: 1px solid #222; text-transform: uppercase; }
         @media (max-width: 900px) { .about-wrapper { grid-template-columns: 1fr; } .hero h1 { font-size: 4rem; } }
     </style>
 </head>
-<body oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
+<body>
 
     <div class="live-status-bar">
         <span class="status-tag">LIVE</span> 서버 상태: <span style="color: #4ee29d;">정상</span> | 오늘의 맵: <span style="color: #fff;">에란겔 / 미라마 / 비켄디 / 테이고 / 론도</span>
@@ -71,9 +73,8 @@
 
     <div id="lock-overlay">
         <h2 id="auth-title">CLIX MEMBERS ONLY</h2>
-        <div class="auth-container">
-            <div id="verify-notice"></div>
-
+        
+        <div class="auth-container" id="auth-form-screen">
             <input type="email" id="auth-email" class="auth-input" placeholder="이메일 주소">
             <input type="password" id="auth-password" class="auth-input" placeholder="비밀번호 (6자 이상)">
             
@@ -84,6 +85,15 @@
 
             <button id="auth-main-btn" class="auth-btn" onclick="handleAuth()">로그인</button>
             <p id="auth-toggle-text" class="auth-switch" onclick="toggleAuthMode()">계정이 없으신가요? 회원가입</p>
+        </div>
+
+        <div class="auth-container" id="verify-screen">
+            <div class="verify-box">
+                <p class="verify-text">이메일 인증이 필요합니다.<br>메일함에 발송된 링크를 클릭해주세요.</p>
+                <button class="auth-btn" onclick="location.reload()">인증 완료 후 새로고침</button>
+                <button class="auth-btn" style="background:#333;" onclick="resendEmail()">인증 메일 재발송</button>
+                <p class="auth-switch" onclick="logout()">다른 계정으로 로그인</p>
+            </div>
         </div>
     </div>
 
@@ -137,7 +147,6 @@
         <h2 class="section-title">CLIX SQUAD STATS</h2>
         <div class="member-grid">
             <div class="member-card">
-                <span class="rank-badge tier-platinum">Platinum</span>
                 <h3>CLIX_0dB</h3>
                 <div class="stats-box">
                     <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">K/D</span><span style="color:#ddd; font-weight:800;">1.25</span></div>
@@ -145,17 +154,12 @@
                 </div>
             </div>
             <div class="member-card">
-                <span class="rank-badge tier-gold">Gold</span>
                 <h3>Viper789456</h3>
                 <div class="stats-box">
                     <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">K/D</span><span style="color:#ddd; font-weight:800;">0.08</span></div>
                     <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">AVG DMG</span><span style="color:#ddd; font-weight:800;">105</span></div>
                 </div>
             </div>
-        </div>
-        <div style="margin-top:50px; text-align:center;">
-            <a href="https://pubg.op.gg" target="_blank" style="color:#ff5e00; text-decoration:none; margin-right:20px; font-weight:800;">PUBG.OP.GG</a>
-            <a href="https://dak.gg/pubg" target="_blank" style="color:#ff5e00; text-decoration:none; font-weight:800;">DAK.GG</a>
         </div>
     </section>
 
@@ -177,20 +181,28 @@
         let isLoginMode = true;
 
         auth.onAuthStateChanged((user) => {
-            const notice = document.getElementById('verify-notice');
-            if (user && user.emailVerified) {
-                document.getElementById('lock-overlay').style.display = 'none';
-                db.collection("users").doc(user.uid).get().then((doc) => {
-                    const nick = doc.exists ? doc.data().nickname : user.email.split('@')[0];
-                    document.getElementById('nav-user-info').innerText = nick + "님 반갑습니다";
-                });
-            } else if (user && !user.emailVerified) {
-                document.getElementById('lock-overlay').style.display = 'flex';
-                notice.style.display = 'block';
-                notice.innerHTML = `인증 메일이 발송되었습니다.<br>인증 후 새로고침 해주세요.<br><button onclick="resendEmail()" style="background:none; border:none; color:#ff5e00; text-decoration:underline; cursor:pointer; margin-top:5px;">메일 재발송</button>`;
+            const formScreen = document.getElementById('auth-form-screen');
+            const verifyScreen = document.getElementById('verify-screen');
+
+            if (user) {
+                if (user.emailVerified) {
+                    // 인증 완료: 홈페이지 입장
+                    document.getElementById('lock-overlay').style.display = 'none';
+                    db.collection("users").doc(user.uid).get().then((doc) => {
+                        const nick = doc.exists ? doc.data().nickname : user.email.split('@')[0];
+                        document.getElementById('nav-user-info').innerText = nick + "님 반갑습니다";
+                    });
+                } else {
+                    // 인증 미완료: 인증 대기 화면 표시
+                    document.getElementById('lock-overlay').style.display = 'flex';
+                    formScreen.style.display = 'none';
+                    verifyScreen.style.display = 'block';
+                }
             } else {
+                // 로그아웃 상태: 로그인 입력창 표시
                 document.getElementById('lock-overlay').style.display = 'flex';
-                notice.style.display = 'none';
+                formScreen.style.display = 'block';
+                verifyScreen.style.display = 'none';
             }
         });
 
@@ -200,18 +212,19 @@
             document.getElementById('auth-main-btn').innerText = isLoginMode ? "로그인" : "회원가입";
             document.getElementById('auth-toggle-text').innerText = isLoginMode ? "계정이 없으신가요? 회원가입" : "이미 계정이 있나요? 로그인";
             document.getElementById('signup-extra-fields').style.display = isLoginMode ? "none" : "block";
-            document.getElementById('verify-notice').style.display = 'none';
         }
 
         function handleAuth() {
             const email = document.getElementById('auth-email').value;
             const password = document.getElementById('auth-password').value;
+
             if (isLoginMode) {
-                auth.signInWithEmailAndPassword(email, password).catch(err => alert("로그인 오류: " + err.message));
+                auth.signInWithEmailAndPassword(email, password).catch(err => alert("오류: " + err.message));
             } else {
                 const nickname = document.getElementById('auth-nickname').value;
                 const age = document.getElementById('auth-age').value;
-                if(!nickname || !age) return alert("닉네임과 나이를 입력해주세요.");
+                if(!nickname || !age) return alert("닉네임과 나이를 입력하세요.");
+
                 auth.createUserWithEmailAndPassword(email, password)
                 .then((res) => {
                     res.user.sendEmailVerification();
@@ -219,27 +232,23 @@
                         nickname: nickname, age: age, email: email, joinedAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 })
-                .then(() => alert("인증 메일을 확인해주세요!"))
+                .then(() => alert("회원가입 완료! 이메일 인증 링크를 클릭해주세요."))
                 .catch(err => alert("가입 실패: " + err.message));
             }
         }
 
-        function resendEmail() { auth.currentUser.sendEmailVerification().then(() => alert("발송되었습니다.")); }
+        function resendEmail() { auth.currentUser.sendEmailVerification().then(() => alert("인증 메일이 재발송되었습니다.")); }
         function logout() { if(confirm("로그아웃 하시겠습니까?")) auth.signOut(); }
 
         function showMap(mapName, btn) {
             const btns = document.querySelectorAll('.map-nav-btn'); btns.forEach(b => b.classList.remove('active')); btn.classList.add('active');
             const data = { 
-                'erangel': ['erangel.jpg', 'ERANGEL 전략', '- 주요 차량 스폰: 강남, 포친키. 1페 중앙 점령 추천<br>- 외곽 강하: 밀타 파워 보트 필수<br>- 밀베 자기장: 다리 검문 대비 및 해안가 시야 확보<br>- 대도시: 옥상 선점 및 투척물 활용<br>- 평야 교전: 볏짚과 해우소 활용<br>- 기습 포인트: 통행세 징수'],
-                'miramar': ['miramar.jpg', 'MIRAMAR 전략', '- 고지대 능선 점령 필수 시야 확보가 핵심.<br>- 무기 구성: DMR/SR 필수<br>- 차량: 픽업트럭 확보<br>- 도심지 진입: 창문/옥상 클리어링']
+                'erangel': ['erangel.jpg', 'ERANGEL 전략', '- 주요 차량 스폰: 강남, 포친키. 1페 중앙 점령 추천<br>- 외곽 강하: 밀타 파워 보트 필수<br>- 밀베 자기장: 다리 검문 대비 및 해안가 시야 확보<br>- 대도시: 옥상 선점 및 투척물 활용'],
+                'miramar': ['miramar.jpg', 'MIRAMAR 전략', '- 고지대 능선 점령 필수 시야 확보가 핵심.<br>- 무기 구성: DMR/SR 필수<br>- 차량: 픽업트럭 확보']
             };
             const m = data[mapName];
-            document.getElementById('map-content').innerHTML = `
-                <div class="map-image-wrapper"><img src="${m[0]}" onerror="this.src='${m[0].toUpperCase()}'"></div>
-                <div class="map-strategy-box"><h3 style="color:#ff5e00; margin-top:0;">${m[1]}</h3><p style="color:#888; font-size:0.9rem; line-height: 1.8;">${m[2]}</p></div>`;
+            document.getElementById('map-content').innerHTML = `<div class="map-image-wrapper"><img src="${m[0]}" onerror="this.src='${m[0].toUpperCase()}'"></div><div class="map-strategy-box"><h3>${m[1]}</h3><p>${m[2]}</p></div>`;
         }
     </script>
-</body>
-</html>
 </body>
 </html>
