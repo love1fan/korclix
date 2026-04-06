@@ -22,7 +22,13 @@
 
         .header { border-bottom: 2px solid #ff5e00; padding-bottom: 20px; margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; }
         h1 { color: #ff5e00; letter-spacing: 3px; margin: 0; font-size: 2rem; text-transform: uppercase; font-weight: 900; }
-        .back-btn { color: #888; text-decoration: none; border: 1px solid #333; padding: 10px 25px; border-radius: 4px; font-weight: bold; }
+        
+        /* 버튼 영역 스타일 */
+        .header-btns { display: flex; gap: 10px; }
+        .back-btn { color: #888; text-decoration: none; border: 1px solid #333; padding: 10px 25px; border-radius: 4px; font-weight: bold; transition: 0.3s; display: flex; align-items: center; }
+        .back-btn:hover { background: #ff5e00; color: #fff; border-color: #ff5e00; }
+        .admin-btn { background: transparent; color: #ff5e00; border: 1px solid #ff5e00; padding: 10px 25px; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.3s; font-family: inherit; }
+        .admin-btn:hover { background: #ff5e00; color: #fff; }
 
         /* 커스텀 공지사항 작성 폼 */
         #admin-editor { display: none; border: 2px solid #ff5e00; padding: 25px; margin-bottom: 40px; border-radius: 4px; background: #111; }
@@ -40,9 +46,6 @@
         .notice-date { color: #666; font-size: 0.9rem; }
         .notice-content { color: #bbb; white-space: pre-wrap; line-height: 1.8; }
         .btn-del { color: #ff3333; cursor: pointer; font-size: 0.8rem; position: absolute; bottom: 20px; right: 30px; display: none; text-decoration: underline; }
-
-        /* 관리자 로그인 버튼 (우측 하단, 주황색 노출) */
-        #admin-login-btn { position: fixed; bottom: 10px; right: 10px; font-size: 10px; color: #ff5e00; cursor: pointer; z-index: 999; font-weight: bold; }
     </style>
 </head>
 <body oncontextmenu="return false" onselectstart="return false">
@@ -58,7 +61,10 @@
 
     <div class="header">
         <h1>CLIX NOTICE</h1>
-        <a href="index.html" class="back-btn">BACK TO HOME</a>
+        <div class="header-btns">
+            <button class="admin-btn" onclick="authAdmin()">관리자 로그인</button>
+            <a href="index.html" class="back-btn">BACK TO HOME</a>
+        </div>
     </div>
 
     <div id="admin-editor">
@@ -77,8 +83,6 @@
         <p style="text-align:center; color:#555; margin-top:30px;">데이터를 불러오는 중입니다...</p>
     </div>
 
-    <div id="admin-login-btn" onclick="authAdmin()">ADMIN</div>
-
     <script>
         // Firebase 설정
         const firebaseConfig = {
@@ -93,7 +97,6 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // 페이지 로드 시 상태 확인 및 데이터 호출
         window.onload = function() {
             if(sessionStorage.getItem('clix_master') === 'true') {
                 showAdminUI();
@@ -112,10 +115,10 @@
             }
         }
 
-        // 관리자 UI 노출
         function showAdminUI() {
             document.getElementById('admin-editor').style.display = 'block';
             document.querySelectorAll('.btn-del').forEach(b => b.style.display = 'block');
+            document.querySelector('.admin-btn').style.display = 'none'; // 로그인 성공 시 버튼 숨김
         }
 
         // Firebase 데이터 실시간 불러오기
