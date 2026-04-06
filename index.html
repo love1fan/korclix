@@ -20,7 +20,7 @@
         
         .auth-container { background: #111; padding: 40px; border-radius: 8px; border: 1px solid #222; width: 320px; }
         .auth-input { width: 100%; padding: 12px; margin-bottom: 10px; background: #1a1a1a; border: 1px solid #333; color: #fff; box-sizing: border-box; }
-        .auth-btn { width: 100%; padding: 15px; background: #ff5e00; color: white; border: none; font-weight: 800; cursor: pointer; margin-bottom: 10px; }
+        .auth-btn { width: 100%; padding: 15px; background: #ff5e00; color: white; border: none; font-weight: 800; cursor: pointer; margin-bottom: 10px; width: 100%; }
         .auth-switch { font-size: 0.8rem; color: #666; cursor: pointer; text-decoration: underline; }
 
         .live-status-bar { background: #1a1a1a; padding: 12px; text-align: center; border-bottom: 2px solid #ff5e00; font-size: 0.9rem; position: fixed; width: 100%; z-index: 101; }
@@ -29,9 +29,7 @@
         nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(0,0,0,0.95) !important; position: fixed; width: 100%; box-sizing: border-box; z-index: 100; border-bottom: 1px solid #222; margin-top: 45px; }
         nav .logo { font-weight: 900; font-size: 26px; color: #ff5e00 !important; letter-spacing: 2px; text-transform: uppercase; text-decoration: none !important; }
         nav ul { list-style: none; display: flex; margin: 0; padding: 0; align-items: center; }
-        nav ul li a { margin-left: 20px; font-size: 12px; font-weight: 600; color: #999 !important; text-decoration: none !important; transition: 0.3s; text-transform: uppercase; }
-        nav ul li a:hover { color: #ff5e00 !important; }
-        
+        nav ul li a { margin-left: 20px; font-size: 12px; font-weight: 600; color: #999 !important; text-decoration: none !important; text-transform: uppercase; }
         .logout-link { margin-left: 20px; font-size: 10px; color: #ff3333 !important; cursor: pointer; border: 1px solid #444; padding: 5px 10px; border-radius: 4px; font-weight: bold; }
 
         .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1920&q=80'); background-size: cover; background-position: center; }
@@ -66,9 +64,10 @@
         .recruit-btn { display: block; width: 100%; text-align: center; padding: 30px; background: #ff5e00; color: white; text-decoration: none; font-weight: 900; font-size: 1.4rem; }
 
         footer { padding: 80px; text-align: center; color: #444; border-top: 1px solid #222; text-transform: uppercase; }
+        @media (max-width: 900px) { .about-wrapper, .join-container { grid-template-columns: 1fr; } .hero h1 { font-size: 4rem; } }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
 
     <div class="live-status-bar">
         <span class="status-tag">LIVE</span> 서버 상태: <span style="color: #4ee29d;">정상</span> | 오늘의 맵: <span style="color: #fff;">에란겔 / 미라마 / 비켄디 / 테이고 / 론도</span>
@@ -82,6 +81,7 @@
             <button id="auth-main-btn" class="auth-btn" onclick="handleAuth()">로그인</button>
             <p id="auth-toggle-text" class="auth-switch" onclick="toggleAuthMode()">계정이 없으신가요? 회원가입</p>
         </div>
+        <p style="margin-top:20px; font-size:0.8rem; color:#444;">승인된 멤버만 입장이 가능합니다.</p>
     </div>
 
     <nav>
@@ -117,7 +117,7 @@
                     <button class="map-nav-btn active" onclick="showMap('erangel', this)">ERANGEL</button>
                     <button class="map-nav-btn" onclick="showMap('miramar', this)">MIRAMAR</button>
                 </div>
-                <div id="map-content" class="map-content-area">
+                <div class="map-content-area" id="map-content">
                     <div class="map-image-wrapper"><img src="erangel.jpg" alt="Map" onerror="this.src='ERANGEL.JPG'"></div>
                     <div class="map-strategy-box">
                         <h3 style="color:#ff5e00; margin-top:0;">ERANGEL 전략</h3>
@@ -126,7 +126,8 @@
                             - 외곽 강하: 밀타 파워, 노보 파밍 시 보트/차량 선점 필수.<br>
                             - 밀베 자기장: 다리 검문 대비 및 해안가 둔덕 시야 확보.<br>
                             - 대도시: 야스나야, 포친키 시가전 시 옥상 선점 및 투척물 활용.<br>
-                            - 평야 교전: 볏짚과 해우소를 활용한 거점 방어.
+                            - 평야 교전: 볏짚과 해우소를 활용한 거점 방어.<br>
+                            - 기습 포인트: 해우소 지붕 위 등 예상치 못한 고지대 점령으로 통행세 징수
                         </p>
                     </div>
                 </div>
@@ -143,6 +144,7 @@
                 <div class="stats-box">
                     <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">K/D</span><span style="color:#ddd; font-weight:800;">1.25</span></div>
                     <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">AVG DMG</span><span style="color:#ddd; font-weight:800;">208</span></div>
+                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">WIN</span><span style="color:#ddd; font-weight:800;">7.7%</span></div>
                 </div>
             </div>
             <div class="member-card">
@@ -151,6 +153,7 @@
                 <div class="stats-box">
                     <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">K/D</span><span style="color:#ddd; font-weight:800;">0.08</span></div>
                     <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">AVG DMG</span><span style="color:#ddd; font-weight:800;">105</span></div>
+                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">WIN</span><span style="color:#ddd; font-weight:800;">8.3%</span></div>
                 </div>
             </div>
             <div class="member-card">
@@ -159,8 +162,13 @@
                 <div class="stats-box">
                     <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">K/D</span><span style="color:#ddd; font-weight:800;">0.30</span></div>
                     <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">AVG DMG</span><span style="color:#ddd; font-weight:800;">57</span></div>
+                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">WIN</span><span style="color:#ddd; font-weight:800;">9.1%</span></div>
                 </div>
             </div>
+        </div>
+        <div style="margin-top:50px; text-align:center;">
+            <a href="https://pubg.op.gg" target="_blank" style="color:#ff5e00; text-decoration:none; margin-right:20px; font-weight:800;">PUBG.OP.GG 바로가기</a>
+            <a href="https://dak.gg/pubg" target="_blank" style="color:#ff5e00; text-decoration:none; font-weight:800;">DAK.GG 바로가기</a>
         </div>
     </section>
 
@@ -172,12 +180,16 @@
                 <ul>
                     <li>23세 이상 성인 (2004년생부터 가입 가능)</li>
                     <li>핵 및 비인가 프로그램 사용 이력 절대 금지</li>
+                    <li>디스코드 및 마이크 사용 필수</li>
+                    <li>이중 클랜 및 비매너 행위 금지</li>
                 </ul>
             </div>
             <div class="info-box">
                 <h3>가입 신청 안내</h3>
                 <ul>
-                    <li>회원가입 후 운영진 승인을 대기해 주세요.</li>
+                    <li>상단 회원가입 기능을 이용해 계정을 생성해 주세요.</li>
+                    <li>가입 신청서를 작성하시면 운영진 확인 후 승인해 드립니다.</li>
+                    <li>운영진 확인 후 기재하신 연락처로 개별 연락드립니다.</li>
                     <li>테스트 매치는 개별 연락 후 진행됩니다.</li>
                 </ul>
             </div>
@@ -188,18 +200,18 @@
     <footer>&copy; 2026 CLAN CLIX. ALL RIGHTS RESERVED.</footer>
 
     <script>
-        // 이 부분이 Firebase와 연결되는 가장 중요한 '열쇠'입니다.
+        // image_08b2d6.png에서 확인된 진짜 설정값 적용
         const firebaseConfig = {
-            apiKey: "AIzaSyAFSAu2aynX6YPiJEatWy9IQgWgUuTxBds",
+            apiKey: "AIzaSyAFSAu2aynX6YPiJEatWy9IQgWgUuTx8ds",
             authDomain: "korclix.firebaseapp.com",
             projectId: "korclix",
             storageBucket: "korclix.firebasestorage.app",
             messagingSenderId: "472792477536",
-            appId: "1:472792477536:web:14907e228c343b72fd7005"
+            appId: "1:472792477536:web:14907e228c343b72fd7805"
         };
+
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-
         let isLoginMode = true;
 
         auth.onAuthStateChanged((user) => {
@@ -233,20 +245,23 @@
             }
         }
 
-        function logout() { if(confirm("로그아웃?")) auth.signOut(); }
+        function logout() { if(confirm("로그아웃 하시겠습니까?")) auth.signOut(); }
 
         function showMap(mapName, btn) {
             const btns = document.querySelectorAll('.map-nav-btn');
             btns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             const mapData = {
-                'erangel': ['erangel.jpg', 'ERANGEL 전략', '- 주요 차량 스폰: 강남, 포친키. 1페 중앙 점령 추천<br>- 외곽 강하: 밀타 파워, 노보 파밍 시 보트/차량 선점 필수'],
-                'miramar': ['miramar.jpg', 'MIRAMAR 전략', '- 고지대 능선 점령 필수 시야 확보가 핵심.<br>- 무기 구성: DMR/SR 장거리 무기 필수']
+                'erangel': ['erangel.jpg', 'ERANGEL 전략', '- 주요 차량 스폰: 강남, 포친키. 1페 중앙 점령 추천<br>- 외곽 강하: 밀타 파워, 노보 파밍 시 보트/차량 선점 필수<br>- 밀베 자기장: 다리 검문 대비 및 해안가 둔덕 시야 확보<br>- 대도시: 야스나야, 포친키 시가전 시 옥상 선점 및 투척물 활용<br>- 평야 교전: 볏짚과 해우소를 활용한 거점 방어<br>- 기습 포인트: 해우소 지붕 위 등 예상치 못한 고지대 점령으로 통행세 징수'],
+                'miramar': ['miramar.jpg', 'MIRAMAR 전략', '- 고지대 능선 점령 필수 시야 확보가 핵심.<br>- 무기 구성: 광활한 개활지 대비 DMR/SR 장거리 무기 필수<br>- 차량 및 이동: 오프로드에 유리한 픽업트럭 확보 및 능선 하단 회전<br>- 도심지 진입: 페카도, 로스 레오네스 진입 시 창문/옥상 클리어링 최우선<br>- 지형 활용: 분지 지형 굴곡을 활용한 하이딩 및 기습 전술']
             };
             const data = mapData[mapName];
             document.getElementById('map-content').innerHTML = `
                 <div class="map-image-wrapper"><img src="${data[0]}" alt="Map" onerror="this.src='${data[0].toUpperCase()}'"></div>
-                <div class="map-strategy-box"><h3 style="color:#ff5e00; margin-top:0;">${data[1]}</h3><p style="color:#888; font-size:0.9rem; line-height: 1.8;">${data[2]}</p></div>
+                <div class="map-strategy-box">
+                    <h3 style="color:#ff5e00; margin-top:0;">${data[1]}</h3>
+                    <p style="color:#888; font-size:0.9rem; line-height: 1.8;">${data[2]}</p>
+                </div>
             `;
         }
     </script>
