@@ -21,10 +21,42 @@
         <a href="index.html" class="back-btn">BACK TO HOME</a>
     </div>
 
-    <div class="notice-card">
-        <span class="tag">중요</span> <span style="font-size: 1.2rem; font-weight: 800;">CLIX 클랜 홈페이지 정식 오픈</span>
-        <span class="date">2026-04-07</span>
-        <p class="content">클랜원들을 위한 공식 홈페이지가 개설되었습니다. 공지사항과 게시판을 통해 원활한 소통 바랍니다.</p>
+    <div id="notice-container">
+        <p style="color:#666; text-align:center;">데이터를 불러오는 중입니다...</p>
     </div>
+
+    <script>
+        // 본인의 구글 스프레드시트 ID를 아래 따옴표 안에 입력하십시오.
+        const sheetId = '11iF6vZJag6R8CC0VzRqezK0HzK7GbMtqRBEmSsIfGec'; 
+        const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
+
+        fetch(url)
+            .then(res => res.text())
+            .then(text => {
+                const json = JSON.parse(text.substr(47).slice(0, -2));
+                const rows = json.table.rows;
+                let html = '';
+                
+                rows.forEach(row => {
+                    if(row.c[0] != null) {
+                        const tag = row.c[0]?.v || '';
+                        const title = row.c[1]?.v || '';
+                        const date = row.c[2]?.v || '';
+                        const content = row.c[3]?.v || '';
+                        
+                        html += `
+                        <div class="notice-card">
+                            <span class="tag">${tag}</span> <span style="font-size: 1.2rem; font-weight: 800;">${title}</span>
+                            <span class="date">${date}</span>
+                            <p class="content">${content}</p>
+                        </div>`;
+                    }
+                });
+                document.getElementById('notice-container').innerHTML = html;
+            })
+            .catch(error => {
+                document.getElementById('notice-container').innerHTML = '<p style="color:red; text-align:center;">데이터를 불러오는 데 실패했습니다.</p>';
+            });
+    </script>
 </body>
 </html>
