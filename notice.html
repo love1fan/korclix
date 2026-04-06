@@ -2,61 +2,32 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>CLIX CLAN | NOTICE</title>
+    <title>NOTICE | CLIX</title>
     <style>
-        body { background: #0a0a0a; color: #fff; font-family: 'Inter', sans-serif; margin: 0; padding: 50px 8%; }
-        .header { border-bottom: 2px solid #ff5e00; padding-bottom: 20px; margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; }
-        h1 { color: #ff5e00; letter-spacing: 5px; margin: 0; }
-        .back-btn { color: #888; text-decoration: none; font-weight: 800; border: 1px solid #333; padding: 10px 20px; transition: 0.3s; }
-        .back-btn:hover { background: #ff5e00; color: #fff; }
-        .notice-card { background: #111; border: 1px solid #222; padding: 30px; margin-bottom: 20px; }
-        .tag { background: #ff5e00; color: #fff; padding: 3px 10px; font-size: 0.7rem; font-weight: 800; margin-right: 15px; }
-        .date { color: #444; float: right; }
-        .content { margin-top: 15px; color: #aaa; line-height: 1.6; }
+        body { background: #0a0a0a; color: #fff; font-family: sans-serif; padding: 50px 8%; }
+        .header { border-bottom: 2px solid #ff5e00; padding-bottom: 20px; margin-bottom: 40px; display: flex; justify-content: space-between; }
+        .back-btn { color: #888; text-decoration: none; border: 1px solid #333; padding: 10px 20px; }
+        .notice-card { background: #111; border-left: 5px solid #ff5e00; padding: 30px; margin-bottom: 20px; }
+        .tag { background: #ff5e00; color: #fff; padding: 3px 10px; font-size: 0.8rem; margin-right: 10px; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>NOTICE</h1>
-        <a href="index.html" class="back-btn">BACK TO HOME</a>
-    </div>
-
-    <div id="notice-container">
-        <p style="color:#666; text-align:center;">데이터를 불러오는 중입니다...</p>
-    </div>
-
+    <div class="header"><h1>NOTICE</h1><a href="index.html" class="back-btn">HOME</a></div>
+    <div id="notice-container"><p>불러오는 중...</p></div>
     <script>
-        // 본인의 구글 스프레드시트 ID를 아래 따옴표 안에 입력하십시오.
         const sheetId = '11iF6vZJag6R8CC0VzRqezK0HzK7GbMtqRBEmSsIfGec'; 
-        const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
-
-        fetch(url)
-            .then(res => res.text())
-            .then(text => {
-                const json = JSON.parse(text.substr(47).slice(0, -2));
-                const rows = json.table.rows;
-                let html = '';
-                
-                rows.forEach(row => {
-                    if(row.c[0] != null) {
-                        const tag = row.c[0]?.v || '';
-                        const title = row.c[1]?.v || '';
-                        const date = row.c[2]?.v || '';
-                        const content = row.c[3]?.v || '';
-                        
-                        html += `
-                        <div class="notice-card">
-                            <span class="tag">${tag}</span> <span style="font-size: 1.2rem; font-weight: 800;">${title}</span>
-                            <span class="date">${date}</span>
-                            <p class="content">${content}</p>
-                        </div>`;
-                    }
-                });
-                document.getElementById('notice-container').innerHTML = html;
-            })
-            .catch(error => {
-                document.getElementById('notice-container').innerHTML = '<p style="color:red; text-align:center;">데이터를 불러오는 데 실패했습니다.</p>';
-            });
+        const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&t=${new Date().getTime()}`;
+        fetch(url).then(res => res.text()).then(text => {
+            const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S\w]+)\)/)[1]);
+            const rows = json.table.rows;
+            let html = '';
+            for (let i = 1; i < rows.length; i++) { // 1행 건너뛰고 2행부터
+                const r = rows[i].c;
+                if(!r || !r[1]) continue;
+                html += `<div class="notice-card"><span class="tag">${r[0]?r[0].v:''}</span><strong>${r[1]?r[1].v:''}</strong><p>${r[3]?r[3].v:''}</p></div>`;
+            }
+            document.getElementById('notice-container').innerHTML = html || '공지가 없습니다.';
+        });
     </script>
 </body>
 </html>
