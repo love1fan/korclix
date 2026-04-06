@@ -5,20 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CLIX CLAN | FREE BOARD</title>
     <style>
-        /* 기본 스타일 유지 */
+        /* 기본 레이아웃 스타일 */
         body { margin: 0; font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: #ffffff; line-height: 1.6; padding: 50px 8%; }
         
-        /* 헤더 디자인 */
+        /* 헤더 디자인 (NOTICE와 통일) */
         .header { border-bottom: 2px solid #ff5e00; padding-bottom: 20px; margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; }
         h1 { color: #ff5e00; letter-spacing: 5px; margin: 0; font-size: 2rem; text-transform: uppercase; }
         .back-btn { color: #888; text-decoration: none; font-weight: 800; border: 1px solid #333; padding: 10px 25px; transition: 0.3s; border-radius: 4px; font-size: 0.9rem; }
         .back-btn:hover { background: #ff5e00; color: #fff; border-color: #ff5e00; }
 
-        /* 안내 문구 */
+        /* 게시판 안내 문구 */
         .board-info { background: #111; padding: 20px; border-left: 5px solid #ff5e00; margin-bottom: 40px; color: #aaa; font-size: 0.9rem; }
         
-        /* 게시판 영역 */
-        #disqus_thread { background: #111; padding: 30px; border-radius: 8px; border: 1px solid #222; }
+        /* Disqus 게시판 영역 박스 */
+        #disqus_thread { background: #111; padding: 30px; border-radius: 8px; border: 1px solid #222; min-height: 300px; }
     </style>
 </head>
 <body>
@@ -29,24 +29,20 @@
     </div>
 
     <div class="board-info">
-        💬 <b>커뮤니티 가이드:</b> 클랜원 간 예의를 지켜주세요. 비매너 게시글은 운영진에 의해 삭제될 수 있습니다.
+        💬 <b>커뮤니티:</b> 클랜원들과 자유롭게 소통하세요! 사진 첨부(카메라 아이콘)도 가능합니다.
     </div>
 
     <div id="disqus_thread"></div>
 
     <script>
-        /**
-        * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-        * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
-        */
         var disqus_config = function () {
-            this.page.url = window.location.href;  // 현재 페이지 URL
-            this.page.identifier = 'clix_main_board'; // 게시판 고유 ID
+            this.page.url = window.location.href;  
+            this.page.identifier = 'clix_free_board_v1'; 
         };
 
-        (function() { // DON'T EDIT BELOW THIS LINE
+        (function() { 
             var d = document, s = d.createElement('script');
-            // ⚠️ 주의: 아래 주소의 'clix-clan'이 본인의 Disqus Shortname과 정확히 일치해야 합니다.
+            // ⚠️ 주의: 'clix-clan'이 본인의 Disqus Shortname과 일치해야 합니다.
             s.src = 'https://clix-clan.disqus.com/embed.js'; 
             s.setAttribute('data-timestamp', +new Date());
             (d.head || d.body).appendChild(s);
