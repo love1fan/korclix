@@ -32,28 +32,15 @@
         .hero h1 { font-size: 7rem; margin: 0; letter-spacing: 18px; font-weight: 900; color: #fff; text-shadow: 0 0 25px rgba(255, 94, 0, 0.5); text-transform: uppercase; }
         .hero p { font-size: 1.2rem; color: #aaa; margin-top: 10px; letter-spacing: 4px; font-weight: 500; text-transform: uppercase; }
 
-        /* [티어별 색상 및 효과] */
-        .tier-survivor { color: #ff4444; border: 1px solid #ff4444; text-shadow: 0 0 10px #ff4444; }
-        .tier-master { color: #ff5e00; border: 1px solid #ff5e00; text-shadow: 0 0 10px #ff5e00; }
-        .tier-diamond { color: #00e5ff; border: 1px solid #00e5ff; text-shadow: 0 0 10px #00e5ff; }
-        .tier-platinum { color: #4ee29d; border: 1px solid #4ee29d; }
-        .tier-gold { color: #ffcc00; border: 1px solid #ffcc00; }
-        .tier-silver { color: #c0c0c0; border: 1px solid #c0c0c0; }
-        .tier-bronze { color: #cd7f32; border: 1px solid #cd7f32; }
-
-        /* [전적 스탯 카드] */
         .section { padding: 120px 8%; max-width: 1200px; margin: 0 auto; }
         .section-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 70px; text-align: center; letter-spacing: 6px; color: #ff5e00; text-transform: uppercase; }
         .member-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
         .member-card { background: linear-gradient(145deg, #151515, #0a0a0a); border: 1px solid #222; padding: 30px; position: relative; transition: 0.4s; }
         
-        /* 호버 시 티어 색상 강조 */
-        .member-card:hover { transform: translateY(-10px); }
-        .card-survivor:hover { border-color: #ff4444; box-shadow: 0 0 20px rgba(255, 68, 68, 0.2); }
-        .card-master:hover { border-color: #ff5e00; box-shadow: 0 0 20px rgba(255, 94, 0, 0.2); }
-        .card-diamond:hover { border-color: #00e5ff; box-shadow: 0 0 20px rgba(0, 229, 255, 0.2); }
-
         .rank-badge { position: absolute; top: 20px; right: 20px; font-size: 0.7rem; font-weight: 900; padding: 4px 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .tier-platinum { color: #4ee29d; border: 1px solid #4ee29d; }
+        .tier-bronze { color: #cd7f32; border: 1px solid #cd7f32; }
+
         .member-card h3 { font-size: 1.8rem; margin: 10px 0 5px 0; color: #fff; font-weight: 900; }
         .member-card .role { font-size: 0.85rem; color: #777; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; display: block; }
         .stats-box { display: flex; justify-content: space-between; border-top: 1px solid #222; padding-top: 20px; margin-top: 20px; }
@@ -61,7 +48,6 @@
         .stat-label { display: block; font-size: 11px; color: #555; margin-bottom: 5px; text-transform: uppercase; }
         .stat-value { font-size: 1.1rem; font-weight: 800; color: #ddd; }
 
-        /* [가입 섹션] */
         #join { background-color: #0f0f0f; border-top: 1px solid #222; }
         .recruit-btn { display: inline-block; width: 100%; text-align: center; padding: 25px; background: #ff5e00; color: white; text-decoration: none; font-weight: 800; font-size: 1.2rem; margin-top: 40px; transition: 0.4s; text-transform: uppercase; }
         
@@ -94,8 +80,8 @@
     <section class="section" id="members">
         <h2 class="section-title">CLIX SQUAD STATS</h2>
         <div class="member-grid">
-            <div class="member-card card-master">
-                <span class="rank-badge tier-master">Master</span>
+            <div class="member-card">
+                <span class="rank-badge tier-platinum">Platinum</span>
                 <h3>CLIX_0dB</h3>
                 <span class="role">Main Order</span>
                 <div class="stats-box">
@@ -104,8 +90,8 @@
                     <div class="stat-item"><span class="stat-label">WIN RATE</span><span class="stat-value">25%</span></div>
                 </div>
             </div>
-            <div class="member-card card-diamond">
-                <span class="rank-badge tier-diamond">Diamond</span>
+            <div class="member-card">
+                <span class="rank-badge tier-platinum">Platinum</span>
                 <h3>Viper789456</h3>
                 <span class="role">Sub Order</span>
                 <div class="stats-box">
@@ -114,14 +100,14 @@
                     <div class="stat-item"><span class="stat-label">WIN RATE</span><span class="stat-value">18%</span></div>
                 </div>
             </div>
-            <div class="member-card card-survivor">
-                <span class="rank-badge tier-survivor">Survivor</span>
-                <h3>TopPlayer_KR</h3>
-                <span class="role">Attacker</span>
+            <div class="member-card">
+                <span class="rank-badge tier-bronze">Bronze</span>
+                <h3>joa1013</h3>
+                <span class="role">Back Up</span>
                 <div class="stats-box">
-                    <div class="stat-item"><span class="stat-label">K/D</span><span class="stat-value">5.12</span></div>
-                    <div class="stat-item"><span class="stat-label">AVG DMG</span><span class="stat-value">620</span></div>
-                    <div class="stat-item"><span class="stat-label">WIN RATE</span><span class="stat-value">32%</span></div>
+                    <div class="stat-item"><span class="stat-label">K/D</span><span class="stat-value">2.10</span></div>
+                    <div class="stat-item"><span class="stat-label">AVG DMG</span><span class="stat-value">310</span></div>
+                    <div class="stat-item"><span class="stat-label">WIN RATE</span><span class="stat-value">15%</span></div>
                 </div>
             </div>
         </div>
@@ -135,6 +121,7 @@
     <footer>&copy; 2026 CLAN CLIX. ALL RIGHTS RESERVED.</footer>
 
     <script>
+        // 페이지가 열릴 때 이미 인증받았는지 확인 (새로고침 시 실행됨)
         window.onload = function() {
             if (sessionStorage.getItem("clix_auth") === "true") {
                 document.getElementById('lock-overlay').style.display = 'none';
@@ -142,14 +129,17 @@
         };
 
         function checkAccess() {
-            var correctCode = "1234"; 
+            // 💡 정답 코드를 1541로 수정했습니다.
+            var correctCode = "1541"; 
             var input = prompt("입장 코드를 입력하세요.");
+
             if (input === correctCode) {
                 alert("인증되었습니다.");
+                // 💡 여기서 브라우저 세션에 "인증됨"을 기록합니다.
                 sessionStorage.setItem("clix_auth", "true");
                 document.getElementById('lock-overlay').style.display = 'none';
             } else if (input !== null) {
-                alert("잘못된 코드입니다.");
+                alert("잘못된 코드입니다. 정답은 1541입니다.");
             }
         }
     </script>
