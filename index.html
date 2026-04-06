@@ -5,33 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PUBG CLIX CLAN | 공식 홈페이지</title>
     <style>
-        /* [1. 기본 설정] */
         body { margin: 0; font-family: 'Inter', 'Segoe UI', sans-serif; background-color: #0a0a0a; color: #ffffff; line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth; }
         
-        /* [2. 잠금 레이어] */
         #lock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
         #lock-overlay h2 { font-size: 3.5rem; color: #ff5e00; margin-bottom: 20px; letter-spacing: 5px; font-weight: 900; text-transform: uppercase; }
         .lock-btn { padding: 22px 60px; background: #ff5e00; color: white; text-decoration: none; font-weight: 800; font-size: 1.3rem; text-transform: uppercase; border-radius: 4px; border: none; cursor: pointer; }
         .unlock-text { margin-top: 30px; font-size: 0.9rem; color: #333; cursor: pointer; text-decoration: underline; }
 
-        /* [3. 라이브 상태바] */
         .live-status-bar { background: #1a1a1a; padding: 12px; text-align: center; border-bottom: 2px solid #ff5e00; font-size: 0.9rem; position: fixed; width: 100%; z-index: 101; }
         .status-tag { background: #ff5e00; color: #fff; padding: 2px 8px; border-radius: 3px; font-weight: 800; margin-right: 10px; }
 
-        /* [4. 네비게이션] */
         nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(0,0,0,0.95); position: fixed; width: 100%; box-sizing: border-box; z-index: 100; border-bottom: 1px solid #222; margin-top: 45px; }
         nav .logo { font-weight: 900; font-size: 26px; color: #ff5e00; letter-spacing: 2px; text-transform: uppercase; text-decoration: none; }
         nav ul { list-style: none; display: flex; margin: 0; padding: 0; }
         nav ul li a { margin-left: 20px; font-size: 12px; font-weight: 600; color: #999; text-decoration: none; transition: 0.3s; text-transform: uppercase; }
         nav ul li a:hover { color: #ff5e00; }
 
-        /* [5. 섹션 공통] */
         .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1920&q=80'); background-size: cover; background-position: center; }
         .hero h1 { font-size: 8rem; margin: 0; letter-spacing: 20px; font-weight: 900; text-shadow: 0 0 30px rgba(255, 94, 0, 0.5); text-transform: uppercase; }
         .section { padding: 120px 8%; max-width: 1200px; margin: 0 auto; }
         .section-title { font-size: 2.8rem; font-weight: 800; margin-bottom: 60px; text-align: center; letter-spacing: 8px; color: #ff5e00; text-transform: uppercase; }
 
-        /* [6. ABOUT & MAPS (이미지 포함)] */
         .about-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
         .tag { padding: 15px 25px; background: #111; border-left: 3px solid #ff5e00; font-weight: 700; margin-right: 10px; display: inline-block; }
         .map-dashboard { background: #111; border: 1px solid #222; border-radius: 12px; overflow: hidden; }
@@ -41,13 +35,6 @@
         .map-content-area { padding: 30px; display: grid; grid-template-columns: 150px 1fr; gap: 30px; }
         .map-image-wrapper img { width: 100%; border: 2px solid #333; border-radius: 8px; }
 
-        /* [7. GEAR SETTINGS] */
-        .settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-        .setting-card { background: #111; padding: 30px; border: 1px solid #222; border-top: 4px solid #ff5e00; }
-        .setting-row { display: flex; justify-content: space-between; border-bottom: 1px solid #222; padding: 8px 0; }
-        .setting-value { color: #ff5e00; font-weight: 800; }
-
-        /* [8. MEMBERS 최신 전적 (1.25, 0.08, 0.30)] */
         .member-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
         .member-card { background: #151515; border: 1px solid #222; padding: 40px; position: relative; }
         .rank-badge { position: absolute; top: 25px; right: 25px; font-size: 0.75rem; font-weight: 900; padding: 5px 12px; border: 1px solid; }
@@ -56,7 +43,6 @@
         .tier-bronze { color: #cd7f32; border-color: #cd7f32; }
         .stats-box { display: flex; justify-content: space-between; border-top: 1px solid #222; padding-top: 25px; margin-top: 10px; }
 
-        /* [9. JOIN 가입 양식 복구] */
         #join { background-color: #0d0d0d; border-top: 1px solid #222; }
         .join-container { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-bottom: 40px; }
         .info-box h3 { color: #ff5e00; font-size: 1.6rem; font-weight: 900; border-left: 5px solid #ff5e00; padding-left: 20px; margin-bottom: 30px; }
@@ -72,7 +58,7 @@
 <body>
 
     <div class="live-status-bar">
-        <span class="status-tag">LIVE</span> 서버 상태: <span style="color: #4ee29d;">정상</span> | 맵 로테이션: <span style="color: #fff;">에란겔 / 미라마 / 비켄디 / 테이고 / 론도</span>
+        <span class="status-tag">LIVE</span> 서버 상태: <span style="color: #4ee29d;">정상</span> | 오늘의 맵: <span style="color: #fff;">에란겔 / 미라마 / 비켄디 / 테이고 / 론도</span>
     </div>
 
     <div id="lock-overlay">
@@ -102,9 +88,9 @@
     <section class="section" id="about">
         <div class="about-wrapper">
             <div class="about-intro-box">
-                <h3>Who We Are</h3>
-                <h2>WE ARE THE<br><span style="color: #ff5e00;">CLIX CLAN.</span></h2>
-                <p>성숙한 매너와 체계적인 전술을 지향하는 배틀그라운드 성인 클랜입니다.</p>
+                <h3 style="color:#888; letter-spacing:2px;">Who We Are</h3>
+                <h2 style="font-size:3.5rem; margin:10px 0;">WE ARE THE<br><span style="color: #ff5e00;">CLIX CLAN.</span></h2>
+                <p style="color:#aaa; margin-bottom:30px;">성숙한 매너와 체계적인 전술을 지향하는 배틀그라운드 성인 클랜입니다.</p>
                 <div class="tag">Manner First</div>
                 <div class="tag">Adult Only</div>
             </div>
@@ -114,30 +100,12 @@
                     <button class="map-nav-btn" onclick="showMap('miramar', this)">MIRAMAR</button>
                 </div>
                 <div class="map-content-area" id="map-content">
-                    <div class="map-image-wrapper"><img src="https://raw.githubusercontent.com/love1fan/korclix/main/maps/erangel.jpg" alt="Map"></div>
+                    <div class="map-image-wrapper"><img src="https://via.placeholder.com/300x300/111111/ff5e00?text=ERANGEL" alt="Map"></div>
                     <div class="map-strategy-box">
-                        <h3 style="color:#ff5e00;">ERANGEL 전략</h3>
+                        <h3 style="color:#ff5e00; margin-top:0;">ERANGEL 전략</h3>
                         <p style="color:#888; font-size:0.9rem;">주요 차량 스폰: 강남, 포친키. 1페 중앙 점령 추천.</p>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="section" id="settings">
-        <h2 class="section-title">CLIX PRO SETTINGS</h2>
-        <div class="settings-grid">
-            <div class="setting-card">
-                <h4>CLIX_0dB SENS</h4>
-                <div class="setting-row"><span>DPI</span><span class="setting-value">800</span></div>
-                <div class="setting-row"><span>수직 감도</span><span class="setting-value">1.2</span></div>
-                <div class="setting-row"><span>일반 감도</span><span class="setting-value">45</span></div>
-            </div>
-            <div class="setting-card">
-                <h4>RECOMMENDED GEAR</h4>
-                <div class="setting-row"><span>MOUSE</span><span class="setting-value">G-PRO Superlight 2</span></div>
-                <div class="setting-row"><span>MONITOR</span><span class="setting-value">BenQ XL2546 240Hz</span></div>
-                <div class="setting-row"><span>SOUND</span><span class="setting-value">Loudness ON</span></div>
             </div>
         </div>
     </section>
@@ -147,35 +115,35 @@
         <div class="member-grid">
             <div class="member-card">
                 <span class="rank-badge tier-platinum">Platinum</span>
-                <h3>CLIX_0dB</h3><span style="color:#444; font-size:0.8rem;">Main Order</span>
+                <h3 style="margin:0;">CLIX_0dB</h3><span style="color:#444; font-size:0.8rem; text-transform:uppercase;">Main Order</span>
                 <div class="stats-box">
-                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">K/D</span><span style="font-weight:800;">1.25</span></div>
-                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">AVG DMG</span><span style="font-weight:800;">208</span></div>
-                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">WIN</span><span style="font-weight:800;">7.7%</span></div>
+                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">K/D</span><span style="color:#ddd; font-weight:800;">1.25</span></div>
+                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">AVG DMG</span><span style="color:#ddd; font-weight:800;">208</span></div>
+                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">WIN</span><span style="color:#ddd; font-weight:800;">7.7%</span></div>
                 </div>
             </div>
             <div class="member-card">
                 <span class="rank-badge tier-gold">Gold</span>
-                <h3>Viper789456</h3><span style="color:#444; font-size:0.8rem;">Sub Order</span>
+                <h3 style="margin:0;">Viper789456</h3><span style="color:#444; font-size:0.8rem; text-transform:uppercase;">Sub Order</span>
                 <div class="stats-box">
-                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">K/D</span><span style="font-weight:800;">0.08</span></div>
-                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">AVG DMG</span><span style="font-weight:800;">105</span></div>
-                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">WIN</span><span style="font-weight:800;">8.3%</span></div>
+                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">K/D</span><span style="color:#ddd; font-weight:800;">0.08</span></div>
+                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">AVG DMG</span><span style="color:#ddd; font-weight:800;">105</span></div>
+                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">WIN</span><span style="color:#ddd; font-weight:800;">8.3%</span></div>
                 </div>
             </div>
             <div class="member-card">
                 <span class="rank-badge tier-bronze">Bronze</span>
-                <h3>joa1013</h3><span style="color:#444; font-size:0.8rem;">Back Up</span>
+                <h3 style="margin:0;">joa1013</h3><span style="color:#444; font-size:0.8rem; text-transform:uppercase;">Back Up</span>
                 <div class="stats-box">
-                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">K/D</span><span style="font-weight:800;">0.30</span></div>
-                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">AVG DMG</span><span style="font-weight:800;">57</span></div>
-                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">WIN</span><span style="font-weight:800;">9.1%</span></div>
+                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">K/D</span><span style="color:#ddd; font-weight:800;">0.30</span></div>
+                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">AVG DMG</span><span style="color:#ddd; font-weight:800;">57</span></div>
+                    <div style="text-align:center;"><span style="display:block; font-size:10px; color:#555;">WIN</span><span style="color:#ddd; font-weight:800;">9.1%</span></div>
                 </div>
             </div>
         </div>
-        <div style="margin-top:40px; text-align:center;">
-            <a href="https://pubg.op.gg" target="_blank" style="color:#ff5e00; text-decoration:none; font-weight:800; margin-right:20px;">PUBG.OP.GG</a>
-            <a href="https://dak.gg/pubg" target="_blank" style="color:#ff5e00; text-decoration:none; font-weight:800;">DAK.GG</a>
+        <div style="margin-top:50px; text-align:center;">
+            <a href="https://pubg.op.gg" target="_blank" style="color:#ff5e00; text-decoration:none; margin-right:20px; font-weight:800;">PUBG.OP.GG 바로가기</a>
+            <a href="https://dak.gg/pubg" target="_blank" style="color:#ff5e00; text-decoration:none; font-weight:800;">DAK.GG 바로가기</a>
         </div>
     </section>
 
@@ -197,6 +165,7 @@
                     <li>하단 버튼을 눌러 구글 신청 양식을 제출해 주세요.</li>
                     <li>제출 후 홈페이지 하단에 나오는 코드(1541)를 꼭 기억하세요.</li>
                     <li>운영진 확인 후 기재하신 연락처로 개별 연락드립니다.</li>
+                    <li>테스트 매치는 개별 연락 후 진행됩니다.</li>
                 </ul>
             </div>
         </div>
@@ -211,13 +180,13 @@
             btns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             const mapData = {
-                'erangel': ['https://raw.githubusercontent.com/love1fan/korclix/main/maps/erangel.jpg', 'ERANGEL 전략', '주요 차량 스폰: 강남, 포친키. 1페 중앙 점령 추천.'],
-                'miramar': ['https://raw.githubusercontent.com/love1fan/korclix/main/maps/miramar.jpg', 'MIRAMAR 전략', '고지대 점령 필수. 능선 시야 확보가 핵심입니다.']
+                'erangel': ['https://via.placeholder.com/300x300/111111/ff5e00?text=ERANGEL', 'ERANGEL 전략', '주요 차량 스폰: 강남, 포친키. 1페 중앙 점령 추천.'],
+                'miramar': ['https://via.placeholder.com/300x300/111111/ff5e00?text=MIRAMAR', 'MIRAMAR 전략', '고지대 점령 필수. 능선 시야 확보가 핵심입니다.']
             };
             const data = mapData[mapName];
             document.getElementById('map-content').innerHTML = `
                 <div class="map-image-wrapper"><img src="${data[0]}" alt="Map"></div>
-                <div class="map-strategy-box"><h3 style="color:#ff5e00;">${data[1]}</h3><p style="color:#888; font-size:0.9rem;">${data[2]}</p></div>
+                <div class="map-strategy-box"><h3 style="color:#ff5e00; margin-top:0;">${data[1]}</h3><p style="color:#888; font-size:0.9rem;">${data[2]}</p></div>
             `;
         }
 
@@ -228,7 +197,7 @@
         };
 
         function checkAccess() {
-            var input = prompt("입장 코드를 입력하세요.");
+            var input = prompt("가입 신청 완료 후 받은 입장 코드를 입력하세요.");
             if (input === "1541") {
                 alert("인증되었습니다.");
                 sessionStorage.setItem("clix_auth", "true");
