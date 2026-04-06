@@ -100,7 +100,7 @@
                     <button class="map-nav-btn" onclick="showMap('miramar', this)">MIRAMAR</button>
                 </div>
                 <div class="map-content-area" id="map-content">
-                    <div class="map-image-wrapper"><img src="https://via.placeholder.com/300x300/111111/ff5e00?text=ERANGEL" alt="Map"></div>
+                    <div class="map-image-wrapper"><img src="erangel.jpg" alt="Map"></div>
                     <div class="map-strategy-box">
                         <h3 style="color:#ff5e00; margin-top:0;">ERANGEL 전략</h3>
                         <p style="color:#888; font-size:0.9rem;">주요 차량 스폰: 강남, 포친키. 1페 중앙 점령 추천.</p>
@@ -180,8 +180,8 @@
             btns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             const mapData = {
-                'erangel': ['https://via.placeholder.com/300x300/111111/ff5e00?text=ERANGEL', 'ERANGEL 전략', '주요 차량 스폰: 강남, 포친키. 1페 중앙 점령 추천.'],
-                'miramar': ['https://via.placeholder.com/300x300/111111/ff5e00?text=MIRAMAR', 'MIRAMAR 전략', '고지대 점령 필수. 능선 시야 확보가 핵심입니다.']
+                'erangel': ['erangel.jpg', 'ERANGEL 전략', '주요 차량 스폰: 강남, 포친키. 1페 중앙 점령 추천.'],
+                'miramar': ['miramar.jpg', 'MIRAMAR 전략', '고지대 점령 필수. 능선 시야 확보가 핵심입니다.']
             };
             const data = mapData[mapName];
             document.getElementById('map-content').innerHTML = `
