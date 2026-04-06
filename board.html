@@ -17,44 +17,51 @@
             -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
         }
 
+        /* 네비게이션바 */
         nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(0,0,0,0.95) !important; position: fixed; width: 100%; top: 0; left: 0; box-sizing: border-box; z-index: 100; border-bottom: 1px solid #222; }
         nav .logo { font-weight: 900; font-size: 26px; color: #ff5e00 !important; text-decoration: none; text-transform: uppercase; letter-spacing: 2px; }
         nav ul { list-style: none; display: flex; margin: 0; padding: 0; align-items: center; }
         nav ul li a { margin-left: 20px; font-size: 12px; color: #999; text-decoration: none; text-transform: uppercase; font-weight: 600; }
         
-        .header { border-bottom: 2px solid #ff5e00; padding-bottom: 20px; margin-bottom: 40px; display: flex; justify-content: space-between; align-items: flex-end; }
+        /* 헤더 */
+        .header { border-bottom: 2px solid #ff5e00; padding-bottom: 20px; margin-bottom: 40px; }
         h1 { color: #ff5e00; letter-spacing: 3px; margin: 0; font-size: 2.5rem; text-transform: uppercase; font-weight: 900; }
 
-        /* 글쓰기 구역 */
+        /* 글쓰기 구역 (회원 전용) */
         #write-section { display: none; border: 1px solid #222; padding: 30px; margin-bottom: 50px; border-radius: 8px; background: #111; }
-        .user-info-display { color: #ff5e00; font-weight: 800; margin-bottom: 10px; font-size: 0.9rem; }
-        textarea { width: 100%; padding: 15px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 4px; box-sizing: border-box; font-family: inherit; resize: none; margin-bottom: 15px; }
+        .user-info-display { color: #ff5e00; font-weight: 800; margin-bottom: 15px; font-size: 1rem; }
+        textarea { width: 100%; padding: 15px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 4px; box-sizing: border-box; font-family: inherit; resize: none; margin-bottom: 15px; font-size: 1rem; }
         
-        /* 파일 업로드 스타일 */
-        .file-upload-wrapper { margin-bottom: 15px; display: flex; gap: 10px; align-items: center; }
-        .file-label { background: #333; color: #fff; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold; border: 1px solid #444; }
-        .file-label:hover { background: #444; }
+        /* 파일 업로드 컨트롤 */
+        .upload-controls { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; background: #000; padding: 15px; border-radius: 4px; border: 1px solid #222; }
+        .file-label { background: #ff5e00; color: #fff; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 900; text-transform: uppercase; transition: 0.3s; }
+        .file-label:hover { background: #ff8533; }
         #file-input { display: none; }
-        #file-name { font-size: 0.8rem; color: #888; }
+        #file-name { font-size: 0.85rem; color: #888; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        .btn-post { background: #ff5e00; color: #fff; padding: 15px; border: none; font-weight: 900; cursor: pointer; width: 100%; text-transform: uppercase; border-radius: 4px; transition: 0.3s; }
-        .btn-post:disabled { background: #555; cursor: not-allowed; }
+        .btn-post { background: #ff5e00; color: #fff; padding: 15px; border: none; font-weight: 900; cursor: pointer; width: 100%; text-transform: uppercase; border-radius: 4px; font-size: 1.1rem; letter-spacing: 1px; transition: 0.3s; }
+        .btn-post:disabled { background: #333; cursor: not-allowed; color: #666; }
 
-        /* 게시글 카드 및 미디어 스타일 */
-        .post-card { background: #111; border: 1px solid #222; border-radius: 12px; padding: 30px; margin-bottom: 25px; position: relative; }
-        .post-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #222; }
-        .post-author { color: #ff5e00; font-weight: 800; }
-        .post-date { color: #555; font-size: 0.8rem; }
-        .post-content { color: #ddd; white-space: pre-wrap; font-size: 1.05rem; margin-bottom: 15px; }
+        /* 게시글 카드 디자인 */
+        .post-card { background: #111; border: 1px solid #222; border-radius: 12px; padding: 30px; margin-bottom: 30px; position: relative; }
+        .post-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #222; }
+        .post-author { color: #ff5e00; font-weight: 900; font-size: 1.1rem; }
+        .post-date { color: #555; font-size: 0.85rem; font-weight: 600; }
+        .post-content { color: #ddd; white-space: pre-wrap; font-size: 1.05rem; line-height: 1.8; margin-bottom: 20px; }
         
-        /* 미디어 표시 구역 */
-        .post-media { margin-top: 15px; border-radius: 8px; overflow: hidden; max-width: 100%; }
-        .post-media img, .post-media video { max-width: 100%; display: block; border-radius: 8px; border: 1px solid #222; }
+        /* 미디어 렌더링 */
+        .post-media-container { margin-top: 20px; border-radius: 8px; overflow: hidden; border: 1px solid #222; background: #000; }
+        .post-media-container img, .post-media-container video { width: 100%; height: auto; display: block; max-height: 600px; object-fit: contain; }
 
-        .btn-del { color: #ff3333; cursor: pointer; font-size: 0.75rem; position: absolute; bottom: 30px; right: 30px; display: none; font-weight: bold; border: 1px solid #442222; padding: 5px 10px; border-radius: 4px; }
+        /* 비회원 안내 */
+        #login-notice { border: 1px dashed #333; padding: 40px; text-align: center; margin-bottom: 50px; border-radius: 12px; color: #555; font-weight: 700; }
+        #login-notice a { color: #ff5e00; text-decoration: none; border-bottom: 1px solid #ff5e00; }
+
+        .btn-del { color: #ff3333; cursor: pointer; font-size: 0.75rem; position: absolute; top: 30px; right: 30px; display: none; font-weight: 900; border: 1px solid #442222; padding: 6px 12px; border-radius: 4px; text-transform: uppercase; }
+        .btn-del:hover { background: #ff3333; color: #fff; }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false">
 
     <nav>
         <a href="index.html" class="logo">CLAN CLIX</a>
@@ -71,24 +78,24 @@
     </div>
 
     <div id="write-section">
-        <div class="user-info-display" id="display-nick">불러오는 중...</div>
-        <textarea id="post-content" rows="4" placeholder="내용을 입력하고 사진이나 동영상을 첨부해보세요."></textarea>
+        <div class="user-info-display" id="display-nick">인증 대기 중...</div>
+        <textarea id="post-content" rows="4" placeholder="클랜원들과 공유하고 싶은 소식이나 영상을 올려보세요."></textarea>
         
-        <div class="file-upload-wrapper">
-            <label for="file-input" class="file-label">파일 선택 (사진/영상)</label>
-            <input type="file" id="file-input" accept="image/*, video/*" onchange="updateFileName()">
-            <span id="file-name">선택된 파일 없음</span>
+        <div class="upload-controls">
+            <label for="file-input" class="file-label">이미지 / 영상 첨부</label>
+            <input type="file" id="file-input" accept="image/*, video/*" onchange="previewFileName()">
+            <span id="file-name">선택된 파일이 없습니다 (최대 20MB)</span>
         </div>
 
-        <button id="post-btn" class="btn-post" onclick="savePost()">POST MESSAGE</button>
+        <button id="submit-btn" class="btn-post" onclick="savePost()">POST MESSAGE</button>
     </div>
 
-    <div id="login-notice" style="border: 1px dashed #333; padding: 30px; text-align: center; margin-bottom: 50px; border-radius: 8px; color: #666;">
-        게시글은 회원만 작성할 수 있습니다. <a href="index.html" style="color:#ff5e00;">로그인 하러가기</a>
+    <div id="login-notice">
+        게시글 작성은 클랜원만 가능합니다. <a href="index.html">로그인 페이지로 이동</a>
     </div>
 
     <div id="board-container">
-        <p style="text-align:center; color:#444; padding: 50px;">LOADING POSTS...</p>
+        <p style="text-align:center; color:#333; padding: 50px; font-weight: 800;">콘텐츠를 불러오는 중...</p>
     </div>
 
     <script>
@@ -96,7 +103,7 @@
             apiKey: "AIzaSyAFSAu2aynX6YPiJEatWy9IQgWgUuTx8ds",
             authDomain: "korclix.firebaseapp.com",
             projectId: "korclix",
-            storageBucket: "korclix.firebasestorage.app", // 여기에 본인의 스토리지 주소 확인
+            storageBucket: "korclix.firebasestorage.app",
             messagingSenderId: "472792477536",
             appId: "1:472792477536:web:14907e228c343b72fd7805"
         };
@@ -106,58 +113,58 @@
         const db = firebase.firestore();
         const storage = firebase.storage();
 
-        let currentUserNickname = "";
+        let userNick = "";
 
         auth.onAuthStateChanged((user) => {
-            const writeSection = document.getElementById('write-section');
-            const loginNotice = document.getElementById('login-notice');
+            const writeArea = document.getElementById('write-section');
+            const noticeArea = document.getElementById('login-notice');
             if (user && user.emailVerified) {
-                writeSection.style.display = 'block';
-                loginNotice.style.display = 'none';
+                writeArea.style.display = 'block';
+                noticeArea.style.display = 'none';
                 db.collection("users").doc(user.uid).get().then((doc) => {
-                    currentUserNickname = doc.exists ? doc.data().nickname : user.email.split('@')[0];
-                    document.getElementById('display-nick').innerText = "작성자: " + currentUserNickname;
+                    userNick = doc.exists ? doc.data().nickname : user.email.split('@')[0];
+                    document.getElementById('display-nick').innerText = "작성자: " + userNick;
                 });
             } else {
-                writeSection.style.display = 'none';
-                loginNotice.style.display = 'block';
+                writeArea.style.display = 'none';
+                noticeArea.style.display = 'block';
             }
-            loadPosts();
+            fetchPosts();
         });
 
-        function updateFileName() {
+        function previewFileName() {
             const file = document.getElementById('file-input').files[0];
-            document.getElementById('file-name').innerText = file ? file.name : "선택된 파일 없음";
+            document.getElementById('file-name').innerText = file ? file.name : "선택된 파일이 없습니다 (최대 20MB)";
         }
 
-        function loadPosts() {
-            db.collection("board").orderBy("timestamp", "desc").onSnapshot((querySnapshot) => {
-                const container = document.getElementById('board-container');
-                container.innerHTML = "";
+        function fetchPosts() {
+            db.collection("board").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
+                const list = document.getElementById('board-container');
+                list.innerHTML = "";
                 
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const date = data.timestamp ? data.timestamp.toDate().toLocaleString('ko-KR') : '방금 전';
-                    const isAdmin = sessionStorage.getItem('clix_master') === 'true';
+                snapshot.forEach((doc) => {
+                    const post = doc.data();
+                    const date = post.timestamp ? post.timestamp.toDate().toLocaleString('ko-KR') : '방금 전';
+                    const masterMode = sessionStorage.getItem('clix_master') === 'true';
 
-                    let mediaHtml = "";
-                    if (data.fileUrl) {
-                        if (data.fileType.includes("image")) {
-                            mediaHtml = `<div class="post-media"><img src="${data.fileUrl}" loading="lazy"></div>`;
-                        } else if (data.fileType.includes("video")) {
-                            mediaHtml = `<div class="post-media"><video src="${data.fileUrl}" controls></video></div>`;
+                    let mediaSection = "";
+                    if (post.mediaUrl) {
+                        if (post.mediaType.startsWith("image")) {
+                            mediaSection = `<div class="post-media-container"><img src="${post.mediaUrl}" loading="lazy"></div>`;
+                        } else if (post.mediaType.startsWith("video")) {
+                            mediaSection = `<div class="post-media-container"><video src="${post.mediaUrl}" controls></video></div>`;
                         }
                     }
 
-                    container.innerHTML += `
+                    list.innerHTML += `
                         <div class="post-card">
                             <div class="post-header">
-                                <span class="post-author">${data.nickname}</span>
+                                <span class="post-author">${post.nickname}</span>
                                 <span class="post-date">${date}</span>
                             </div>
-                            <div class="post-content">${data.content}</div>
-                            ${mediaHtml}
-                            <button class="btn-del" style="display:${isAdmin ? 'block' : 'none'}" onclick="deletePost('${doc.id}', '${data.fileRef || ''}')">DELETE</button>
+                            <div class="post-content">${post.content}</div>
+                            ${mediaSection}
+                            <button class="btn-del" style="display:${masterMode ? 'block' : 'none'}" onclick="trashPost('${doc.id}', '${post.mediaPath || ''}')">DELETE</button>
                         </div>
                     `;
                 });
@@ -165,66 +172,60 @@
         }
 
         async function savePost() {
-            const cont = document.getElementById('post-content').value.trim();
-            const fileInput = document.getElementById('file-input');
-            const file = fileInput.files[0];
-            const btn = document.getElementById('post-btn');
+            const text = document.getElementById('post-content').value.trim();
+            const picker = document.getElementById('file-input');
+            const file = picker.files[0];
+            const btn = document.getElementById('submit-btn');
 
-            if(!cont && !file) return alert("내용을 입력하거나 파일을 선택하세요.");
+            if (!text && !file) return alert("내용 또는 파일을 추가해 주세요.");
 
             btn.disabled = true;
-            btn.innerText = "UPLOADING...";
+            btn.innerText = "업로드 중...";
 
-            let fileUrl = null;
-            let fileType = null;
-            let fileRef = null;
+            let url = null;
+            let type = null;
+            let path = null;
 
             try {
                 if (file) {
-                    // 파일 용량 제한 (예: 20MB)
-                    if (file.size > 20 * 1024 * 1024) {
-                        throw new Error("파일 용량이 너무 큽니다 (최대 20MB)");
-                    }
+                    if (file.size > 20 * 1024 * 1024) throw new Error("20MB 이하의 파일만 가능합니다.");
                     
-                    const extension = file.name.split('.').pop();
-                    fileRef = `board/${Date.now()}_${auth.currentUser.uid}.${extension}`;
-                    const storageRef = storage.ref(fileRef);
+                    const ext = file.name.split('.').pop();
+                    path = `board/${Date.now()}_${auth.currentUser.uid}.${ext}`;
+                    const ref = storage.ref(path);
                     
-                    await storageRef.put(file);
-                    fileUrl = await storageRef.getDownloadURL();
-                    fileType = file.type;
+                    await ref.put(file);
+                    url = await ref.getDownloadURL();
+                    type = file.type;
                 }
 
                 await db.collection("board").add({
-                    nickname: currentUserNickname,
-                    content: cont,
+                    nickname: userNick,
+                    content: text,
                     uid: auth.currentUser.uid,
-                    fileUrl: fileUrl,
-                    fileType: fileType,
-                    fileRef: fileRef,
+                    mediaUrl: url,
+                    mediaType: type,
+                    mediaPath: path,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
                 document.getElementById('post-content').value = "";
-                fileInput.value = "";
-                updateFileName();
-                alert("등록 완료!");
+                picker.value = "";
+                previewFileName();
+                alert("게시되었습니다!");
 
-            } catch (error) {
-                alert("오류 발생: " + error.message);
+            } catch (e) {
+                alert("실패: " + e.message);
             } finally {
                 btn.disabled = false;
                 btn.innerText = "POST MESSAGE";
             }
         }
 
-        async function deletePost(id, fileRef) {
-            if(!confirm("삭제하시겠습니까?")) return;
-            
+        async function trashPost(id, path) {
+            if (!confirm("삭제할까요?")) return;
             try {
-                if (fileRef) {
-                    await storage.ref(fileRef).delete();
-                }
+                if (path) await storage.ref(path).delete();
                 await db.collection("board").doc(id).delete();
             } catch (e) {
                 alert("삭제 중 오류가 발생했습니다.");
