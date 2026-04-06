@@ -7,22 +7,18 @@
     <style>
         body { margin: 0; font-family: 'Inter', 'Segoe UI', sans-serif; background-color: #0a0a0a; color: #ffffff; line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth; }
         
-        /* [잠금 레이어] 가입 전 클릭 방지 */
+        /* [잠금 레이어] */
         #lock-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.95); z-index: 9999; display: flex; flex-direction: column;
+            background: rgba(0, 0, 0, 0.98); z-index: 9999; display: flex; flex-direction: column;
             justify-content: center; align-items: center; text-align: center;
         }
         #lock-overlay h2 { font-size: 3rem; color: #ff5e00; margin-bottom: 20px; letter-spacing: 5px; font-weight: 900; text-transform: uppercase; }
-        #lock-overlay p { font-size: 1.1rem; color: #aaa; margin-bottom: 40px; letter-spacing: 1px; }
-        .lock-btn { 
-            padding: 22px 60px; background: #ff5e00; color: white; 
-            text-decoration: none; font-weight: 800; font-size: 1.3rem; 
-            text-transform: uppercase; border-radius: 4px; transition: 0.3s;
-        }
-        .lock-btn:hover { background: #e05200; transform: scale(1.05); box-shadow: 0 0 30px rgba(255, 94, 0, 0.3); }
-        .unlock-text { margin-top: 30px; font-size: 0.9rem; color: #444; cursor: pointer; text-decoration: underline; transition: 0.3s; }
-        .unlock-text:hover { color: #888; }
+        #lock-overlay p { font-size: 1.1rem; color: #aaa; margin-bottom: 40px; }
+        .lock-btn { padding: 22px 60px; background: #ff5e00; color: white; text-decoration: none; font-weight: 800; font-size: 1.3rem; text-transform: uppercase; border-radius: 4px; transition: 0.3s; border: none; cursor: pointer; }
+        .lock-btn:hover { background: #e05200; transform: scale(1.05); box-shadow: 0 0 30px rgba(255, 94, 0, 0.4); }
+        .unlock-text { margin-top: 30px; font-size: 0.9rem; color: #333; cursor: pointer; text-decoration: underline; transition: 0.3s; }
+        .unlock-text:hover { color: #666; }
 
         /* [네비게이션] */
         nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(0,0,0,0.95); position: fixed; width: 100%; box-sizing: border-box; z-index: 100; border-bottom: 1px solid #222; }
@@ -36,35 +32,40 @@
         .hero h1 { font-size: 7rem; margin: 0; letter-spacing: 18px; font-weight: 900; color: #fff; text-shadow: 0 0 25px rgba(255, 94, 0, 0.5); text-transform: uppercase; }
         .hero p { font-size: 1.2rem; color: #aaa; margin-top: 10px; letter-spacing: 4px; font-weight: 500; text-transform: uppercase; }
 
-        /* [섹션 공통] */
+        /* [티어별 색상 및 효과] */
+        .tier-survivor { color: #ff4444; border: 1px solid #ff4444; text-shadow: 0 0 10px #ff4444; }
+        .tier-master { color: #ff5e00; border: 1px solid #ff5e00; text-shadow: 0 0 10px #ff5e00; }
+        .tier-diamond { color: #00e5ff; border: 1px solid #00e5ff; text-shadow: 0 0 10px #00e5ff; }
+        .tier-platinum { color: #4ee29d; border: 1px solid #4ee29d; }
+        .tier-gold { color: #ffcc00; border: 1px solid #ffcc00; }
+        .tier-silver { color: #c0c0c0; border: 1px solid #c0c0c0; }
+        .tier-bronze { color: #cd7f32; border: 1px solid #cd7f32; }
+
+        /* [전적 스탯 카드] */
         .section { padding: 120px 8%; max-width: 1200px; margin: 0 auto; }
         .section-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 70px; text-align: center; letter-spacing: 6px; color: #ff5e00; text-transform: uppercase; }
-        
-        /* [전적 스탯 카드] */
         .member-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
-        .member-card { background: linear-gradient(145deg, #151515, #0a0a0a); border: 1px solid #222; padding: 30px; position: relative; overflow: hidden; transition: 0.4s; }
-        .member-card:hover { border-color: #ff5e00; transform: translateY(-10px); box-shadow: 0 10px 30px rgba(255, 94, 0, 0.2); }
-        .member-card .rank-badge { position: absolute; top: 20px; right: 20px; font-size: 0.7rem; font-weight: 900; color: #ff5e00; border: 1px solid #ff5e00; padding: 4px 10px; text-transform: uppercase; letter-spacing: 1px; }
-        .member-card h3 { font-size: 1.8rem; margin: 10px 0 5px 0; color: #fff; font-weight: 900; letter-spacing: -0.5px; }
+        .member-card { background: linear-gradient(145deg, #151515, #0a0a0a); border: 1px solid #222; padding: 30px; position: relative; transition: 0.4s; }
+        
+        /* 호버 시 티어 색상 강조 */
+        .member-card:hover { transform: translateY(-10px); }
+        .card-survivor:hover { border-color: #ff4444; box-shadow: 0 0 20px rgba(255, 68, 68, 0.2); }
+        .card-master:hover { border-color: #ff5e00; box-shadow: 0 0 20px rgba(255, 94, 0, 0.2); }
+        .card-diamond:hover { border-color: #00e5ff; box-shadow: 0 0 20px rgba(0, 229, 255, 0.2); }
+
+        .rank-badge { position: absolute; top: 20px; right: 20px; font-size: 0.7rem; font-weight: 900; padding: 4px 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .member-card h3 { font-size: 1.8rem; margin: 10px 0 5px 0; color: #fff; font-weight: 900; }
         .member-card .role { font-size: 0.85rem; color: #777; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; display: block; }
         .stats-box { display: flex; justify-content: space-between; border-top: 1px solid #222; padding-top: 20px; margin-top: 20px; }
         .stat-item { text-align: center; }
         .stat-label { display: block; font-size: 11px; color: #555; margin-bottom: 5px; text-transform: uppercase; }
         .stat-value { font-size: 1.1rem; font-weight: 800; color: #ddd; }
-        .member-card.vacant { border: 1px dashed #444; background: transparent; display: flex; align-items: center; justify-content: center; min-height: 220px; text-align: center; color: #444; font-weight: 800; }
 
         /* [가입 섹션] */
         #join { background-color: #0f0f0f; border-top: 1px solid #222; }
-        .join-container { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; }
-        .info-box h3 { color: #ff5e00; margin-bottom: 25px; font-size: 1.5rem; font-weight: 800; border-left: 4px solid #ff5e00; padding-left: 15px; }
-        .info-box ul { list-style: none; padding: 0; }
-        .info-box ul li { margin-bottom: 15px; padding-left: 25px; position: relative; color: #ccc; font-weight: 500; }
-        .info-box ul li::before { content: '✓'; position: absolute; left: 0; color: #ff5e00; font-weight: bold; }
-        .recruit-btn { display: inline-block; width: 100%; text-align: center; padding: 25px; background: #ff5e00; color: white; text-decoration: none; font-weight: 800; font-size: 1.2rem; margin-top: 40px; transition: 0.4s; text-transform: uppercase; border: none; cursor: pointer; }
-
-        footer { padding: 60px; text-align: center; border-top: 1px solid #222; background-color: #080808; color: #555; font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; }
+        .recruit-btn { display: inline-block; width: 100%; text-align: center; padding: 25px; background: #ff5e00; color: white; text-decoration: none; font-weight: 800; font-size: 1.2rem; margin-top: 40px; transition: 0.4s; text-transform: uppercase; }
         
-        @media (max-width: 768px) { .join-container { grid-template-columns: 1fr; } .hero h1 { font-size: 4rem; } }
+        footer { padding: 60px; text-align: center; color: #555; font-size: 13px; text-transform: uppercase; border-top: 1px solid #222; }
     </style>
 </head>
 <body>
@@ -93,8 +94,8 @@
     <section class="section" id="members">
         <h2 class="section-title">CLIX SQUAD STATS</h2>
         <div class="member-grid">
-            <div class="member-card">
-                <span class="rank-badge">Master</span>
+            <div class="member-card card-master">
+                <span class="rank-badge tier-master">Master</span>
                 <h3>CLIX_0dB</h3>
                 <span class="role">Main Order</span>
                 <div class="stats-box">
@@ -103,8 +104,8 @@
                     <div class="stat-item"><span class="stat-label">WIN RATE</span><span class="stat-value">25%</span></div>
                 </div>
             </div>
-            <div class="member-card">
-                <span class="rank-badge">Diamond</span>
+            <div class="member-card card-diamond">
+                <span class="rank-badge tier-diamond">Diamond</span>
                 <h3>Viper789456</h3>
                 <span class="role">Sub Order</span>
                 <div class="stats-box">
@@ -113,61 +114,42 @@
                     <div class="stat-item"><span class="stat-label">WIN RATE</span><span class="stat-value">18%</span></div>
                 </div>
             </div>
-            <div class="member-card">
-                <span class="rank-badge">Diamond</span>
-                <h3>joa1013</h3>
-                <span class="role">Back Up</span>
+            <div class="member-card card-survivor">
+                <span class="rank-badge tier-survivor">Survivor</span>
+                <h3>TopPlayer_KR</h3>
+                <span class="role">Attacker</span>
                 <div class="stats-box">
-                    <div class="stat-item"><span class="stat-label">K/D</span><span class="stat-value">2.10</span></div>
-                    <div class="stat-item"><span class="stat-label">AVG DMG</span><span class="stat-value">310</span></div>
-                    <div class="stat-item"><span class="stat-label">WIN RATE</span><span class="stat-value">15%</span></div>
+                    <div class="stat-item"><span class="stat-label">K/D</span><span class="stat-value">5.12</span></div>
+                    <div class="stat-item"><span class="stat-label">AVG DMG</span><span class="stat-value">620</span></div>
+                    <div class="stat-item"><span class="stat-label">WIN RATE</span><span class="stat-value">32%</span></div>
                 </div>
-            </div>
-            <div class="member-card vacant">
-                <h3>RECRUITING...</h3>
             </div>
         </div>
     </section>
 
     <section class="section" id="join">
         <h2 class="section-title">RECRUITMENT</h2>
-        <div class="join-container">
-            <div class="info-box">
-                <h3>가입 조건</h3>
-                <ul>
-                    <li>23세 이상 성인 (2004년생부터 가입 가능)</li>
-                    <li>핵 및 비인가 프로그램 사용 이력 절대 금지</li>
-                    <li>디스코드 및 마이크 사용 필수</li>
-                    <li>이중 클랜 및 비매너 행위 금지</li>
-                </ul>
-            </div>
-            <div class="info-box">
-                <h3>가입 신청 안내</h3>
-                <ul>
-                    <li>아래 버튼을 눌러 신청서를 작성해 주세요.</li>
-                    <li>운영진 확인 후 기재하신 연락처로 안내드립니다.</li>
-                    <li>테스트 매치는 개별 연락 후 진행됩니다.</li>
-                </ul>
-            </div>
-        </div>
         <a href="https://forms.gle/zDusmBGTh7dqFHZD6" class="recruit-btn" target="_blank">CLIX 클랜 가입 신청서 작성하기</a>
     </section>
 
     <footer>&copy; 2026 CLAN CLIX. ALL RIGHTS RESERVED.</footer>
 
     <script>
-        // 💡 입장 코드 체크 함수
-        function checkAccess() {
-            var correctCode = "1541"; // 가입 완료자에게 알려줄 코드 (원하는 대로 변경 가능)
-            var input = prompt("가입 신청 완료 문구 하단에 적힌 입장 코드를 입력하세요.");
-
-            if (input === correctCode) {
-                alert("인증되었습니다. 환영합니다!");
+        window.onload = function() {
+            if (sessionStorage.getItem("clix_auth") === "true") {
                 document.getElementById('lock-overlay').style.display = 'none';
-            } else if (input === null) {
-                // 취소 시 아무 동작 안 함
-            } else {
-                alert("잘못된 코드입니다. 가입 신청을 먼저 완료해주세요.");
+            }
+        };
+
+        function checkAccess() {
+            var correctCode = "1234"; 
+            var input = prompt("입장 코드를 입력하세요.");
+            if (input === correctCode) {
+                alert("인증되었습니다.");
+                sessionStorage.setItem("clix_auth", "true");
+                document.getElementById('lock-overlay').style.display = 'none';
+            } else if (input !== null) {
+                alert("잘못된 코드입니다.");
             }
         }
     </script>
