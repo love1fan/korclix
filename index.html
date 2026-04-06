@@ -19,11 +19,18 @@
         .section { padding: 120px 8%; max-width: 1200px; margin: 0 auto; }
         .section-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 70px; text-align: center; letter-spacing: 6px; color: #ff5e00; text-transform: uppercase; }
         
-        .member-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
-        .member-card { background: #111; padding: 45px 35px; border: 1px solid #222; transition: 0.3s; }
-        .member-card h3 { font-size: 1.6rem; margin: 0 0 10px 0; color: #fff; font-weight: 800; }
-        .member-card p { font-size: 0.95rem; color: #777; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; margin: 0; }
-        .member-card.vacant { border: 1px dashed #444; opacity: 0.7; }
+        /* 멤버 카드 전적 디자인 */
+        .member-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .member-card { background: linear-gradient(145deg, #151515, #0a0a0a); border: 1px solid #222; padding: 30px; position: relative; overflow: hidden; transition: 0.4s; }
+        .member-card:hover { border-color: #ff5e00; transform: translateY(-10px); box-shadow: 0 10px 30px rgba(255, 94, 0, 0.2); }
+        .member-card .rank-badge { position: absolute; top: 20px; right: 20px; font-size: 0.7rem; font-weight: 900; color: #ff5e00; border: 1px solid #ff5e00; padding: 4px 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .member-card h3 { font-size: 1.8rem; margin: 10px 0 5px 0; color: #fff; font-weight: 900; letter-spacing: -0.5px; }
+        .member-card .role { font-size: 0.85rem; color: #777; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; display: block; }
+        .stats-box { display: flex; justify-content: space-between; border-top: 1px solid #222; padding-top: 20px; margin-top: 20px; }
+        .stat-item { text-align: center; }
+        .stat-label { display: block; font-size: 11px; color: #555; margin-bottom: 5px; text-transform: uppercase; }
+        .stat-value { font-size: 1.1rem; font-weight: 800; color: #ddd; }
+        .member-card.vacant { border: 1px dashed #444; background: transparent; display: flex; align-items: center; justify-content: center; min-height: 200px; text-align: center; }
 
         #join { background-color: #0f0f0f; border-top: 1px solid #222; }
         .join-container { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; }
@@ -56,12 +63,41 @@
     </section>
 
     <section class="section" id="members">
-        <h2 class="section-title">CLIX CLAN MEMBERS</h2>
+        <h2 class="section-title">CLIX SQUAD STATS</h2>
         <div class="member-grid">
-            <div class="member-card"><h3>CLIX_0dB</h3><p>Main Order</p></div>
-            <div class="member-card"><h3>Viper789456</h3><p>Sub Order</p></div>
-            <div class="member-card vacant"><h3>공석</h3><p>Attacker</p></div>
-            <div class="member-card"><h3>joa1013</h3><p>Back Up</p></div>
+            <div class="member-card">
+                <span class="rank-badge">Master</span>
+                <h3>CLIX_0dB</h3>
+                <span class="role">Main Order</span>
+                <div class="stats-box">
+                    <div class="stat-item"><span class="stat-label">K/D</span><span class="stat-value">3.42</span></div>
+                    <div class="stat-item"><span class="stat-label">AVG DMG</span><span class="stat-value">450</span></div>
+                    <div class="stat-item"><span class="stat-label">WIN RATE</span><span class="stat-value">25%</span></div>
+                </div>
+            </div>
+            <div class="member-card">
+                <span class="rank-badge">Diamond</span>
+                <h3>Viper789456</h3>
+                <span class="role">Sub Order</span>
+                <div class="stats-box">
+                    <div class="stat-item"><span class="stat-label">K/D</span><span class="stat-value">2.85</span></div>
+                    <div class="stat-item"><span class="stat-label">AVG DMG</span><span class="stat-value">380</span></div>
+                    <div class="stat-item"><span class="stat-label">WIN RATE</span><span class="stat-value">18%</span></div>
+                </div>
+            </div>
+            <div class="member-card">
+                <span class="rank-badge">Diamond</span>
+                <h3>joa1013</h3>
+                <span class="role">Back Up</span>
+                <div class="stats-box">
+                    <div class="stat-item"><span class="stat-label">K/D</span><span class="stat-value">2.10</span></div>
+                    <div class="stat-item"><span class="stat-label">AVG DMG</span><span class="stat-value">310</span></div>
+                    <div class="stat-item"><span class="stat-label">WIN RATE</span><span class="stat-value">15%</span></div>
+                </div>
+            </div>
+            <div class="member-card vacant">
+                <h3 style="color: #444;">RECRUITING...</h3>
+            </div>
         </div>
     </section>
 
@@ -90,8 +126,6 @@
         <a href="https://forms.gle/zDusmBGTh7dqFHZD6" class="recruit-btn" target="_blank">CLIX 클랜 가입 신청서 작성하기</a>
     </section>
 
-    <footer>
-        &copy; 2026 CLAN CLIX. ALL RIGHTS RESERVED.
-    </footer>
+    <footer>&copy; 2026 CLAN CLIX. ALL RIGHTS RESERVED.</footer>
 </body>
 </html>
