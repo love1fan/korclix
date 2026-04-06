@@ -41,8 +41,8 @@
         .notice-content { color: #bbb; white-space: pre-wrap; line-height: 1.8; }
         .btn-del { color: #ff3333; cursor: pointer; font-size: 0.8rem; position: absolute; bottom: 20px; right: 30px; display: none; text-decoration: underline; }
 
-        /* 관리자 로그인 버튼 (우측 하단 숨김) */
-        #admin-login-btn { position: fixed; bottom: 10px; right: 10px; font-size: 10px; color: #111; cursor: pointer; z-index: 999; }
+        /* 관리자 로그인 버튼 (우측 하단, 주황색 노출) */
+        #admin-login-btn { position: fixed; bottom: 10px; right: 10px; font-size: 10px; color: #ff5e00; cursor: pointer; z-index: 999; font-weight: bold; }
     </style>
 </head>
 <body oncontextmenu="return false" onselectstart="return false">
@@ -80,7 +80,7 @@
     <div id="admin-login-btn" onclick="authAdmin()">ADMIN</div>
 
     <script>
-        // 클랜장님의 Firebase 설정 적용 완료
+        // Firebase 설정
         const firebaseConfig = {
             apiKey: "AIzaSyAFSAu2aynX6YPiJEatWy9IQgWgUuTxBds",
             authDomain: "korclix.firebaseapp.com",
@@ -93,7 +93,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // 페이지 로드 시 실행
+        // 페이지 로드 시 상태 확인 및 데이터 호출
         window.onload = function() {
             if(sessionStorage.getItem('clix_master') === 'true') {
                 showAdminUI();
@@ -108,16 +108,17 @@
                 showAdminUI();
                 alert("관리자 모드가 활성화되었습니다.");
             } else {
-                alert("비밀번호가 틀렸습니다.");
+                alert("비밀번호가 일치하지 않습니다.");
             }
         }
 
+        // 관리자 UI 노출
         function showAdminUI() {
             document.getElementById('admin-editor').style.display = 'block';
             document.querySelectorAll('.btn-del').forEach(b => b.style.display = 'block');
         }
 
-        // Firebase에서 공지사항 실시간으로 불러오기
+        // Firebase 데이터 실시간 불러오기
         function loadNotices() {
             db.collection("notices").orderBy("timestamp", "desc").onSnapshot((querySnapshot) => {
                 const container = document.getElementById('notice-container');
@@ -147,7 +148,7 @@
             });
         }
 
-        // Firebase에 새 공지사항 쓰기
+        // Firebase 데이터 쓰기
         function saveNotice() {
             const t = document.getElementById('title').value;
             const g = document.getElementById('tag').value || '[공지]';
@@ -167,7 +168,7 @@
                 document.getElementById('title').value = '';
                 document.getElementById('tag').value = '';
                 document.getElementById('content').value = '';
-                alert("공지가 성공적으로 등록되었습니다!");
+                alert("공지가 성공적으로 등록되었습니다.");
             }).catch((error) => {
                 console.error("작성 실패: ", error);
                 alert("오류가 발생했습니다.");
