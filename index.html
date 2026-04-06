@@ -42,6 +42,7 @@
         .section { padding: 120px 8%; max-width: 1200px; margin: 0 auto; }
         .section-title { font-size: 2.8rem; font-weight: 800; margin-bottom: 60px; text-align: center; letter-spacing: 8px; color: #ff5e00; text-transform: uppercase; }
 
+        /* ABOUT & MAP DASHBOARD */
         .about-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
         .tag { padding: 15px 25px; background: #111; border-left: 3px solid #ff5e00; font-weight: 700; margin-right: 10px; display: inline-block; }
         .map-dashboard { background: #111; border: 1px solid #222; border-radius: 12px; overflow: hidden; }
@@ -52,29 +53,44 @@
         .map-image-wrapper { width: 100%; background: #000; border: 2px solid #333; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         .map-image-wrapper img { width: 100%; height: auto; display: block; object-fit: cover; }
 
-        /* 🔥 MEMBERS STATS 디테일 대시보드 */
+        /* 🔥 LIVE STREAM 전용 스타일 */
+        .stream-tabs { display: flex; gap: 10px; margin-bottom: 30px; justify-content: center; }
+        .stream-tab-btn { 
+            background: #111; border: 1px solid #333; color: #888; padding: 12px 25px; 
+            cursor: pointer; font-weight: 800; border-radius: 4px; transition: 0.3s; font-size: 0.8rem;
+        }
+        .stream-tab-btn.active { background: #ff5e00; color: #fff; border-color: #ff5e00; box-shadow: 0 0 15px rgba(255, 94, 0, 0.3); }
+        .stream-tab-btn:hover { border-color: #ff5e00; color: #fff; }
+        .stream-container { 
+            display: grid; grid-template-columns: 2.5fr 1fr; gap: 40px; 
+            background: #0d0d0d; padding: 40px; border-radius: 12px; border: 1px solid #222; 
+        }
+        .video-wrapper { 
+            background: #000; border-radius: 8px; overflow: hidden; 
+            aspect-ratio: 16 / 9; border: 1px solid #333; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .stream-info { display: flex; flex-direction: column; justify-content: center; text-align: left; }
+
+        /* MEMBERS STATS */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-top: 50px; }
         .stat-card { background: rgba(17, 17, 17, 0.9); border: 1px solid #222; border-radius: 12px; padding: 35px; transition: 0.3s; position: relative; overflow: hidden; }
         .stat-card:hover { border-color: #ff5e00; transform: translateY(-5px); box-shadow: 0 10px 30px rgba(255, 94, 0, 0.1); }
         .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #ff5e00; }
-        
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #222; }
         .player-name { font-size: 1.5rem; font-weight: 900; color: #fff; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
         .player-role { font-size: 0.75rem; color: #ff5e00; font-weight: 700; text-transform: uppercase; background: rgba(255, 94, 0, 0.1); padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(255, 94, 0, 0.2); }
-        
         .data-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .data-item { background: #000; border: 1px solid #222; padding: 18px; border-radius: 8px; text-align: center; }
         .data-label { font-size: 0.7rem; color: #666; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; display: block; }
         .data-value { font-size: 1.8rem; font-weight: 900; color: #ff5e00; line-height: 1; }
         .data-unit { font-size: 0.8rem; color: #fff; font-weight: 700; margin-left: 2px; }
-
         .rank-badge { position: absolute; top: 15px; right: 15px; font-size: 0.7rem; font-weight: 900; padding: 3px 8px; border: 1px solid; border-radius: 4px; }
         .tier-platinum { color: #4ee29d; border-color: #4ee29d; }
         .tier-gold { color: #ffcc00; border-color: #ffcc00; }
         .tier-bronze { color: #cd7f32; border-color: #cd7f32; }
 
         footer { padding: 80px; text-align: center; color: #444; border-top: 1px solid #222; text-transform: uppercase; }
-        @media (max-width: 900px) { .about-wrapper, .stats-grid { grid-template-columns: 1fr; } .hero h1 { font-size: 4rem; } }
+        @media (max-width: 900px) { .about-wrapper, .stats-grid, .stream-container { grid-template-columns: 1fr; } .hero h1 { font-size: 4rem; } }
     </style>
 </head>
 <body oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
@@ -149,15 +165,39 @@
         </div>
     </section>
 
+    <section class="section" id="stream">
+        <h2 class="section-title">CLIX LIVE STREAM</h2>
+        
+        <div class="stream-tabs">
+            <button class="stream-tab-btn active" onclick="changeStream('chzzk', '스트리머UID', this)">CHZZK</button>
+            <button class="stream-tab-btn" onclick="changeStream('soop', '스트리머ID', this)">SOOP</button>
+            <button class="stream-tab-btn" onclick="changeStream('youtube', '채널ID', this)">YOUTUBE</button>
+        </div>
+
+        <div class="stream-container">
+            <div class="video-wrapper">
+                <iframe id="live-iframe" src="https://chzzk.naver.com/live/스트리머UID/embed" frameborder="0" allowfullscreen="true" width="100%" height="100%"></iframe>
+            </div>
+            <div class="stream-info">
+                <h3 id="streamer-name" style="color:#ff5e00; margin-top:0;">ON AIR: CLIX STREAMER</h3>
+                <p style="color:#aaa; font-size:0.9rem; line-height: 1.8;">
+                    우리 클랜원들의 박진감 넘치는 플레이를 실시간으로 응원하세요!<br>
+                    플랫폼 탭을 클릭하여 다른 방송을 확인할 수 있습니다.
+                </p>
+                <div style="margin-top:20px;">
+                    <span class="tag" style="background:#ff5e00; color:#fff; border:none; padding:5px 15px;">LIVE</span>
+                    <span class="tag" style="border:1px solid #333; color:#666; padding:5px 15px;">PUBG</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section class="section" id="members">
         <h2 class="section-title">CLIX SQUAD STATS</h2>
         <div class="stats-grid">
             <div class="stat-card">
                 <span class="rank-badge tier-platinum">Platinum</span>
-                <div class="card-header">
-                    <h3 class="player-name">CLIX_0dB</h3>
-                    <span class="player-role">Main Order</span>
-                </div>
+                <div class="card-header"><h3 class="player-name">CLIX_0dB</h3><span class="player-role">Main Order</span></div>
                 <div class="data-row">
                     <div class="data-item"><span class="data-label">K/D Ratio</span><span class="data-value">1.25</span></div>
                     <div class="data-item"><span class="data-label">Avg Damage</span><span class="data-value">208</span></div>
@@ -167,10 +207,7 @@
             </div>
             <div class="stat-card">
                 <span class="rank-badge tier-gold">Gold</span>
-                <div class="card-header">
-                    <h3 class="player-name">Viper789456</h3>
-                    <span class="player-role">Sub Order</span>
-                </div>
+                <div class="card-header"><h3 class="player-name">Viper789456</h3><span class="player-role">Sub Order</span></div>
                 <div class="data-row">
                     <div class="data-item"><span class="data-label">K/D Ratio</span><span class="data-value">0.08</span></div>
                     <div class="data-item"><span class="data-label">Avg Damage</span><span class="data-value">105</span></div>
@@ -180,10 +217,7 @@
             </div>
             <div class="stat-card">
                 <span class="rank-badge tier-bronze">Bronze</span>
-                <div class="card-header">
-                    <h3 class="player-name">joa1013</h3>
-                    <span class="player-role">Back Up</span>
-                </div>
+                <div class="card-header"><h3 class="player-name">joa1013</h3><span class="player-role">Back Up</span></div>
                 <div class="data-row">
                     <div class="data-item"><span class="data-label">K/D Ratio</span><span class="data-value">0.30</span></div>
                     <div class="data-item"><span class="data-label">Avg Damage</span><span class="data-value">57</span></div>
@@ -234,18 +268,18 @@
             }
         });
 
-        let isLoginMode = true;
         function toggleAuthMode() {
-            isLoginMode = !isLoginMode;
-            document.getElementById('auth-title').innerText = isLoginMode ? "CLIX MEMBERS ONLY" : "CLIX SIGN UP";
-            document.getElementById('auth-main-btn').innerText = isLoginMode ? "로그인" : "회원가입";
-            document.getElementById('auth-toggle-text').innerText = isLoginMode ? "계정이 없으신가요? 회원가입" : "이미 계정이 있나요? 로그인";
-            document.getElementById('signup-extra-fields').style.display = isLoginMode ? "none" : "block";
+            let isLoginMode = document.getElementById('auth-main-btn').innerText === "로그인";
+            document.getElementById('auth-title').innerText = isLoginMode ? "CLIX SIGN UP" : "CLIX MEMBERS ONLY";
+            document.getElementById('auth-main-btn').innerText = isLoginMode ? "회원가입" : "로그인";
+            document.getElementById('auth-toggle-text').innerText = isLoginMode ? "이미 계정이 있나요? 로그인" : "계정이 없으신가요? 회원가입";
+            document.getElementById('signup-extra-fields').style.display = isLoginMode ? "block" : "none";
         }
 
         function handleAuth() {
             const email = document.getElementById('auth-email').value;
             const password = document.getElementById('auth-password').value;
+            const isLoginMode = document.getElementById('auth-main-btn').innerText === "로그인";
             if (isLoginMode) {
                 auth.signInWithEmailAndPassword(email, password).catch(err => alert("로그인 오류: " + err.message));
             } else {
@@ -264,14 +298,31 @@
 
         function showMap(mapName, btn) {
             const btns = document.querySelectorAll('.map-nav-btn'); btns.forEach(b => b.classList.remove('active')); btn.classList.add('active');
-            const data = { 
+            const data = { 
                 'erangel': ['erangel.jpg', 'ERANGEL 전략', '- 주요 차량 스폰: 강남, 포친키. 1페 중앙 점령 추천<br>- 외곽 강하: 밀타 파워 보트 필수<br>- 밀베 자기장: 다리 검문 대비 및 해안가 시야 확보<br>- 대도시: 시가전 시 옥상 선점 및 투척물 활용<br>- 평야 교전: 볏짚과 해우소 활용 거점 방어<br>- 기습 포인트: 해우소 지붕 위 점령 통행세 징수'],
                 'miramar': ['miramar.jpg', 'MIRAMAR 전략', '- 고지대 능선 점령 필수 시야 확보가 핵심<br>- 무기 구성: DMR/SR 장거리 무기 필수<br>- 차량: 픽업트럭 확보 및 능선 하단 회전<br>- 도심 진입: 페카도, 로스 레오네스 창문/옥상 클리어링<br>- 지형 활용: 분지 지형 굴곡을 활용한 하이딩 및 기습']
             };
             const m = data[mapName];
-            document.getElementById('map-content').innerHTML = `
-                <div class="map-image-wrapper"><img src="${m[0]}" onerror="this.src='${m[0].toUpperCase()}'"></div>
-                <div class="map-strategy-box"><h3>${m[1]}</h3><p style="color:#888; font-size:0.9rem; line-height: 1.8;">${m[2]}</p></div>`;
+            document.getElementById('map-content').innerHTML = `<div class="map-image-wrapper"><img src="${m[0]}" onerror="this.src='${m[0].toUpperCase()}'"></div><div class="map-strategy-box"><h3>${m[1]}</h3><p style="color:#888; font-size:0.9rem; line-height: 1.8;">${m[2]}</p></div>`;
+        }
+
+        // 스트리밍 제어 함수
+        function changeStream(platform, id, btn) {
+            const iframe = document.getElementById('live-iframe');
+            const btns = document.querySelectorAll('.stream-tab-btn');
+            const streamerName = document.getElementById('streamer-name');
+            btns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            if (platform === 'chzzk') {
+                iframe.src = `https://chzzk.naver.com/live/${id}/embed`;
+                streamerName.innerText = "ON AIR: CHZZK LIVE";
+            } else if (platform === 'soop') {
+                iframe.src = `https://play.soop.st/embed/station/${id}`;
+                streamerName.innerText = "ON AIR: SOOP LIVE";
+            } else if (platform === 'youtube') {
+                iframe.src = `https://www.youtube.com/embed/live_stream?channel=${id}&autoplay=1&mute=1`;
+                streamerName.innerText = "ON AIR: YOUTUBE LIVE";
+            }
         }
     </script>
 </body>
