@@ -56,6 +56,7 @@
         .map-nav-btn.active { background: #ff5e00; color: white; }
         .map-content-area { padding: 30px; display: grid; grid-template-columns: 150px 1fr; gap: 30px; }
         
+        /* 맵 드로잉 관련 스타일 변경 */
         .map-drawing-container { position: relative; width: 100%; border: 2px solid #333; border-radius: 8px; overflow: hidden; background: #000; }
         .map-drawing-container img { width: 100%; height: auto; display: block; object-fit: cover; }
         #tactical-canvas { position: absolute; top: 0; left: 0; z-index: 10; cursor: crosshair; touch-action: none; }
@@ -317,13 +318,13 @@
         <h2 class="section-title">CLIX SQUAD STATS</h2>
         <div class="stats-grid">
             <div class="stat-card">
-                <span class="rank-badge tier-platinum" id="pubg-tier">Loading..</span>
-                <div class="card-header"><h3 class="player-name">CLX_0dB</h3><span class="player-role">Main Order</span></div>
+                <span class="rank-badge tier-platinum">Platinum</span>
+                <div class="card-header"><h3 class="player-name">CLIX_0dB</h3><span class="player-role">Main Order</span></div>
                 <div class="data-row">
-                    <div class="data-item"><span class="data-label">K/D Ratio</span><span class="data-value" id="pubg-kd">0.00</span></div>
-                    <div class="data-item"><span class="data-label">Avg Damage</span><span class="data-value" id="pubg-avg-dmg">0</span></div>
-                    <div class="data-item"><span class="data-label">Rank Point</span><span class="data-value" id="pubg-rp">0<span class="data-unit">LP</span></span></div>
-                    <div class="data-item"><span class="data-label">Win Rate</span><span class="data-value">--<span class="data-unit">%</span></span></div>
+                    <div class="data-item"><span class="data-label">K/D Ratio</span><span class="data-value">1.25</span></div>
+                    <div class="data-item"><span class="data-label">Avg Damage</span><span class="data-value">208</span></div>
+                    <div class="data-item"><span class="data-label">Win Rate</span><span class="data-value">7.7<span class="data-unit">%</span></span></div>
+                    <div class="data-item"><span class="data-label">Top 10</span><span class="data-value">25.3<span class="data-unit">%</span></span></div>
                 </div>
             </div>
             <div class="stat-card">
@@ -368,39 +369,7 @@
         let isUserAdmin = false;
         let userNick = "익명";
 
-        // --- [추가됨] PUBG API 설정 ---
-        const PUBG_API_KEY = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIyZDM0N2Y2MC0xNGJjLTAxM2YtMjljYy01MmJjZWJmMWUzMTYiLCJpc3MiOiJnYW1lbG9ja2VyIiwiaWF0IjoxNzc1NTcyMTk3LCJwdWIiOiJibHVlaG9sZSIsInRpdGxlIjoicHViZyIsImFwcCI6ImNsaXgtY2xhbi1zdGF0In0.uV5HbysN7Yb8MtfPNFWxxTz1o62sCS60thT5uy8MsUM";
-        const TEST_NICKNAME = "CLX_0dB";
-        const PROXY_URL = "https://cors-anywhere.herokuapp.com/";
-
-        async function fetchPubgStats() {
-            try {
-                // 1. 플레이어 ID 조회
-                const pRes = await fetch(PROXY_URL + `https://api.pubg.com/shards/steam/players?filter[playerNames]=${TEST_NICKNAME}`, {
-                    headers: { "Authorization": `Bearer ${PUBG_API_KEY}`, "Accept": "application/vnd.api+json" }
-                });
-                const pData = await pRes.json();
-                const accountId = pData.data[0].id;
-
-                // 2. 랭크 스탯 조회 (28시즌 기준)
-                const sRes = await fetch(PROXY_URL + `https://api.pubg.com/shards/steam/players/${accountId}/seasons/division.bro.official.pc-2024-28/ranked`, {
-                    headers: { "Authorization": `Bearer ${PUBG_API_KEY}`, "Accept": "application/vnd.api+json" }
-                });
-                const sData = await sRes.json();
-                const stats = sData.data.attributes.rankedGameModeStats.squad;
-
-                if(stats) {
-                    document.getElementById('pubg-rp').innerHTML = `${stats.currentRankPoint}<span class="data-unit">LP</span>`;
-                    document.getElementById('pubg-kd').innerText = (stats.kills / (stats.deaths || 1)).toFixed(2);
-                    document.getElementById('pubg-avg-dmg').innerText = Math.floor(stats.damageDealt / stats.roundsPlayed);
-                    document.getElementById('pubg-tier').innerText = `${stats.currentTier.tier} ${stats.currentTier.subTier}`;
-                }
-            } catch (e) {
-                console.error("PUBG API 로드 실패:", e);
-            }
-        }
-
-        // --- 맵 그리기 로직 ---
+        // --- 맵 그리기 로직 추가 ---
         let canvas, ctx;
         let isDrawing = false;
         let currentTool = 'pen';
@@ -411,6 +380,7 @@
             const img = document.getElementById('map-image');
             if(!canvas || !img) return;
             ctx = canvas.getContext('2d');
+            
             canvas.width = img.clientWidth;
             canvas.height = img.clientHeight;
             
@@ -418,6 +388,7 @@
             canvas.addEventListener('mouseup', endPosition);
             canvas.addEventListener('mousemove', draw);
             canvas.addEventListener('mouseout', endPosition);
+            
             canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startPosition(e.touches[0]); }, {passive: false});
             canvas.addEventListener('touchend', endPosition);
             canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e.touches[0]); }, {passive: false});
@@ -428,7 +399,6 @@
             if(img && img.complete) initCanvas();
         });
 
-        // [수정됨] 페이지 로드 시 맵과 PUBG 데이터를 함께 초기화
         document.addEventListener('DOMContentLoaded', () => {
             const savedEmail = localStorage.getItem('clix_saved_email');
             if (savedEmail) {
@@ -441,47 +411,66 @@
                 if(img.complete) initCanvas(); 
                 else img.onload = initCanvas;
             }
-
-            // PUBG 데이터 호출
-            fetchPubgStats();
         });
 
         function getMousePos(evt) {
             const rect = canvas.getBoundingClientRect();
-            return { x: evt.clientX - rect.left, y: evt.clientY - rect.top };
+            return {
+                x: evt.clientX - rect.left,
+                y: evt.clientY - rect.top
+            };
         }
-        function startPosition(e) { isDrawing = true; draw(e); }
-        function endPosition() { isDrawing = false; ctx.beginPath(); }
+
+        function startPosition(e) { 
+            isDrawing = true; 
+            draw(e); 
+        }
+        
+        function endPosition() { 
+            isDrawing = false; 
+            ctx.beginPath(); 
+        }
+        
         function draw(e) {
             if (!isDrawing) return;
             const pos = getMousePos(e);
+
             ctx.lineWidth = currentTool === 'eraser' ? 20 : 3;
             ctx.lineCap = 'round';
             ctx.strokeStyle = currentTool === 'eraser' ? 'rgba(0,0,0,1)' : currentColor;
             ctx.globalCompositeOperation = currentTool === 'eraser' ? 'destination-out' : 'source-over';
+
             ctx.lineTo(pos.x, pos.y);
             ctx.stroke();
             ctx.beginPath();
             ctx.moveTo(pos.x, pos.y);
         }
+
         function setTool(tool) {
             currentTool = tool;
             document.getElementById('tool-pen').classList.remove('active');
             document.getElementById('tool-eraser').classList.remove('active');
             document.getElementById('tool-' + tool).classList.add('active');
         }
+
         function setColor(color, element) {
             currentColor = color;
             setTool('pen');
             document.querySelectorAll('.tool-color').forEach(el => el.classList.remove('active'));
             element.classList.add('active');
         }
-        function clearCanvas() { if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height); }
+
+        function clearCanvas() {
+            if (!ctx || !canvas) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        // --- 맵 그리기 로직 끝 ---
 
         auth.onAuthStateChanged((user) => {
             const overlay = document.getElementById('lock-overlay');
             const formScreen = document.getElementById('auth-form-screen');
             const verifyScreen = document.getElementById('verify-screen');
+            
             if (user) {
                 if (user.emailVerified) {
                     overlay.style.display = 'none';
@@ -490,9 +479,14 @@
                             const data = doc.data();
                             userNick = data.nickname || user.email.split('@')[0];
                             isUserAdmin = data.isAdmin === true;
+                        } else {
+                            userNick = user.email.split('@')[0];
+                            isUserAdmin = false;
                         }
+                        
                         document.getElementById('nav-user-info').innerText = userNick + "님 반갑습니다";
                         document.getElementById('clear-all-btn').style.display = isUserAdmin ? 'block' : 'none';
+                        
                         loadMessages();
                     });
                 } else {
@@ -501,6 +495,8 @@
                     verifyScreen.style.display = 'block';
                 }
             } else {
+                isUserAdmin = false;
+                userNick = "익명";
                 overlay.style.display = 'flex';
                 formScreen.style.display = 'block';
                 verifyScreen.style.display = 'none';
@@ -508,77 +504,182 @@
         });
 
         function getNicknameColor(nickname) {
-            const colors = ['#ff5e00', '#4ee29d', '#00d4ff', '#ffcc00', '#ff4e50', '#8e44ad', '#3498db', '#f1c40f'];
+            const colors = [
+                '#ff5e00', '#4ee29d', '#00d4ff', '#ffcc00', 
+                '#ff4e50', '#8e44ad', '#3498db', '#f1c40f'
+            ];
             let hash = 0;
-            for (let i = 0; i < nickname.length; i++) hash = nickname.charCodeAt(i) + ((hash << 5) - hash);
-            return colors[Math.abs(hash) % colors.length];
+            for (let i = 0; i < nickname.length; i++) {
+                hash = nickname.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const index = Math.abs(hash) % colors.length;
+            return colors[index];
         }
 
         function toggleMusic() {
             const music = document.getElementById('bgm');
+            const playBtn = document.querySelector('.play-toggle');
+            const playIcon = document.getElementById('play-icon');
             const status = document.getElementById('music-status');
-            const icon = document.getElementById('play-icon');
+
             if (music.paused) {
                 music.play().then(() => {
-                    icon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+                    playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
                     status.innerText = "ON"; status.style.color = "#ff5e00";
-                }).catch(() => alert("음원 파일이 없습니다."));
+                    playBtn.classList.add('music-on');
+                }).catch(e => alert("전장 음원(bgm.mp3)이 준비되지 않았습니다."));
             } else {
                 music.pause();
-                icon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+                playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
                 status.innerText = "OFF"; status.style.color = "#444";
+                playBtn.classList.remove('music-on');
             }
+        }
+
+        function deleteMessage(msgId) {
+            if (!confirm("이 메시지를 삭제하시겠습니까?")) return;
+            db.collection("chats").doc(msgId).delete().catch(err => alert("삭제 실패: " + err.message));
+        }
+
+        async function clearAllChats() {
+            if (!isUserAdmin) return alert("권한이 없습니다.");
+            if (!confirm("모든 채팅 기록을 삭제하시겠습니까? (복구 불가)")) return;
+            
+            try {
+                const snapshot = await db.collection("chats").get();
+                const batch = db.batch();
+                snapshot.docs.forEach((doc) => {
+                    batch.delete(doc.ref);
+                });
+                await batch.commit();
+                alert("전체 채팅이 초기화되었습니다.");
+            } catch (err) {
+                alert("삭제 중 오류 발생: " + err.message);
+            }
+        }
+
+        function toggleAuthMode() {
+            let btn = document.getElementById('auth-main-btn');
+            let isLoginMode = btn.innerText === "로그인";
+            document.getElementById('auth-title').innerText = isLoginMode ? "CLIX SIGN UP" : "CLIX MEMBERS ONLY";
+            btn.innerText = isLoginMode ? "회원가입" : "로그인";
+            document.getElementById('auth-toggle-text').innerText = isLoginMode ? "이미 계정이 있나요? 로그인" : "계정이 없으신가요? 회원가입";
+            document.getElementById('signup-extra-fields').style.display = isLoginMode ? "block" : "none";
+            
+            document.getElementById('login-options').style.display = isLoginMode ? "none" : "flex";
         }
 
         function handleAuth() {
             const email = document.getElementById('auth-email').value.trim();
             const password = document.getElementById('auth-password').value;
-            const isLogin = document.getElementById('auth-main-btn').innerText === "로그인";
-            if (isLogin) {
-                auth.signInWithEmailAndPassword(email, password).catch(err => alert(err.message));
+            const isLoginMode = document.getElementById('auth-main-btn').innerText === "로그인";
+            
+            if (isLoginMode) {
+                const keepLoggedIn = document.getElementById('keep-logged-in').checked;
+                const rememberEmail = document.getElementById('remember-email').checked;
+
+                const persistence = keepLoggedIn ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION;
+                
+                if (rememberEmail) {
+                    localStorage.setItem('clix_saved_email', email);
+                } else {
+                    localStorage.removeItem('clix_saved_email');
+                }
+
+                auth.setPersistence(persistence)
+                    .then(() => auth.signInWithEmailAndPassword(email, password))
+                    .catch(err => alert("로그인 오류: " + err.message));
             } else {
                 const nickname = document.getElementById('auth-nickname').value;
+                const age = document.getElementById('auth-age').value;
+                if(!nickname || !age) return alert("추가 정보를 입력하세요.");
                 auth.createUserWithEmailAndPassword(email, password).then((res) => {
                     res.user.sendEmailVerification();
-                    return db.collection("users").doc(res.user.uid).set({ nickname: nickname, email: email });
-                }).catch(err => alert(err.message));
+                    return db.collection("users").doc(res.user.uid).set({ nickname: nickname, age: age, email: email, joinedAt: firebase.firestore.FieldValue.serverTimestamp() });
+                }).then(() => alert("인증 메일을 확인하세요!")).catch(err => alert("가입 실패: " + err.message));
             }
         }
 
-        function toggleAuthMode() {
-            const btn = document.getElementById('auth-main-btn');
-            const isLogin = btn.innerText === "로그인";
-            btn.innerText = isLogin ? "회원가입" : "로그인";
-            document.getElementById('signup-extra-fields').style.display = isLogin ? "block" : "none";
-        }
+        function resendEmail() { auth.currentUser.sendEmailVerification().then(() => alert("재발송 완료")); }
+        function logout() { if(confirm("로그아웃 하시겠습니까?")) auth.signOut(); }
 
-        function logout() { if(confirm("로그아웃?")) auth.signOut(); }
-
+        // 기존 showMap 함수 교체
         function showMap(mapName, btn) {
-            document.querySelectorAll('.map-nav-btn').forEach(b => b.classList.remove('active'));
+            const btns = document.querySelectorAll('.map-nav-btn'); 
+            btns.forEach(b => b.classList.remove('active')); 
             btn.classList.add('active');
-            document.getElementById('map-image').src = mapName + '.jpg';
+            
+            const data = { 
+                'erangel': ['erangel.jpg', 'ERANGEL 전략', '- 주요 차량 스폰: 강남, 포친키. 1페 중앙 점령 추천<br>- 외곽 강하: 밀타 파워 보트 필수<br>- 밀베 자기장: 다리 검문 대비 및 해안가 시야 확보<br>- 대도시: 시가전 시 옥상 선점 및 투척물 활용<br>- 평야 교전: 볏짚과 해우소 활용 거점 방어<br>- 기습 포인트: 해우소 지붕 위 점령 통행세 징수'],
+                'miramar': ['miramar.jpg', 'MIRAMAR 전략', '- 고지대 능선 점령 필수 시야 확보가 핵심<br>- 무기 구성: DMR/SR 장거리 무기 필수<br>- 차량: 픽업트럭 확보 및 능선 하단 회전<br>- 도심 진입: 페카도, 로스 레오네스 창문/옥상 클리어링<br>- 지형 활용: 분지 지형 굴곡을 활용한 하이딩 및 기습']
+            };
+            const m = data[mapName];
+            
+            const img = document.getElementById('map-image');
+            img.src = m[0];
+            img.onerror = function() { this.src = m[0].toUpperCase(); };
+            img.onload = initCanvas; 
+
+            document.getElementById('map-strategy-box').innerHTML = `<h3 style="color:#ff5e00; margin-top:0;">${m[1]}</h3><p style="color:#888; font-size:0.9rem; line-height: 1.8;">${m[2]}</p>`;
             clearCanvas();
         }
 
+        function changeStream(platform, id, btn) {
+            const iframe = document.getElementById('live-iframe');
+            const btns = document.querySelectorAll('.stream-tab-btn');
+            btns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            if (platform === 'chzzk') iframe.src = `https://chzzk.naver.com/live/${id}/embed`;
+            else if (platform === 'soop') iframe.src = `https://play.soop.st/embed/station/${id}`;
+            else if (platform === 'youtube') iframe.src = `https://www.youtube.com/embed/live_stream?channel=${id}&autoplay=1&mute=1`;
+        }
+
         function loadMessages() {
-            db.collection("chats").orderBy("createdAt", "asc").limitToLast(50).onSnapshot((snap) => {
-                const box = document.getElementById('chat-messages');
-                box.innerHTML = "";
-                snap.forEach((doc) => {
-                    const d = doc.data();
-                    box.innerHTML += `<div class="chat-msg-item"><span class="chat-nickname" style="color:${getNicknameColor(d.nickname)}">${d.nickname}</span><div>${d.text}</div></div>`;
+            const chatBox = document.getElementById('chat-messages');
+            
+            db.collection("chats")
+                .orderBy("createdAt", "asc")
+                .limitToLast(50)
+                .onSnapshot((snapshot) => {
+                    chatBox.innerHTML = "";
+                    
+                    snapshot.forEach((doc) => {
+                        const data = doc.data();
+                        const msgId = doc.id;
+                        const div = document.createElement('div');
+                        div.className = 'chat-msg-item';
+                        
+                        const deleteBtn = isUserAdmin ? `<span onclick="deleteMessage('${msgId}')" style="color:#ff3333; cursor:pointer; float:right; font-size:10px; font-weight:bold;">[X]</span>` : "";
+                        const nickColor = getNicknameColor(data.nickname);
+
+                        div.innerHTML = `
+                            ${deleteBtn}
+                            <span class="chat-nickname" style="color: ${nickColor};">${data.nickname}</span>
+                            <div class="chat-text" style="color: #eee;">${data.text}</div>
+                        `;
+                        chatBox.appendChild(div);
+                    });
+                    chatBox.scrollTop = chatBox.scrollHeight;
                 });
-                box.scrollTop = box.scrollHeight;
-            });
         }
 
         function sendMessage() {
+            const user = auth.currentUser;
             const input = document.getElementById('chat-input');
-            if (!input.value.trim()) return;
-            db.collection("chats").add({ nickname: userNick, text: input.value, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-            input.value = "";
+            const message = input.value.trim();
+            if (!user) return alert("로그인 후 이용 가능합니다.");
+            if (!message) return;
+            
+            db.collection("chats").add({
+                nickname: userNick,
+                text: message,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => { input.value = ""; });
         }
+
+        document.getElementById('chat-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
     </script>
 </body>
 </html>
