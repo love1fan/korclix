@@ -65,59 +65,35 @@
         .stream-tab-btn.active { background: #ff5e00; color: #fff; border-color: #ff5e00; box-shadow: 0 0 15px rgba(255, 94, 0, 0.3); }
         .stream-tab-btn:hover { border-color: #ff5e00; color: #fff; }
 
-        /* 🔥 스트림 컨테이너 수정: 화면을 넘지 않도록 제한 */
-.stream-container { 
-    display: grid; 
-    grid-template-columns: 2.2fr 1.3fr; 
-    gap: 20px; 
-    background: #0d0d0d; 
-    padding: 25px; 
-    border-radius: 12px; 
-    border: 1px solid #222; 
-    align-items: stretch;
-    max-height: 80vh; /* 화면 높이의 80%까지만 커지도록 제한 */
-    margin-bottom: 50px;
-}
-
-/* 🔥 비디오 박스 수정: 가로/세로 비율은 유지하되 부모를 넘지 않게 함 */
-.video-wrapper { 
-    background: #000; 
-    border-radius: 8px; 
-    overflow: hidden; 
-    border: 1px solid #333; 
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-
-/* iframe이 박스 안에 꽉 차도록 고정 */
-#live-iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-}
-
-/* 🔥 채팅창 수정: 내용이 많아도 삐져나오지 않게 함 */
-.chat-box-wrapper { 
-    background: #111; 
-    border: 1px solid #222; 
-    border-radius: 8px; 
-    display: flex; 
-    flex-direction: column; 
-    height: 100%; 
-    min-width: 300px; /* 채팅창 최소 너비 확보 */
-    overflow: hidden; 
-}
-        #chat-messages { 
-            flex: 1; /* 입력창을 제외한 영역을 채팅창이 차지 */
-            padding: 15px; overflow-y: auto; font-size: 0.85rem; color: #ccc; scroll-behavior: smooth; 
+        .stream-container { 
+            display: grid; grid-template-columns: 2.2fr 1.3fr; gap: 20px; 
+            background: #0d0d0d; padding: 25px; border-radius: 12px; border: 1px solid #222; 
+            align-items: stretch; max-height: 80vh; margin-bottom: 50px;
         }
+        .video-wrapper { 
+            background: #000; border-radius: 8px; overflow: hidden; 
+            border: 1px solid #333; position: relative; width: 100%; height: 100%;
+        }
+        #live-iframe { width: 100%; height: 100%; border: none; }
+
+        .chat-box-wrapper { 
+            background: #111; border: 1px solid #222; border-radius: 8px; 
+            display: flex; flex-direction: column; height: 100%; min-width: 300px; overflow: hidden; 
+        }
+        #chat-messages { flex: 1; padding: 15px; overflow-y: auto; font-size: 0.85rem; color: #ccc; scroll-behavior: smooth; }
         .chat-msg-item { margin-bottom: 10px; line-height: 1.4; border-bottom: 1px solid #1a1a1a; padding-bottom: 5px; }
         .chat-nickname { color: #ff5e00; font-weight: 800; margin-right: 5px; font-size: 0.75rem; }
         .chat-input-area { padding: 10px; border-top: 1px solid #222; display: flex; gap: 8px; background: #151515; }
         #chat-input { flex: 1; background: #000; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 4px; font-size: 0.85rem; outline: none; }
         #chat-input:focus { border-color: #ff5e00; }
         .chat-send-btn { background: #ff5e00; color: #fff; border: none; padding: 0 15px; border-radius: 4px; font-weight: 800; cursor: pointer; font-size: 0.8rem; }
+
+        /* 🔥 디스코드 스타일 */
+        .discord-container { 
+            display: grid; grid-template-columns: 1fr 2fr; gap: 40px; 
+            background: #0d0d0d; padding: 40px; border-radius: 12px; border: 1px solid #222; align-items: center; 
+        }
+        .discord-widget { background: #000; border-radius: 8px; overflow: hidden; border: 1px solid #333; line-height: 0; }
 
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-top: 50px; }
         .stat-card { background: rgba(17, 17, 17, 0.9); border: 1px solid #222; border-radius: 12px; padding: 35px; transition: 0.3s; position: relative; overflow: hidden; }
@@ -137,7 +113,7 @@
         .tier-bronze { color: #cd7f32; border-color: #cd7f32; }
 
         footer { padding: 80px; text-align: center; color: #444; border-top: 1px solid #222; text-transform: uppercase; }
-        @media (max-width: 900px) { .about-wrapper, .stats-grid, .stream-container { grid-template-columns: 1fr; } .hero h1 { font-size: 4rem; } }
+        @media (max-width: 900px) { .about-wrapper, .stats-grid, .stream-container, .discord-container { grid-template-columns: 1fr; } .hero h1 { font-size: 4rem; } }
     </style>
 </head>
 <body oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
@@ -170,6 +146,8 @@
         <a href="#" class="logo">CLAN CLIX</a>
         <ul>
             <li><a href="#about">ABOUT</a></li>
+            <li><a href="#stream">LIVE</a></li>
+            <li><a href="#discord">DISCORD</a></li>
             <li><a href="notice.html">NOTICE</a></li>
             <li><a href="board.html">BOARD</a></li>
             <li><a href="#members">STATS</a></li>
@@ -230,12 +208,30 @@
                     <span style="width: 8px; height: 8px; background: #ff5e00; border-radius: 50%; box-shadow: 0 0 5px #ff5e00;"></span>
                     <span style="font-size: 0.8rem; font-weight: 900; letter-spacing: 1px;">CLIX LIVE CHAT</span>
                 </div>
-                <div id="chat-messages">
-                </div>
+                <div id="chat-messages"></div>
                 <div class="chat-input-area">
                     <input type="text" id="chat-input" placeholder="로그인 후 채팅 가능..." autocomplete="off">
                     <button class="chat-send-btn" onclick="sendMessage()">SEND</button>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="discord">
+        <h2 class="section-title">CLIX DISCORD</h2>
+        <div class="discord-container">
+            <div class="discord-widget">
+                <iframe src="https://discord.com/widget?id=YOUR_SERVER_ID&theme=dark" width="100%" height="400" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
+            </div>
+            <div class="discord-info">
+                <h3 style="color: #5865F2; font-size: 2.2rem; margin-top: 0; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">We Speak On Discord</h3>
+                <p style="color: #888; line-height: 1.8; margin-bottom: 30px;">
+                    CLIX 클랜원들과의 실시간 소통, 전술 회의, 그리고 내전 참여를 위해<br>
+                    반드시 디스코드 채널에 합류해 주세요. 
+                </p>
+                <a href="https://discord.gg/YOUR_INVITE_CODE" target="_blank" class="auth-btn" style="background: #5865F2; text-decoration: none; display: inline-block; text-align: center; width: 220px; font-weight: 900;">
+                    디스코드 참여하기
+                </a>
             </div>
         </div>
     </section>
@@ -363,7 +359,6 @@
             const btns = document.querySelectorAll('.stream-tab-btn');
             btns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-
             if (platform === 'chzzk') {
                 iframe.src = `https://chzzk.naver.com/live/${id}/embed`;
             } else if (platform === 'soop') {
@@ -387,12 +382,8 @@
                         div.innerHTML = `<span class="chat-nickname">${data.nickname}</span> ${data.text}`;
                         chatBox.appendChild(div);
                     });
-                    
                     setTimeout(() => {
-                        chatBox.scrollTo({
-                            top: chatBox.scrollHeight,
-                            behavior: 'smooth'
-                        });
+                        chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
                     }, 50); 
                 });
         }
@@ -401,19 +392,15 @@
             const user = auth.currentUser;
             const input = document.getElementById('chat-input');
             const message = input.value.trim();
-
             if (!user) return alert("로그인 후 이용 가능합니다.");
             if (!message) return;
-
             db.collection("users").doc(user.uid).get().then((doc) => {
                 const nickname = doc.exists ? doc.data().nickname : "익명";
                 db.collection("chats").add({
                     nickname: nickname,
                     text: message,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                }).then(() => {
-                    input.value = "";
-                });
+                }).then(() => { input.value = ""; });
             });
         }
 
