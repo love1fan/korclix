@@ -55,8 +55,16 @@
         .map-nav-btn { flex: 1; padding: 20px; border: none; background: none; color: #666; font-weight: 800; cursor: pointer; }
         .map-nav-btn.active { background: #ff5e00; color: white; }
         .map-content-area { padding: 30px; display: grid; grid-template-columns: 150px 1fr; gap: 30px; }
-        .map-image-wrapper { width: 100%; background: #000; border: 2px solid #333; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-        .map-image-wrapper img { width: 100%; height: auto; display: block; object-fit: cover; }
+        
+        /* 맵 드로잉 관련 스타일 변경 */
+        .map-drawing-container { position: relative; width: 100%; border: 2px solid #333; border-radius: 8px; overflow: hidden; background: #000; }
+        .map-drawing-container img { width: 100%; height: auto; display: block; object-fit: cover; }
+        #tactical-canvas { position: absolute; top: 0; left: 0; z-index: 10; cursor: crosshair; touch-action: none; }
+        .drawing-tools { display: flex; gap: 10px; margin-top: 10px; background: #1a1a1a; padding: 10px; border-radius: 8px; align-items: center; flex-wrap: wrap; }
+        .tool-btn { background: #333; color: #fff; border: 1px solid #444; padding: 5px 15px; cursor: pointer; border-radius: 4px; font-weight: bold; font-size: 0.8rem; }
+        .tool-btn.active { background: #ff5e00; border-color: #ff5e00; }
+        .tool-color { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
+        .tool-color.active { border-color: #fff; box-shadow: 0 0 5px #fff; }
 
         .stream-tabs { display: flex; gap: 10px; margin-bottom: 30px; justify-content: center; }
         .stream-tab-btn { 
@@ -227,8 +235,23 @@
                     <button class="map-nav-btn" onclick="showMap('miramar', this)">MIRAMAR</button>
                 </div>
                 <div class="map-content-area" id="map-content">
-                    <div class="map-image-wrapper"><img src="erangel.jpg" alt="Map" onerror="this.src='ERANGEL.JPG'"></div>
-                    <div class="map-strategy-box">
+                    <div>
+                        <div class="map-drawing-container">
+                            <img id="map-image" src="erangel.jpg" alt="Map" onerror="this.src='ERANGEL.JPG'">
+                            <canvas id="tactical-canvas"></canvas>
+                        </div>
+                        <div class="drawing-tools">
+                            <button class="tool-btn active" id="tool-pen" onclick="setTool('pen')">펜</button>
+                            <button class="tool-btn" id="tool-eraser" onclick="setTool('eraser')">지우개</button>
+                            <button class="tool-btn" style="color:#ff3333;" onclick="clearCanvas()">전체 지우기</button>
+                            <div style="flex:1;"></div>
+                            <div class="tool-color active" style="background:#ff3333;" onclick="setColor('#ff3333', this)"></div>
+                            <div class="tool-color" style="background:#33cc33;" onclick="setColor('#33cc33', this)"></div>
+                            <div class="tool-color" style="background:#3399ff;" onclick="setColor('#3399ff', this)"></div>
+                            <div class="tool-color" style="background:#ffffff;" onclick="setColor('#ffffff', this)"></div>
+                        </div>
+                    </div>
+                    <div class="map-strategy-box" id="map-strategy-box">
                         <h3 style="color:#ff5e00; margin-top:0;">ERANGEL 전략</h3>
                         <p style="color:#888; font-size:0.9rem; line-height: 1.8;">
                             - 주요 차량 스폰: 강남, 포친키. 1페 중앙 점령 추천.<br>
@@ -345,13 +368,102 @@
         let isUserAdmin = false;
         let userNick = "익명";
 
+        // --- 맵 그리기 로직 추가 ---
+        let canvas, ctx;
+        let isDrawing = false;
+        let currentTool = 'pen';
+        let currentColor = '#ff3333';
+
+        function initCanvas() {
+            canvas = document.getElementById('tactical-canvas');
+            const img = document.getElementById('map-image');
+            if(!canvas || !img) return;
+            ctx = canvas.getContext('2d');
+            
+            canvas.width = img.clientWidth;
+            canvas.height = img.clientHeight;
+            
+            canvas.addEventListener('mousedown', startPosition);
+            canvas.addEventListener('mouseup', endPosition);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseout', endPosition);
+            
+            canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startPosition(e.touches[0]); }, {passive: false});
+            canvas.addEventListener('touchend', endPosition);
+            canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e.touches[0]); }, {passive: false});
+        }
+
+        window.addEventListener('resize', () => {
+            const img = document.getElementById('map-image');
+            if(img && img.complete) initCanvas();
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
             const savedEmail = localStorage.getItem('clix_saved_email');
             if (savedEmail) {
                 document.getElementById('auth-email').value = savedEmail;
                 document.getElementById('remember-email').checked = true;
             }
+            
+            const img = document.getElementById('map-image');
+            if(img) {
+                if(img.complete) initCanvas(); 
+                else img.onload = initCanvas;
+            }
         });
+
+        function getMousePos(evt) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: evt.clientX - rect.left,
+                y: evt.clientY - rect.top
+            };
+        }
+
+        function startPosition(e) { 
+            isDrawing = true; 
+            draw(e); 
+        }
+        
+        function endPosition() { 
+            isDrawing = false; 
+            ctx.beginPath(); 
+        }
+        
+        function draw(e) {
+            if (!isDrawing) return;
+            const pos = getMousePos(e);
+
+            ctx.lineWidth = currentTool === 'eraser' ? 20 : 3;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = currentTool === 'eraser' ? 'rgba(0,0,0,1)' : currentColor;
+            ctx.globalCompositeOperation = currentTool === 'eraser' ? 'destination-out' : 'source-over';
+
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+        }
+
+        function setTool(tool) {
+            currentTool = tool;
+            document.getElementById('tool-pen').classList.remove('active');
+            document.getElementById('tool-eraser').classList.remove('active');
+            document.getElementById('tool-' + tool).classList.add('active');
+        }
+
+        function setColor(color, element) {
+            currentColor = color;
+            setTool('pen');
+            document.querySelectorAll('.tool-color').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        function clearCanvas() {
+            if (!ctx || !canvas) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        // --- 맵 그리기 로직 끝 ---
 
         auth.onAuthStateChanged((user) => {
             const overlay = document.getElementById('lock-overlay');
@@ -490,14 +602,25 @@
         function resendEmail() { auth.currentUser.sendEmailVerification().then(() => alert("재발송 완료")); }
         function logout() { if(confirm("로그아웃 하시겠습니까?")) auth.signOut(); }
 
+        // 기존 showMap 함수 교체
         function showMap(mapName, btn) {
-            const btns = document.querySelectorAll('.map-nav-btn'); btns.forEach(b => b.classList.remove('active')); btn.classList.add('active');
+            const btns = document.querySelectorAll('.map-nav-btn'); 
+            btns.forEach(b => b.classList.remove('active')); 
+            btn.classList.add('active');
+            
             const data = { 
                 'erangel': ['erangel.jpg', 'ERANGEL 전략', '- 주요 차량 스폰: 강남, 포친키. 1페 중앙 점령 추천<br>- 외곽 강하: 밀타 파워 보트 필수<br>- 밀베 자기장: 다리 검문 대비 및 해안가 시야 확보<br>- 대도시: 시가전 시 옥상 선점 및 투척물 활용<br>- 평야 교전: 볏짚과 해우소 활용 거점 방어<br>- 기습 포인트: 해우소 지붕 위 점령 통행세 징수'],
                 'miramar': ['miramar.jpg', 'MIRAMAR 전략', '- 고지대 능선 점령 필수 시야 확보가 핵심<br>- 무기 구성: DMR/SR 장거리 무기 필수<br>- 차량: 픽업트럭 확보 및 능선 하단 회전<br>- 도심 진입: 페카도, 로스 레오네스 창문/옥상 클리어링<br>- 지형 활용: 분지 지형 굴곡을 활용한 하이딩 및 기습']
             };
             const m = data[mapName];
-            document.getElementById('map-content').innerHTML = `<div class="map-image-wrapper"><img src="${m[0]}" onerror="this.src='${m[0].toUpperCase()}'"></div><div class="map-strategy-box"><h3>${m[1]}</h3><p style="color:#888; font-size:0.9rem; line-height: 1.8;">${m[2]}</p></div>`;
+            
+            const img = document.getElementById('map-image');
+            img.src = m[0];
+            img.onerror = function() { this.src = m[0].toUpperCase(); };
+            img.onload = initCanvas; 
+
+            document.getElementById('map-strategy-box').innerHTML = `<h3 style="color:#ff5e00; margin-top:0;">${m[1]}</h3><p style="color:#888; font-size:0.9rem; line-height: 1.8;">${m[2]}</p>`;
+            clearCanvas();
         }
 
         function changeStream(platform, id, btn) {
