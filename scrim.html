@@ -98,6 +98,26 @@
 
         let isUserAdmin = false;
 
+        const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1491054650411978954/VNb4rgYvRZQ-X932PMUO6NlPSKtzjdLNKRPr8lx25WjHbf4e5mLkhHLa45yMwj48myyF";
+
+        function sendDiscordWebhook(title, author, content) {
+            const payload = {
+                content: "📢 **[스크림/내전] 새로운 결과가 등록되었습니다.**",
+                embeds: [{
+                    title: title,
+                    description: content.length > 50 ? content.substring(0, 50) + "..." : content,
+                    color: 16735744, 
+                    author: { name: author }
+                }]
+            };
+
+            fetch(DISCORD_WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).catch(error => console.error("디스코드 웹훅 전송 실패:", error));
+        }
+
         document.getElementById('match-date').valueAsDate = new Date();
 
         auth.onAuthStateChanged((user) => {
@@ -170,6 +190,10 @@
                 document.getElementById('match-title').value = '';
                 document.getElementById('match-result').value = '';
                 document.getElementById('match-details').value = '';
+                
+                const webhookTitle = `[${date}] ${title} - ${result}`;
+                sendDiscordWebhook(webhookTitle, "관리자", details);
+
                 alert("기록이 성공적으로 등록되었습니다.");
             }).catch((error) => {
                 alert("등록 실패: " + error.message);
