@@ -65,10 +65,11 @@
         .stream-tab-btn.active { background: #ff5e00; color: #fff; border-color: #ff5e00; box-shadow: 0 0 15px rgba(255, 94, 0, 0.3); }
         .stream-tab-btn:hover { border-color: #ff5e00; color: #fff; }
 
+        /* 🔥 라이브 스트림 및 채팅창 크기 확장 */
         .stream-container { 
-            display: grid; grid-template-columns: 2.2fr 1.3fr; gap: 20px; 
+            display: grid; grid-template-columns: 2.5fr 1fr; gap: 20px; 
             background: #0d0d0d; padding: 25px; border-radius: 12px; border: 1px solid #222; 
-            align-items: stretch; max-height: 80vh; margin-bottom: 50px;
+            align-items: stretch; margin: 0 auto 50px auto; max-width: 1400px; height: 600px;
         }
         .video-wrapper { 
             background: #000; border-radius: 8px; overflow: hidden; 
@@ -76,10 +77,9 @@
         }
         #live-iframe { width: 100%; height: 100%; border: none; }
 
-        /* 🔥 채팅창 UI 디자인 고도화 */
         .chat-box-wrapper { 
             background: #111; border: 1px solid #222; border-radius: 8px; 
-            display: flex; flex-direction: column; height: 100%; min-width: 300px; overflow: hidden; 
+            display: flex; flex-direction: column; height: 100%; min-width: 350px; overflow: hidden; 
         }
         #chat-messages { 
             flex: 1; padding: 15px; overflow-y: auto; font-size: 0.85rem; color: #ccc; 
@@ -126,8 +126,8 @@
         .tier-gold { color: #ffcc00; border-color: #ffcc00; }
         .tier-bronze { color: #cd7f32; border-color: #cd7f32; }
 
-        footer { padding: 80px; text-align: center; color: #444; border-top: 1px solid #222; text-transform: uppercase; }
-        @media (max-width: 900px) { .about-wrapper, .stats-grid, .stream-container, .discord-container { grid-template-columns: 1fr; } .hero h1 { font-size: 4rem; } }
+        footer { padding: 80px; text-align: center; color: #444; border-top: 1px solid #222; text-transform: uppercase; cursor: pointer; }
+        @media (max-width: 900px) { .about-wrapper, .stats-grid, .stream-container, .discord-container { grid-template-columns: 1fr; } .hero h1 { font-size: 4rem; } .stream-container { height: auto; max-height: none; } }
 
         #music-player {
             position: fixed; bottom: 30px; left: 30px; 
@@ -187,6 +187,15 @@
             <button class="auth-btn" onclick="location.reload()">인증 완료 후 새로고침</button>
             <button class="auth-btn" style="background:#333;" onclick="resendEmail()">메일 재발송</button>
             <p class="auth-switch" onclick="logout()">다른 계정으로 로그인</p>
+        </div>
+    </div>
+
+    <div id="admin-lock" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:10000; flex-direction:column; justify-content:center; align-items:center;">
+        <div class="auth-container">
+            <h2 style="color:#ff5e00; text-align:center;">ADMIN ACCESS</h2>
+            <input type="password" id="admin-pass" class="auth-input" placeholder="관리자 암호 입력">
+            <button class="auth-btn" onclick="checkAdmin()">접속</button>
+            <button class="auth-btn" style="background:#333;" onclick="document.getElementById('admin-lock').style.display='none'">닫기</button>
         </div>
     </div>
 
@@ -257,7 +266,7 @@
                         <span style="width: 8px; height: 8px; background: #ff5e00; border-radius: 50%; box-shadow: 0 0 5px #ff5e00;"></span>
                         <span style="font-size: 0.8rem; font-weight: 900; letter-spacing: 1px;">CLIX LIVE CHAT</span>
                     </div>
-                    <button onclick="clearAllChats()" style="background:none; border:none; color:#444; font-size:10px; cursor:pointer; font-weight:bold;">CLEAR ALL</button>
+                    <button id="clear-all-btn" onclick="clearAllChats()" style="display:none; background:none; border:none; color:#ff3333; font-size:10px; cursor:pointer; font-weight:bold;">CLEAR ALL</button>
                 </div>
                 <div id="chat-messages"></div>
                 <div class="chat-input-area">
@@ -321,7 +330,7 @@
         <div style="margin-top:50px; text-align:center;"><a href="https://pubg.op.gg" target="_blank" style="color:#ff5e00; text-decoration:none; font-weight:800; border: 1px solid #ff5e00; padding: 10px 20px; border-radius: 4px;">PUBG.OP.GG 바로가기</a></div>
     </section>
 
-    <footer>&copy; 2026 CLAN CLIX. ALL RIGHTS RESERVED.</footer>
+    <footer onclick="adminFooterClick()">&copy; 2026 CLAN CLIX. ALL RIGHTS RESERVED.</footer>
 
     <script>
         const firebaseConfig = {
@@ -336,10 +345,41 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // 🔥 관리자 설정 (배그 닉네임 기준)
         const ADMIN_NICKNAMES = ["CLIX_0dB", "관리자닉네임"];
 
-        // 🔥 닉네임별 고유 색상 생성 함수
+        // 🔥 숨겨진 관리자 접속 로직 추가
+        const ADMIN_PW = "CLIX1234!!"; // 관리자 암호
+        let footerClickCount = 0;
+
+        // 단축키로 접근 (Ctrl + Shift + L)
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.shiftKey && e.key === 'L') {
+                document.getElementById('admin-lock').style.display = 'flex';
+            }
+        });
+
+        // 모바일/마우스 환경: Footer 5번 연속 클릭 시 접근
+        function adminFooterClick() {
+            footerClickCount++;
+            if (footerClickCount >= 5) {
+                document.getElementById('admin-lock').style.display = 'flex';
+                footerClickCount = 0;
+            }
+            setTimeout(() => { footerClickCount = 0; }, 3000);
+        }
+
+        // 암호 확인 및 권한 부여
+        function checkAdmin() {
+            const pass = document.getElementById('admin-pass').value;
+            if (pass === ADMIN_PW) {
+                alert("관리자 모드 활성화");
+                document.getElementById('admin-lock').style.display = 'none';
+                document.getElementById('clear-all-btn').style.display = 'block';
+            } else {
+                alert("접근 권한이 없습니다.");
+            }
+        }
+
         function getNicknameColor(nickname) {
             const colors = [
                 '#ff5e00', '#4ee29d', '#00d4ff', '#ffcc00', 
@@ -353,7 +393,6 @@
             return colors[index];
         }
 
-        // 🔥 뮤직 플레이어 컨트롤 함수
         function toggleMusic() {
             const music = document.getElementById('bgm');
             const playBtn = document.querySelector('.play-toggle');
@@ -374,13 +413,11 @@
             }
         }
 
-        // 🔥 개별 메시지 삭제
         function deleteMessage(msgId) {
             if (!confirm("이 메시지를 삭제하시겠습니까?")) return;
             db.collection("chats").doc(msgId).delete().catch(err => alert("삭제 실패: " + err.message));
         }
 
-        // 🔥 전체 채팅 비우기 (Batch 처리로 강력한 삭제)
         async function clearAllChats() {
             const user = auth.currentUser;
             if (!user) return alert("로그인 후 이용 가능합니다.");
@@ -390,7 +427,7 @@
                 const userNick = doc.exists ? doc.data().nickname : "";
 
                 if (!ADMIN_NICKNAMES.includes(userNick)) {
-                    return alert("관리자만 전체 채팅을 삭제할 수 있습니다.");
+                    return alert("권한이 없습니다.");
                 }
 
                 if (!confirm("모든 채팅 기록을 삭제하시겠습니까? (복구 불가)")) return;
@@ -481,7 +518,6 @@
             else if (platform === 'youtube') iframe.src = `https://www.youtube.com/embed/live_stream?channel=${id}&autoplay=1&mute=1`;
         }
 
-        // 🔥 관리 및 색상 기능이 포함된 채팅 로드 함수
         function loadMessages() {
             const chatBox = document.getElementById('chat-messages');
             
