@@ -64,18 +64,34 @@
         }
         .stream-tab-btn.active { background: #ff5e00; color: #fff; border-color: #ff5e00; box-shadow: 0 0 15px rgba(255, 94, 0, 0.3); }
         .stream-tab-btn:hover { border-color: #ff5e00; color: #fff; }
+
+        /* 🔥 스트림 컨테이너 높이 정렬 */
         .stream-container { 
-            display: grid; grid-template-columns: 2.2fr 1.3fr; gap: 20px; 
-            background: #0d0d0d; padding: 25px; border-radius: 12px; border: 1px solid #222; 
+            display: grid; 
+            grid-template-columns: 2.2fr 1.3fr; 
+            gap: 20px; 
+            background: #0d0d0d; 
+            padding: 25px; 
+            border-radius: 12px; 
+            border: 1px solid #222; 
+            align-items: stretch; /* 왼쪽 동영상 높이에 채팅창을 맞춤 */
         }
         .video-wrapper { 
             background: #000; border-radius: 8px; overflow: hidden; 
             aspect-ratio: 16 / 9; border: 1px solid #333; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
         
-        /* 🔥 채팅 UI 스타일 */
-        .chat-box-wrapper { background: #111; border: 1px solid #222; border-radius: 8px; display: flex; flex-direction: column; height: 100%; min-height: 400px; max-height: 500px; overflow: hidden; }
-        #chat-messages { flex: 1; padding: 15px; overflow-y: auto; font-size: 0.85rem; color: #ccc; scroll-behavior: smooth; }
+        /* 🔥 채팅 UI 스타일 수정 */
+        .chat-box-wrapper { 
+            background: #111; border: 1px solid #222; border-radius: 8px; 
+            display: flex; flex-direction: column; 
+            height: 100%; /* 부모 높이를 꽉 채움 */
+            overflow: hidden; 
+        }
+        #chat-messages { 
+            flex: 1; /* 입력창을 제외한 영역을 채팅창이 차지 */
+            padding: 15px; overflow-y: auto; font-size: 0.85rem; color: #ccc; scroll-behavior: smooth; 
+        }
         .chat-msg-item { margin-bottom: 10px; line-height: 1.4; border-bottom: 1px solid #1a1a1a; padding-bottom: 5px; }
         .chat-nickname { color: #ff5e00; font-weight: 800; margin-right: 5px; font-size: 0.75rem; }
         .chat-input-area { padding: 10px; border-top: 1px solid #222; display: flex; gap: 8px; background: #151515; }
@@ -337,7 +353,6 @@
             }
         }
 
-        // 🔥 실시간 채팅 로직 (자동 스크롤 개선 버전)
         function loadMessages() {
             const chatBox = document.getElementById('chat-messages');
             db.collection("chats")
@@ -353,7 +368,6 @@
                         chatBox.appendChild(div);
                     });
                     
-                    // ✅ 메시지 렌더링 후 스크롤 하단 이동 (부드럽게)
                     setTimeout(() => {
                         chatBox.scrollTo({
                             top: chatBox.scrollHeight,
