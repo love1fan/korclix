@@ -16,12 +16,11 @@
             -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
         }
         
-        /* 잠금 레이어 - 깜빡임 방지를 위해 display: none; 기본값 설정 */
+        /* [1] 잠금 레이어 (깜빡임 방지 적용) */
         #lock-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0, 0, 0, 0.98); z-index: 9999; 
-            display: none; /* 핵심: 처음엔 숨겨둡니다 */
-            flex-direction: column; justify-content: center; align-items: center; 
+            display: none; flex-direction: column; justify-content: center; align-items: center; 
             text-align: center; overflow-y: auto; padding: 20px 0; 
         }
         #lock-overlay h2 { font-size: 3.5rem; color: #ff5e00; margin-bottom: 20px; letter-spacing: 5px; font-weight: 900; text-transform: uppercase; }
@@ -30,76 +29,62 @@
         .auth-input { width: 100%; padding: 12px; margin-bottom: 10px; background: #1a1a1a; border: 1px solid #333; color: #fff; box-sizing: border-box; font-family: inherit; }
         .auth-btn { width: 100%; padding: 15px; background: #ff5e00; color: white; border: none; font-weight: 800; cursor: pointer; margin-bottom: 10px; font-size: 1rem; text-transform: uppercase; }
         .auth-switch { font-size: 0.8rem; color: #666; cursor: pointer; text-decoration: underline; margin-top: 10px; }
-
         #verify-screen { display: none; }
         #signup-extra-fields { display: none; margin-bottom: 10px; }
 
+        /* 상태바 및 네비게이션 */
         .live-status-bar { background: #1a1a1a; padding: 12px; text-align: center; border-bottom: 2px solid #ff5e00; font-size: 0.9rem; position: fixed; width: 100%; z-index: 101; top: 0; }
         .status-tag { background: #ff5e00; color: #fff; padding: 2px 8px; border-radius: 3px; font-weight: 800; margin-right: 10px; }
-
         nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(0,0,0,0.95) !important; position: fixed; width: 100%; box-sizing: border-box; z-index: 100; border-bottom: 1px solid #222; margin-top: 45px; }
         nav .logo { font-weight: 900; font-size: 26px; color: #ff5e00 !important; letter-spacing: 2px; text-transform: uppercase; text-decoration: none !important; }
         nav ul { list-style: none; display: flex; margin: 0; padding: 0; align-items: center; }
         nav ul li a { margin-left: 20px; font-size: 12px; font-weight: 600; color: #999 !important; text-decoration: none !important; text-transform: uppercase; }
         .logout-link { margin-left: 20px; font-size: 10px; color: #ff3333 !important; cursor: pointer; border: 1px solid #444; padding: 5px 10px; border-radius: 4px; font-weight: bold; }
 
+        /* 히어로 섹션 */
         .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1920&q=80'); background-size: cover; background-position: center; }
         .hero h1 { font-size: 8rem; margin: 0; letter-spacing: 20px; font-weight: 900; text-shadow: 0 0 30px rgba(255, 94, 0, 0.5); text-transform: uppercase; }
-        .section { padding: 120px 8%; max-width: 1200px; margin: 0 auto; }
-        .section-title { font-size: 2.8rem; font-weight: 800; margin-bottom: 60px; text-align: center; letter-spacing: 8px; color: #ff5e00; text-transform: uppercase; }
 
-        /* ABOUT & MAP DASHBOARD */
+        /* [2] 미디어 섹션 (6개 그리드 + 메인 플레이어) */
+        .section { padding: 120px 8%; max-width: 1400px; margin: 0 auto; }
+        .main-player-wrapper { background: #0d0d0d; padding: 30px; border-radius: 12px; border: 1px solid #222; margin-bottom: 60px; display: grid; grid-template-columns: 2.5fr 1fr; gap: 30px; }
+        .video-container { background: #000; border-radius: 8px; overflow: hidden; aspect-ratio: 16 / 9; border: 1px solid #333; }
+        .stream-info-box { display: flex; flex-direction: column; justify-content: center; text-align: left; }
+        .stream-info-box h3 { color: #ff5e00; margin: 0 0 15px 0; font-size: 1.8rem; font-weight: 900; }
+        .stream-info-box p { color: #888; font-size: 1rem; line-height: 1.8; }
+
+        .media-group-title { margin-bottom: 25px; border-bottom: 1px solid #1a1a1a; padding-bottom: 10px; }
+        .media-group-title h2 { font-size: 1.5rem; font-weight: 800; color: #fff; margin: 0; }
+        .media-group-title h2 span { color: #ff5e00; }
+        
+        .media-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .stream-card { cursor: pointer; transition: 0.3s; }
+        .thumb-box { width: 100%; aspect-ratio: 16 / 9; background: #111; border-radius: 8px; overflow: hidden; position: relative; border: 1px solid #222; }
+        .thumb-box img { width: 100%; height: 100%; object-fit: cover; transition: 0.4s; }
+        .stream-card:hover .thumb-box img { transform: scale(1.05); }
+        .card-badge { position: absolute; top: 12px; left: 12px; background: #ff3333; color: #fff; padding: 3px 8px; font-size: 0.7rem; font-weight: 900; border-radius: 4px; z-index: 10; }
+        .card-platform { position: absolute; top: 12px; left: 60px; background: rgba(0,0,0,0.8); color: #fff; padding: 3px 8px; font-size: 0.7rem; font-weight: 800; border-radius: 4px; z-index: 10; }
+        .card-info { padding-top: 15px; text-align: left; }
+        .card-title { font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0 0 6px 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .card-name { font-size: 0.9rem; color: #777; }
+
+        /* 기타 섹션 */
         .about-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
         .tag { padding: 15px 25px; background: #111; border-left: 3px solid #ff5e00; font-weight: 700; margin-right: 10px; display: inline-block; }
         .map-dashboard { background: #111; border: 1px solid #222; border-radius: 12px; overflow: hidden; }
         .map-nav { display: flex; background: #1a1a1a; }
         .map-nav-btn { flex: 1; padding: 20px; border: none; background: none; color: #666; font-weight: 800; cursor: pointer; }
         .map-nav-btn.active { background: #ff5e00; color: white; }
-        .map-content-area { padding: 30px; display: grid; grid-template-columns: 150px 1fr; gap: 30px; }
-        .map-image-wrapper { width: 100%; background: #000; border: 2px solid #333; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-        .map-image-wrapper img { width: 100%; height: auto; display: block; object-fit: cover; }
-
-        /* 🔥 LIVE STREAM 전용 스타일 */
-        .stream-tabs { display: flex; gap: 10px; margin-bottom: 30px; justify-content: center; }
-        .stream-tab-btn { 
-            background: #111; border: 1px solid #333; color: #888; padding: 12px 25px; 
-            cursor: pointer; font-weight: 800; border-radius: 4px; transition: 0.3s; font-size: 0.8rem;
-        }
-        .stream-tab-btn.active { background: #ff5e00; color: #fff; border-color: #ff5e00; box-shadow: 0 0 15px rgba(255, 94, 0, 0.3); }
-        .stream-tab-btn:hover { border-color: #ff5e00; color: #fff; }
-        .stream-container { 
-            display: grid; grid-template-columns: 2.5fr 1fr; gap: 40px; 
-            background: #0d0d0d; padding: 40px; border-radius: 12px; border: 1px solid #222; 
-        }
-        .video-wrapper { 
-            background: #000; border-radius: 8px; overflow: hidden; 
-            aspect-ratio: 16 / 9; border: 1px solid #333; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
-        .stream-info { display: flex; flex-direction: column; justify-content: center; text-align: left; }
-
-        /* MEMBERS STATS */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-top: 50px; }
-        .stat-card { background: rgba(17, 17, 17, 0.9); border: 1px solid #222; border-radius: 12px; padding: 35px; transition: 0.3s; position: relative; overflow: hidden; }
-        .stat-card:hover { border-color: #ff5e00; transform: translateY(-5px); box-shadow: 0 10px 30px rgba(255, 94, 0, 0.1); }
+        .stat-card { background: rgba(17, 17, 17, 0.9); border: 1px solid #222; border-radius: 12px; padding: 35px; position: relative; }
         .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #ff5e00; }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #222; }
-        .player-name { font-size: 1.5rem; font-weight: 900; color: #fff; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
-        .player-role { font-size: 0.75rem; color: #ff5e00; font-weight: 700; text-transform: uppercase; background: rgba(255, 94, 0, 0.1); padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(255, 94, 0, 0.2); }
-        .data-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .data-item { background: #000; border: 1px solid #222; padding: 18px; border-radius: 8px; text-align: center; }
-        .data-label { font-size: 0.7rem; color: #666; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; display: block; }
-        .data-value { font-size: 1.8rem; font-weight: 900; color: #ff5e00; line-height: 1; }
-        .data-unit { font-size: 0.8rem; color: #fff; font-weight: 700; margin-left: 2px; }
-        .rank-badge { position: absolute; top: 15px; right: 15px; font-size: 0.7rem; font-weight: 900; padding: 3px 8px; border: 1px solid; border-radius: 4px; }
-        .tier-platinum { color: #4ee29d; border-color: #4ee29d; }
-        .tier-gold { color: #ffcc00; border-color: #ffcc00; }
-        .tier-bronze { color: #cd7f32; border-color: #cd7f32; }
 
         footer { padding: 80px; text-align: center; color: #444; border-top: 1px solid #222; text-transform: uppercase; }
-        @media (max-width: 900px) { .about-wrapper, .stats-grid, .stream-container { grid-template-columns: 1fr; } .hero h1 { font-size: 4rem; } }
+        @media (max-width: 1100px) { .media-grid { grid-template-columns: repeat(2, 1fr); } .main-player-wrapper { grid-template-columns: 1fr; } }
+        @media (max-width: 900px) { .about-wrapper, .stats-grid { grid-template-columns: 1fr; } .hero h1 { font-size: 4rem; } }
     </style>
 </head>
-<body oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
+<body oncontextmenu="return false" onselectstart="return false">
 
     <div class="live-status-bar">
         <span class="status-tag">LIVE</span> 서버 상태: <span style="color: #4ee29d;">정상</span> | 오늘의 맵: <span style="color: #fff;">에란겔 / 미라마 / 비켄디 / 테이고 / 론도</span>
@@ -120,7 +105,6 @@
         <div class="auth-container" id="verify-screen">
             <p style="color:#ff3333; font-weight:bold; margin-bottom:15px;">이메일 인증이 필요합니다.<br>메일함의 링크를 클릭해주세요.</p>
             <button class="auth-btn" onclick="location.reload()">인증 완료 후 새로고침</button>
-            <button class="auth-btn" style="background:#333;" onclick="resendEmail()">메일 재발송</button>
             <p class="auth-switch" onclick="logout()">다른 계정으로 로그인</p>
         </div>
     </div>
@@ -138,15 +122,55 @@
         </ul>
     </nav>
 
-    <section class="hero" id="home"><h1>CLIX</h1><p>BATTLEGROUND KOR CLIX</p></section>
+    <section class="hero"><h1>CLIX</h1><p>BATTLEGROUND KOR CLIX</p></section>
+
+    <section class="section" id="stream">
+        <div class="main-player-wrapper">
+            <div class="video-container">
+                <iframe id="main-iframe" src="" frameborder="0" allowfullscreen="true" width="100%" height="100%"></iframe>
+            </div>
+            <div class="stream-info-box">
+                <h3 id="main-streamer-title">방송을 선택해주세요</h3>
+                <p id="main-streamer-desc">아래 리스트에서 시청하고 싶은 클랜원의 방송을 클릭하세요.</p>
+                <div style="margin-top:20px;"><span class="status-tag" id="main-platform-tag" style="background:#333;">WAITING</span></div>
+            </div>
+        </div>
+
+        <div class="media-group-title"><h2>PUBG <span>추천 라이브</span></h2></div>
+        <div class="media-grid">
+            <div class="stream-card" onclick="playStream('chzzk', 'UID_1', '치지직 LIVE #1', 'CLIX_0dB의 실시간 랭크게임 방송입니다.')">
+                <div class="thumb-box"><span class="card-badge">LIVE</span><span class="card-platform">CHZZK</span><img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600"></div>
+                <div class="card-info"><p class="card-title">에란겔 솔로 랭크 폭격중</p><p class="card-name">CLIX_0dB</p></div>
+            </div>
+            <div class="stream-card" onclick="playStream('chzzk', 'UID_2', '치지직 LIVE #2', 'joa1013의 즐거운 스쿼드 방송입니다.')">
+                <div class="thumb-box"><span class="card-badge">LIVE</span><span class="card-platform">CHZZK</span><img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=600"></div>
+                <div class="card-info"><p class="card-title">태이고 빡겜 스쿼드 모집중</p><p class="card-name">joa1013</p></div>
+            </div>
+            <div class="stream-card" onclick="playStream('soop', 'BJ_ID_1', 'SOOP LIVE #1', 'Viper789456의 박진감 넘치는 교전 방송!')">
+                <div class="thumb-box"><span class="card-badge">LIVE</span><span class="card-platform">SOOP</span><img src="https://images.unsplash.com/photo-1581012772328-947b1981a8c0?q=80&w=600"></div>
+                <div class="card-info"><p class="card-title">미라마 멸망전 스크림 연습</p><p class="card-name">Viper789456</p></div>
+            </div>
+            <div class="stream-card" onclick="playStream('soop', 'BJ_ID_2', 'SOOP LIVE #2', '클랜원들과 즐거운 한판!')">
+                <div class="thumb-box"><span class="card-badge">LIVE</span><span class="card-platform">SOOP</span><img src="https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=600"></div>
+                <div class="card-info"><p class="card-title">치킨 먹을때까지 방종 없습니다</p><p class="card-name">Member_01</p></div>
+            </div>
+            <div class="stream-card" onclick="playStream('youtube', '채널ID_1', 'YOUTUBE LIVE #1', 'CLIX 공식 채널의 실시간 중계.')">
+                <div class="thumb-box"><span class="card-badge">LIVE</span><span class="card-platform">YOUTUBE</span><img src="https://images.unsplash.com/photo-1624138784614-87fd1b6528f8?q=80&w=600"></div>
+                <div class="card-info"><p class="card-title">클랜 정기 내전 결승 중계</p><p class="card-name">CLIX_Official</p></div>
+            </div>
+            <div class="stream-card" onclick="playStream('youtube', '채널ID_2', 'YOUTUBE LIVE #2', '배틀그라운드 패치 총정리.')">
+                <div class="thumb-box"><span class="card-badge">LIVE</span><span class="card-platform">YOUTUBE</span><img src="https://images.unsplash.com/photo-1542751110-97427bbecf20?q=80&w=600"></div>
+                <div class="card-info"><p class="card-title">신규 총기 성능 테스트</p><p class="card-name">CLIX_VOD</p></div>
+            </div>
+        </div>
+    </section>
 
     <section class="section" id="about">
         <div class="about-wrapper">
             <div class="about-intro-box">
-                <h3 style="color:#888; letter-spacing:2px;">Who We Are</h3>
-                <h2 style="font-size:3.5rem; margin:10px 0;">WE ARE THE<br><span style="color: #ff5e00;">CLIX CLAN</span></h2>
-                <p style="color:#aaa; margin-bottom:30px;">성숙한 매너와 체계적인 전술을 지향하는 배틀그라운드 성인 클랜입니다.</p>
-                <div class="tag">매너 중요시</div><div class="tag">재미와 웃음</div>
+                <h2 style="font-size:3.5rem; margin:0;">WE ARE THE<br><span style="color: #ff5e00;">CLIX CLAN</span></h2>
+                <p style="color:#aaa;">성숙한 매너와 체계적인 전술을 지향하는 배틀그라운드 성인 클랜입니다.</p>
+                <div class="tag">매너 중심</div><div class="tag">성인 클랜</div>
             </div>
             <div class="map-dashboard">
                 <div class="map-nav">
@@ -154,84 +178,22 @@
                     <button class="map-nav-btn" onclick="showMap('miramar', this)">MIRAMAR</button>
                 </div>
                 <div class="map-content-area" id="map-content">
-                    <div class="map-image-wrapper"><img src="erangel.jpg" alt="Map" onerror="this.src='ERANGEL.JPG'"></div>
+                    <div class="map-image-wrapper"><img src="erangel.jpg" onerror="this.src='ERANGEL.JPG'"></div>
                     <div class="map-strategy-box">
-                        <h3 style="color:#ff5e00; margin-top:0;">ERANGEL 전략</h3>
-                        <p style="color:#888; font-size:0.9rem; line-height: 1.8;">
-                            - 주요 차량 스폰: 강남, 포친키. 1페 중앙 점령 추천.<br>
-                            - 외곽 강하: 밀타 파워, 노보 보트/차량 선점 필수.<br>
-                            - 밀베 자기장: 다리 검문 대비 및 해안가 시야 확보.<br>
-                            - 대도시: 시가전 시 옥상 선점 및 투척물 활용.<br>
-                            - 평야 교전: 볏짚과 해우소를 활용한 거점 방어.<br>
-                            - 기습 포인트: 해우소 지붕 위 점령으로 통행세 징수
-                        </p>
+                        <h3 style="color:#ff5e00; margin:0;">ERANGEL 전략</h3>
+                        <p style="color:#888; font-size:0.8rem;">차량 선점 및 중심부 점령이 핵심입니다.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="section" id="stream">
-        <h2 class="section-title">CLIX LIVE STREAM</h2>
-        <div class="stream-tabs">
-            <button class="stream-tab-btn active" onclick="changeStream('chzzk', '스트리머UID', this)">CHZZK</button>
-            <button class="stream-tab-btn" onclick="changeStream('soop', '스트리머ID', this)">SOOP</button>
-            <button class="stream-tab-btn" onclick="changeStream('youtube', '채널ID', this)">YOUTUBE</button>
-        </div>
-        <div class="stream-container">
-            <div class="video-wrapper">
-                <iframe id="live-iframe" src="https://chzzk.naver.com/live/스트리머UID/embed" frameborder="0" allowfullscreen="true" width="100%" height="100%"></iframe>
-            </div>
-            <div class="stream-info">
-                <h3 id="streamer-name" style="color:#ff5e00; margin-top:0;">ON AIR: CLIX STREAMER</h3>
-                <p style="color:#aaa; font-size:0.9rem; line-height: 1.8;">
-                    우리 클랜원들의 박진감 넘치는 플레이를 실시간으로 응원하세요!<br>
-                    플랫폼 탭을 클릭하여 다른 방송을 확인할 수 있습니다.
-                </p>
-                <div style="margin-top:20px;">
-                    <span class="tag" style="background:#ff5e00; color:#fff; border:none; padding:5px 15px;">LIVE</span>
-                    <span class="tag" style="border:1px solid #333; color:#666; padding:5px 15px;">PUBG</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <section class="section" id="members">
-        <h2 class="section-title">CLIX SQUAD STATS</h2>
+        <h2 class="section-title">SQUAD STATS</h2>
         <div class="stats-grid">
-            <div class="stat-card">
-                <span class="rank-badge tier-platinum">Platinum</span>
-                <div class="card-header"><h3 class="player-name">CLIX_0dB</h3><span class="player-role">Main Order</span></div>
-                <div class="data-row">
-                    <div class="data-item"><span class="data-label">K/D Ratio</span><span class="data-value">1.25</span></div>
-                    <div class="data-item"><span class="data-label">Avg Damage</span><span class="data-value">208</span></div>
-                    <div class="data-item"><span class="data-label">Win Rate</span><span class="data-value">7.7<span class="data-unit">%</span></span></div>
-                    <div class="data-item"><span class="data-label">Top 10</span><span class="data-value">25.3<span class="data-unit">%</span></span></div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <span class="rank-badge tier-gold">Gold</span>
-                <div class="card-header"><h3 class="player-name">Viper789456</h3><span class="player-role">Sub Order</span></div>
-                <div class="data-row">
-                    <div class="data-item"><span class="data-label">K/D Ratio</span><span class="data-value">0.08</span></div>
-                    <div class="data-item"><span class="data-label">Avg Damage</span><span class="data-value">105</span></div>
-                    <div class="data-item"><span class="data-label">Win Rate</span><span class="data-value">8.3<span class="data-unit">%</span></span></div>
-                    <div class="data-item"><span class="data-label">Top 10</span><span class="data-value">22.1<span class="data-unit">%</span></span></div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <span class="rank-badge tier-bronze">Bronze</span>
-                <div class="card-header"><h3 class="player-name">joa1013</h3><span class="player-role">Back Up</span></div>
-                <div class="data-row">
-                    <div class="data-item"><span class="data-label">K/D Ratio</span><span class="data-value">0.30</span></div>
-                    <div class="data-item"><span class="data-label">Avg Damage</span><span class="data-value">57</span></div>
-                    <div class="data-item"><span class="data-label">Win Rate</span><span class="data-value">9.1<span class="data-unit">%</span></span></div>
-                    <div class="data-item"><span class="data-label">Top 10</span><span class="data-value">18.5<span class="data-unit">%</span></span></div>
-                </div>
-            </div>
-        </div>
-        <div style="margin-top:50px; text-align:center;">
-            <a href="https://pubg.op.gg" target="_blank" style="color:#ff5e00; text-decoration:none; font-weight:800; border: 1px solid #ff5e00; padding: 10px 20px; border-radius: 4px;">PUBG.OP.GG 바로가기</a>
+            <div class="stat-card"><h3 class="player-name">CLIX_0dB</h3><div class="data-row"><div class="data-item"><span class="data-label">K/D</span><span class="data-value">1.25</span></div><div class="data-item"><span class="data-label">DMG</span><span class="data-value">208</span></div></div></div>
+            <div class="stat-card"><h3 class="player-name">Viper789456</h3><div class="data-row"><div class="data-item"><span class="data-label">K/D</span><span class="data-value">0.08</span></div><div class="data-item"><span class="data-label">DMG</span><span class="data-value">105</span></div></div></div>
+            <div class="stat-card"><h3 class="player-name">joa1013</h3><div class="data-row"><div class="data-item"><span class="data-label">K/D</span><span class="data-value">0.30</span></div><div class="data-item"><span class="data-label">DMG</span><span class="data-value">57</span></div></div></div>
         </div>
     </section>
 
@@ -250,89 +212,92 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // 인증 상태 확인 (깜빡임 방지 적용)
+        // [5] 인증 상태 확인 (깜빡임 방지)
         auth.onAuthStateChanged((user) => {
             const overlay = document.getElementById('lock-overlay');
             const formScreen = document.getElementById('auth-form-screen');
             const verifyScreen = document.getElementById('verify-screen');
-            
             if (user) {
                 if (user.emailVerified) {
-                    // 인증 완료된 사용자: 잠금 해제
                     overlay.style.display = 'none';
                     db.collection("users").doc(user.uid).get().then((doc) => {
                         const nick = doc.exists ? doc.data().nickname : user.email.split('@')[0];
                         document.getElementById('nav-user-info').innerText = nick + "님 반갑습니다";
                     });
                 } else {
-                    // 로그인했으나 메일 인증 안됨: 인증 안내 표시
                     overlay.style.display = 'flex';
                     formScreen.style.display = 'none';
                     verifyScreen.style.display = 'block';
                 }
             } else {
-                // 로그인 안된 상태: 로그인 폼 표시
                 overlay.style.display = 'flex';
                 formScreen.style.display = 'block';
                 verifyScreen.style.display = 'none';
             }
         });
 
-        function toggleAuthMode() {
-            let btn = document.getElementById('auth-main-btn');
-            let isLoginMode = btn.innerText === "로그인";
-            document.getElementById('auth-title').innerText = isLoginMode ? "CLIX SIGN UP" : "CLIX MEMBERS ONLY";
-            btn.innerText = isLoginMode ? "회원가입" : "로그인";
-            document.getElementById('auth-toggle-text').innerText = isLoginMode ? "이미 계정이 있나요? 로그인" : "계정이 없으신가요? 회원가입";
-            document.getElementById('signup-extra-fields').style.display = isLoginMode ? "block" : "none";
+        // [6] 스트림 제어 함수
+        function playStream(platform, id, title, desc) {
+            const iframe = document.getElementById('main-iframe');
+            const titleEl = document.getElementById('main-streamer-title');
+            const descEl = document.getElementById('main-streamer-desc');
+            const tagEl = document.getElementById('main-platform-tag');
+
+            if (platform === 'chzzk') {
+                iframe.src = `https://chzzk.naver.com/live/${id}/embed`;
+                tagEl.style.background = "#00ffa3"; tagEl.innerText = "CHZZK LIVE";
+            } else if (platform === 'soop') {
+                iframe.src = `https://play.soop.st/embed/station/${id}`;
+                tagEl.style.background = "#2a58ff"; tagEl.innerText = "SOOP LIVE";
+            } else if (platform === 'youtube') {
+                iframe.src = `https://www.youtube.com/embed/live_stream?channel=${id}&autoplay=1`;
+                tagEl.style.background = "#ff0000"; tagEl.innerText = "YOUTUBE LIVE";
+            }
+            titleEl.innerText = title;
+            descEl.innerText = desc;
+            window.scrollTo({ top: document.getElementById('stream').offsetTop - 100, behavior: 'smooth' });
         }
 
+        document.addEventListener('DOMContentLoaded', () => {
+            playStream('chzzk', 'UID_1', 'WELCOME TO CLIX LIVE', '아래 목록에서 채널을 선택하세요.');
+        });
+
+        function toggleAuthMode() {
+            let btn = document.getElementById('auth-main-btn');
+            let isLogin = btn.innerText === "로그인";
+            document.getElementById('auth-title').innerText = isLogin ? "CLIX SIGN UP" : "CLIX MEMBERS ONLY";
+            btn.innerText = isLogin ? "회원가입" : "로그인";
+            document.getElementById('signup-extra-fields').style.display = isLogin ? "block" : "none";
+        }
+
+        // [7] 가입 로직 (나이 필드 저장 로직 복구)
         function handleAuth() {
             const email = document.getElementById('auth-email').value;
             const password = document.getElementById('auth-password').value;
-            const isLoginMode = document.getElementById('auth-main-btn').innerText === "로그인";
-            if (isLoginMode) {
-                auth.signInWithEmailAndPassword(email, password).catch(err => alert("로그인 오류: " + err.message));
+            const isLogin = document.getElementById('auth-main-btn').innerText === "로그인";
+            if (isLogin) {
+                auth.signInWithEmailAndPassword(email, password).catch(err => alert(err.message));
             } else {
                 const nickname = document.getElementById('auth-nickname').value;
                 const age = document.getElementById('auth-age').value;
                 if(!nickname || !age) return alert("추가 정보를 입력하세요.");
                 auth.createUserWithEmailAndPassword(email, password).then((res) => {
                     res.user.sendEmailVerification();
-                    return db.collection("users").doc(res.user.uid).set({ nickname: nickname, age: age, email: email, joinedAt: firebase.firestore.FieldValue.serverTimestamp() });
-                }).then(() => alert("인증 메일을 확인하세요!")).catch(err => alert("가입 실패: " + err.message));
+                    return db.collection("users").doc(res.user.uid).set({ 
+                        nickname: nickname, 
+                        age: age, 
+                        email: email,
+                        joinedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }).catch(err => alert(err.message));
             }
         }
-
-        function resendEmail() { auth.currentUser.sendEmailVerification().then(() => alert("재발송 완료")); }
         function logout() { if(confirm("로그아웃 하시겠습니까?")) auth.signOut(); }
-
         function showMap(mapName, btn) {
             const btns = document.querySelectorAll('.map-nav-btn'); btns.forEach(b => b.classList.remove('active')); btn.classList.add('active');
-            const data = { 
-                'erangel': ['erangel.jpg', 'ERANGEL 전략', '- 주요 차량 스폰: 강남, 포친키. 1페 중앙 점령 추천<br>- 외곽 강하: 밀타 파워 보트 필수<br>- 밀베 자기장: 다리 검문 대비 및 해안가 시야 확보<br>- 대도시: 시가전 시 옥상 선점 및 투척물 활용<br>- 평야 교전: 볏짚과 해우소 활용 거점 방어<br>- 기습 포인트: 해우소 지붕 위 점령 통행세 징수'],
-                'miramar': ['miramar.jpg', 'MIRAMAR 전략', '- 고지대 능선 점령 필수 시야 확보가 핵심<br>- 무기 구성: DMR/SR 장거리 무기 필수<br>- 차량: 픽업트럭 확보 및 능선 하단 회전<br>- 도심 진입: 페카도, 로스 레오네스 창문/옥상 클리어링<br>- 지형 활용: 분지 지형 굴곡을 활용한 하이딩 및 기습']
-            };
+            const data = { 'erangel': ['erangel.jpg', 'ERANGEL 전략', '중심부 점령이 핵심입니다.'], 'miramar': ['miramar.jpg', 'MIRAMAR 전략', '고지대 선점이 핵심입니다.'] };
             const m = data[mapName];
-            document.getElementById('map-content').innerHTML = `<div class="map-image-wrapper"><img src="${m[0]}" onerror="this.src='${m[0].toUpperCase()}'"></div><div class="map-strategy-box"><h3>${m[1]}</h3><p style="color:#888; font-size:0.9rem; line-height: 1.8;">${m[2]}</p></div>`;
-        }
-
-        function changeStream(platform, id, btn) {
-            const iframe = document.getElementById('live-iframe');
-            const btns = document.querySelectorAll('.stream-tab-btn');
-            const streamerName = document.getElementById('streamer-name');
-            btns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            if (platform === 'chzzk') {
-                iframe.src = `https://chzzk.naver.com/live/${id}/embed`;
-                streamerName.innerText = "ON AIR: CHZZK LIVE";
-            } else if (platform === 'soop') {
-                iframe.src = `https://play.soop.st/embed/station/${id}`;
-                streamerName.innerText = "ON AIR: SOOP LIVE";
-            } else if (platform === 'youtube') {
-                iframe.src = `https://www.youtube.com/embed/live_stream?channel=${id}&autoplay=1&mute=1`;
-                streamerName.innerText = "ON AIR: YOUTUBE LIVE";
-            }
+            document.getElementById('map-content').innerHTML = `<div class="map-image-wrapper"><img src="${m[0]}" onerror="this.src='${m[0].toUpperCase()}'"></div><div class="map-strategy-box"><h3>${m[1]}</h3><p style="color:#888;">${m[2]}</p></div>`;
         }
     </script>
 </body>
