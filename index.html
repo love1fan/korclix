@@ -16,8 +16,14 @@
             -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
         }
         
-        /* 잠금 레이어 */
-        #lock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; overflow-y: auto; padding: 20px 0; }
+        /* 잠금 레이어 - 깜빡임 방지를 위해 display: none; 기본값 설정 */
+        #lock-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0, 0, 0, 0.98); z-index: 9999; 
+            display: none; /* 핵심: 처음엔 숨겨둡니다 */
+            flex-direction: column; justify-content: center; align-items: center; 
+            text-align: center; overflow-y: auto; padding: 20px 0; 
+        }
         #lock-overlay h2 { font-size: 3.5rem; color: #ff5e00; margin-bottom: 20px; letter-spacing: 5px; font-weight: 900; text-transform: uppercase; }
         
         .auth-container { background: #111; padding: 40px; border-radius: 8px; border: 1px solid #222; width: 350px; box-sizing: border-box; }
@@ -167,13 +173,11 @@
 
     <section class="section" id="stream">
         <h2 class="section-title">CLIX LIVE STREAM</h2>
-        
         <div class="stream-tabs">
             <button class="stream-tab-btn active" onclick="changeStream('chzzk', '스트리머UID', this)">CHZZK</button>
             <button class="stream-tab-btn" onclick="changeStream('soop', '스트리머ID', this)">SOOP</button>
             <button class="stream-tab-btn" onclick="changeStream('youtube', '채널ID', this)">YOUTUBE</button>
         </div>
-
         <div class="stream-container">
             <div class="video-wrapper">
                 <iframe id="live-iframe" src="https://chzzk.naver.com/live/스트리머UID/embed" frameborder="0" allowfullscreen="true" width="100%" height="100%"></iframe>
@@ -246,32 +250,39 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
+        // 인증 상태 확인 (깜빡임 방지 적용)
         auth.onAuthStateChanged((user) => {
+            const overlay = document.getElementById('lock-overlay');
             const formScreen = document.getElementById('auth-form-screen');
             const verifyScreen = document.getElementById('verify-screen');
+            
             if (user) {
                 if (user.emailVerified) {
-                    document.getElementById('lock-overlay').style.display = 'none';
+                    // 인증 완료된 사용자: 잠금 해제
+                    overlay.style.display = 'none';
                     db.collection("users").doc(user.uid).get().then((doc) => {
                         const nick = doc.exists ? doc.data().nickname : user.email.split('@')[0];
                         document.getElementById('nav-user-info').innerText = nick + "님 반갑습니다";
                     });
                 } else {
-                    document.getElementById('lock-overlay').style.display = 'flex';
+                    // 로그인했으나 메일 인증 안됨: 인증 안내 표시
+                    overlay.style.display = 'flex';
                     formScreen.style.display = 'none';
                     verifyScreen.style.display = 'block';
                 }
             } else {
-                document.getElementById('lock-overlay').style.display = 'flex';
+                // 로그인 안된 상태: 로그인 폼 표시
+                overlay.style.display = 'flex';
                 formScreen.style.display = 'block';
                 verifyScreen.style.display = 'none';
             }
         });
 
         function toggleAuthMode() {
-            let isLoginMode = document.getElementById('auth-main-btn').innerText === "로그인";
+            let btn = document.getElementById('auth-main-btn');
+            let isLoginMode = btn.innerText === "로그인";
             document.getElementById('auth-title').innerText = isLoginMode ? "CLIX SIGN UP" : "CLIX MEMBERS ONLY";
-            document.getElementById('auth-main-btn').innerText = isLoginMode ? "회원가입" : "로그인";
+            btn.innerText = isLoginMode ? "회원가입" : "로그인";
             document.getElementById('auth-toggle-text').innerText = isLoginMode ? "이미 계정이 있나요? 로그인" : "계정이 없으신가요? 회원가입";
             document.getElementById('signup-extra-fields').style.display = isLoginMode ? "block" : "none";
         }
@@ -298,7 +309,7 @@
 
         function showMap(mapName, btn) {
             const btns = document.querySelectorAll('.map-nav-btn'); btns.forEach(b => b.classList.remove('active')); btn.classList.add('active');
-            const data = { 
+            const data = { 
                 'erangel': ['erangel.jpg', 'ERANGEL 전략', '- 주요 차량 스폰: 강남, 포친키. 1페 중앙 점령 추천<br>- 외곽 강하: 밀타 파워 보트 필수<br>- 밀베 자기장: 다리 검문 대비 및 해안가 시야 확보<br>- 대도시: 시가전 시 옥상 선점 및 투척물 활용<br>- 평야 교전: 볏짚과 해우소 활용 거점 방어<br>- 기습 포인트: 해우소 지붕 위 점령 통행세 징수'],
                 'miramar': ['miramar.jpg', 'MIRAMAR 전략', '- 고지대 능선 점령 필수 시야 확보가 핵심<br>- 무기 구성: DMR/SR 장거리 무기 필수<br>- 차량: 픽업트럭 확보 및 능선 하단 회전<br>- 도심 진입: 페카도, 로스 레오네스 창문/옥상 클리어링<br>- 지형 활용: 분지 지형 굴곡을 활용한 하이딩 및 기습']
             };
@@ -306,7 +317,6 @@
             document.getElementById('map-content').innerHTML = `<div class="map-image-wrapper"><img src="${m[0]}" onerror="this.src='${m[0].toUpperCase()}'"></div><div class="map-strategy-box"><h3>${m[1]}</h3><p style="color:#888; font-size:0.9rem; line-height: 1.8;">${m[2]}</p></div>`;
         }
 
-        // 스트리밍 제어 함수
         function changeStream(platform, id, btn) {
             const iframe = document.getElementById('live-iframe');
             const btns = document.querySelectorAll('.stream-tab-btn');
