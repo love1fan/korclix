@@ -76,7 +76,7 @@
         }
         #live-iframe { width: 100%; height: 100%; border: none; }
 
-        /* 🔥 채팅창 UI 정리 */
+        /* 🔥 채팅창 UI 디자인 고도화 */
         .chat-box-wrapper { 
             background: #111; border: 1px solid #222; border-radius: 8px; 
             display: flex; flex-direction: column; height: 100%; min-width: 300px; overflow: hidden; 
@@ -91,7 +91,7 @@
         }
         .chat-msg-item:hover { background: rgba(255, 94, 0, 0.05); border-left-color: #ff5e00; }
         .chat-nickname { 
-            display: block; color: #ff5e00; font-weight: 900; font-size: 0.75rem; 
+            display: block; font-weight: 900; font-size: 0.75rem; 
             text-transform: uppercase; margin-bottom: 4px; letter-spacing: 1px;
         }
         .chat-input-area { padding: 10px; border-top: 1px solid #222; display: flex; gap: 8px; background: #151515; }
@@ -99,7 +99,6 @@
         #chat-input:focus { border-color: #ff5e00; }
         .chat-send-btn { background: #ff5e00; color: #fff; border: none; padding: 0 15px; border-radius: 4px; font-weight: 800; cursor: pointer; font-size: 0.8rem; }
         
-        /* 스크롤바 커스텀 */
         #chat-messages::-webkit-scrollbar { width: 4px; }
         #chat-messages::-webkit-scrollbar-track { background: #000; }
         #chat-messages::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
@@ -130,7 +129,6 @@
         footer { padding: 80px; text-align: center; color: #444; border-top: 1px solid #222; text-transform: uppercase; }
         @media (max-width: 900px) { .about-wrapper, .stats-grid, .stream-container, .discord-container { grid-template-columns: 1fr; } .hero h1 { font-size: 4rem; } }
 
-        /* 🔥 뮤직 플레이어 스타일 */
         #music-player {
             position: fixed; bottom: 30px; left: 30px; 
             background: rgba(0, 0, 0, 0.85); border: 1px solid #222; 
@@ -338,8 +336,22 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // 🔥 관리자 설정 (이곳에 실제 관리자의 배그 닉네임을 넣으세요)
+        // 🔥 관리자 설정 (배그 닉네임 기준)
         const ADMIN_NICKNAMES = ["CLIX_0dB", "관리자닉네임"];
+
+        // 🔥 닉네임별 고유 색상 생성 함수
+        function getNicknameColor(nickname) {
+            const colors = [
+                '#ff5e00', '#4ee29d', '#00d4ff', '#ffcc00', 
+                '#ff4e50', '#8e44ad', '#3498db', '#f1c40f'
+            ];
+            let hash = 0;
+            for (let i = 0; i < nickname.length; i++) {
+                hash = nickname.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const index = Math.abs(hash) % colors.length;
+            return colors[index];
+        }
 
         // 🔥 뮤직 플레이어 컨트롤 함수
         function toggleMusic() {
@@ -351,34 +363,48 @@
             if (music.paused) {
                 music.play().then(() => {
                     playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
-                    status.innerText = "ON";
-                    status.style.color = "#ff5e00";
+                    status.innerText = "ON"; status.style.color = "#ff5e00";
                     playBtn.classList.add('music-on');
-                }).catch(e => {
-                    alert("전장 음원(bgm.mp3)이 준비되지 않았습니다.");
-                });
+                }).catch(e => alert("전장 음원(bgm.mp3)이 준비되지 않았습니다."));
             } else {
                 music.pause();
                 playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
-                status.innerText = "OFF";
-                status.style.color = "#444";
+                status.innerText = "OFF"; status.style.color = "#444";
                 playBtn.classList.remove('music-on');
             }
         }
 
-        // 🔥 채팅 삭제 함수
+        // 🔥 개별 메시지 삭제
         function deleteMessage(msgId) {
             if (!confirm("이 메시지를 삭제하시겠습니까?")) return;
             db.collection("chats").doc(msgId).delete().catch(err => alert("삭제 실패: " + err.message));
         }
 
-        // 🔥 전체 채팅 비우기 함수
-        function clearAllChats() {
-            if (!confirm("모든 채팅 기록을 삭제하시겠습니까? (복구 불가)")) return;
-            db.collection("chats").get().then((snapshot) => {
-                snapshot.forEach((doc) => doc.ref.delete());
+        // 🔥 전체 채팅 비우기 (Batch 처리로 강력한 삭제)
+        async function clearAllChats() {
+            const user = auth.currentUser;
+            if (!user) return alert("로그인 후 이용 가능합니다.");
+
+            try {
+                const doc = await db.collection("users").doc(user.uid).get();
+                const userNick = doc.exists ? doc.data().nickname : "";
+
+                if (!ADMIN_NICKNAMES.includes(userNick)) {
+                    return alert("관리자만 전체 채팅을 삭제할 수 있습니다.");
+                }
+
+                if (!confirm("모든 채팅 기록을 삭제하시겠습니까? (복구 불가)")) return;
+
+                const snapshot = await db.collection("chats").get();
+                const batch = db.batch();
+                snapshot.docs.forEach((doc) => {
+                    batch.delete(doc.ref);
+                });
+                await batch.commit();
                 alert("전체 채팅이 초기화되었습니다.");
-            });
+            } catch (err) {
+                alert("삭제 중 오류 발생: " + err.message);
+            }
         }
 
         auth.onAuthStateChanged((user) => {
@@ -450,16 +476,12 @@
             const btns = document.querySelectorAll('.stream-tab-btn');
             btns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            if (platform === 'chzzk') {
-                iframe.src = `https://chzzk.naver.com/live/${id}/embed`;
-            } else if (platform === 'soop') {
-                iframe.src = `https://play.soop.st/embed/station/${id}`;
-            } else if (platform === 'youtube') {
-                iframe.src = `https://www.youtube.com/embed/live_stream?channel=${id}&autoplay=1&mute=1`;
-            }
+            if (platform === 'chzzk') iframe.src = `https://chzzk.naver.com/live/${id}/embed`;
+            else if (platform === 'soop') iframe.src = `https://play.soop.st/embed/station/${id}`;
+            else if (platform === 'youtube') iframe.src = `https://www.youtube.com/embed/live_stream?channel=${id}&autoplay=1&mute=1`;
         }
 
-        // 🔥 관리 기능이 포함된 채팅 로드 함수
+        // 🔥 관리 및 색상 기능이 포함된 채팅 로드 함수
         function loadMessages() {
             const chatBox = document.getElementById('chat-messages');
             
@@ -482,12 +504,12 @@
                             const div = document.createElement('div');
                             div.className = 'chat-msg-item';
                             
-                            // 관리자일 때만 [X] 버튼 표시
                             const deleteBtn = isAdmin ? `<span onclick="deleteMessage('${msgId}')" style="color:#ff3333; cursor:pointer; float:right; font-size:10px; font-weight:bold;">[X]</span>` : "";
+                            const nickColor = getNicknameColor(data.nickname);
 
                             div.innerHTML = `
                                 ${deleteBtn}
-                                <span class="chat-nickname">${data.nickname}</span>
+                                <span class="chat-nickname" style="color: ${nickColor};">${data.nickname}</span>
                                 <div class="chat-text" style="color: #eee;">${data.text}</div>
                             `;
                             chatBox.appendChild(div);
