@@ -31,7 +31,6 @@
         .post-media { margin-top: 15px; text-align: center; background: #000; border-radius: 8px; overflow: hidden; border: 1px solid #333; }
         .post-media img, .post-media video, .post-media iframe { max-width: 100%; max-height: 600px; border: none; display: block; margin: 0 auto; }
         
-        /* 삭제 버튼 스타일 개선 */
         .btn-del { 
             color: #ff3333; cursor: pointer; font-size: 0.75rem; 
             position: absolute; bottom: 25px; right: 30px; 
@@ -72,6 +71,28 @@
         let isUserAdmin = false;
         let userNick = "익명";
 
+        // 디스코드 웹훅 설정
+        const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1491054650411978954/VNb4rgYvRZQ-X932PMUO6NlPSKtzjdLNKRPr8lx25WjHbf4e5mLkhHLa45yMwj48myyF";
+
+        function sendDiscordWebhook(author, content, mediaUrl) {
+            const payload = {
+                content: "📢 **[자유게시판] 새 글이 등록되었습니다.**",
+                embeds: [{
+                    description: content.length > 200 ? content.substring(0, 200) + "..." : content,
+                    color: 16735744, 
+                    author: { name: author },
+                    fields: mediaUrl ? [{ name: "첨부 미디어", value: mediaUrl }] : [],
+                    timestamp: new Date().toISOString()
+                }]
+            };
+
+            fetch(DISCORD_WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).catch(error => console.error("디스코드 웹훅 전송 실패:", error));
+        }
+
         auth.onAuthStateChanged((user) => {
             if (user && user.emailVerified) {
                 document.getElementById('write-section').style.display = 'block';
@@ -110,7 +131,6 @@
                     if (data.mediaUrl) {
                         const url = data.mediaUrl.trim();
                         
-                        // 유튜브 판별
                         if (url.includes('youtube.com') || url.includes('youtu.be')) {
                             let videoId = "";
                             if (url.includes('youtu.be/')) videoId = url.split('youtu.be/')[1].split(/[?#]/)[0];
@@ -121,17 +141,14 @@
                                 mediaHtml = `<div class="post-media"><iframe width="100%" height="400" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe></div>`;
                             }
                         } 
-                        // 일반 영상
                         else if (url.toLowerCase().match(/\.(mp4|webm|ogg|mov)$/i)) {
                             mediaHtml = `<div class="post-media"><video controls preload="metadata" style="width:100%;"><source src="${data.mediaUrl}"></video></div>`;
                         } 
-                        // 이미지
                         else {
                             mediaHtml = `<div class="post-media"><img src="${data.mediaUrl}" onerror="this.parentElement.style.display='none'"></div>`;
                         }
                     }
 
-                    // 관리자 권한 확인 후 삭제 버튼 노출
                     const delBtn = isUserAdmin ? `<div class="btn-del" onclick="deletePost('${doc.id}')">DELETE</div>` : "";
 
                     container.innerHTML += `
@@ -158,9 +175,14 @@
                 content: content,
                 mediaUrl: mediaUrl || null,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            document.getElementById('post-content').value = "";
-            document.getElementById('media-url').value = "";
+            }).then(() => {
+                // 저장 성공 후 디스코드 알림 발송
+                sendDiscordWebhook(userNick, content, mediaUrl);
+                
+                document.getElementById('post-content').value = "";
+                document.getElementById('media-url').value = "";
+                alert("게시글이 등록되었습니다.");
+            }).catch(err => alert("등록 실패: " + err.message));
         }
 
         function deletePost(id) {
