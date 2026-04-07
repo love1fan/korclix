@@ -6,7 +6,8 @@
     <title>CLIX NOTICE</title>
     
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script> <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script> 
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 
     <style>
         body { 
@@ -102,6 +103,32 @@
 
         let isUserAdmin = false;
 
+        // ⚠️ 디스코드 '#공지사항' 채널 전용 웹훅 URL
+        const DISCORD_NOTICE_WEBHOOK = "https://discord.com/api/webhooks/1491054650411978954/VNb4rgYvRZQ-X932PMUO6NlPSKtzjdLNKRPr8lx25WjHbf4e5mLkhHLa45yMwj48myyF";
+
+        async function sendNoticeWebhook(tag, title, content) {
+            const payload = {
+                content: "🚨 **[@everyone] 새로운 공식 공지사항이 등록되었습니다.**",
+                embeds: [{
+                    title: `${tag} ${title}`,
+                    description: content.length > 500 ? content.substring(0, 500) + "..." : content,
+                    color: 16735744, // #ff5e00
+                    timestamp: new Date().toISOString(),
+                    footer: { text: "CLIX CLAN OFFICIAL NOTICE" }
+                }]
+            };
+
+            try {
+                await fetch(DISCORD_NOTICE_WEBHOOK, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (error) {
+                console.error("디스코드 공지 웹훅 전송 실패:", error);
+            }
+        }
+
         auth.onAuthStateChanged((user) => {
             if (user && user.emailVerified) {
                 db.collection("users").doc(user.uid).get().then((doc) => {
@@ -150,7 +177,7 @@
             });
         }
 
-        function saveNotice() {
+        async function saveNotice() {
             if (!isUserAdmin) {
                 alert("권한이 없습니다.");
                 return;
@@ -165,19 +192,25 @@
                 return;
             }
 
-            db.collection("notices").add({
-                title: t,
-                tag: g,
-                content: c,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            }).then(() => {
+            try {
+                // 1. Firebase 저장
+                await db.collection("notices").add({
+                    title: t,
+                    tag: g,
+                    content: c,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // 2. 디스코드 공지 채널 알림 발송
+                await sendNoticeWebhook(g, t, c);
+
                 document.getElementById('title').value = '';
                 document.getElementById('tag').value = '';
                 document.getElementById('content').value = '';
                 alert("공지가 성공적으로 등록되었습니다.");
-            }).catch((error) => {
+            } catch (error) {
                 alert("오류가 발생했습니다: " + error.message);
-            });
+            }
         }
 
         function deleteNotice(docId) {
