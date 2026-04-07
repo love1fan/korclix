@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PUBG CLIX | SCRIM RECORD</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+
+    <style>
+        body { 
+            margin: 0; padding: 140px 8% 50px 8%; background-color: #0a0a0a; color: #ffffff; 
+            font-family: 'Inter', sans-serif; line-height: 1.6; -webkit-user-select: none; user-select: none; 
+        }
+
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(0,0,0,0.95) !important; position: fixed; width: 100%; top: 0; left: 0; box-sizing: border-box; z-index: 100; border-bottom: 1px solid #222; }
+        nav .logo { font-weight: 900; font-size: 26px; color: #ff5e00 !important; text-decoration: none; text-transform: uppercase; }
+        nav ul { list-style: none; display: flex; margin: 0; padding: 0; }
+        nav ul li a { margin-left: 20px; font-size: 12px; color: #999; text-decoration: none; text-transform: uppercase; font-weight: 600; }
+
+        .header { border-bottom: 2px solid #ff5e00; padding-bottom: 20px; margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; }
+        h1 { color: #ff5e00; letter-spacing: 3px; margin: 0; font-size: 2.5rem; text-transform: uppercase; font-weight: 900; }
+        .back-btn { color: #888; text-decoration: none; border: 1px solid #333; padding: 10px 25px; border-radius: 4px; font-weight: bold; transition: 0.3s; display: flex; align-items: center; }
+        .back-btn:hover { background: #ff5e00; color: #fff; border-color: #ff5e00; }
+
+        #admin-editor { display: none; border: 2px solid #ff5e00; padding: 30px; margin-bottom: 50px; border-radius: 8px; background: #111; }
+        .editor-title { color: #ff5e00; font-weight: 900; margin-bottom: 20px; display: block; font-size: 1.2rem; text-transform: uppercase; }
+        .input-group { display: grid; grid-template-columns: 1fr 2fr 2fr; gap: 15px; margin-bottom: 15px; }
+        input, textarea { width: 100%; padding: 12px; background: #1a1a1a; border: 1px solid #333; color: #fff; box-sizing: border-box; font-family: inherit; border-radius: 4px; outline: none; }
+        input:focus, textarea:focus { border-color: #ff5e00; }
+        textarea { resize: vertical; min-height: 100px; }
+        .btn-save { background: #ff5e00; color: #fff; padding: 15px; border: none; font-weight: 900; cursor: pointer; width: 100%; text-transform: uppercase; border-radius: 4px; margin-top: 10px; }
+
+        .scrim-list { display: grid; gap: 20px; }
+        .scrim-card { background: #111; border: 1px solid #222; border-radius: 8px; padding: 25px; position: relative; display: flex; flex-direction: column; }
+        .scrim-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 15px; }
+        .scrim-title { font-size: 1.3rem; font-weight: 900; color: #fff; text-transform: uppercase; }
+        .scrim-date-badge { background: #333; color: #aaa; padding: 5px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; }
+        .scrim-result { font-size: 1.1rem; color: #4ee29d; font-weight: bold; margin-bottom: 15px; }
+        .scrim-details { color: #bbb; white-space: pre-wrap; font-size: 0.95rem; line-height: 1.7; }
+        
+        .btn-del { 
+            color: #ff3333; cursor: pointer; font-size: 0.75rem; 
+            position: absolute; bottom: 20px; right: 25px; 
+            display: none; text-decoration: none; border: 1px solid #422; 
+            padding: 5px 12px; border-radius: 4px; font-weight: 900; background: rgba(0,0,0,0.5);
+        }
+        .btn-del:hover { background: #ff3333; color: #fff; border-color: #ff3333; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="logo">CLAN CLIX</a>
+        <ul>
+            <li><a href="index.html#about">ABOUT</a></li>
+            <li><a href="notice.html">NOTICE</a></li>
+            <li><a href="board.html">BOARD</a></li>
+            <li><a href="scrim.html" style="color: #ff5e00;">SCRIM</a></li>
+        </ul>
+    </nav>
+
+    <div class="header">
+        <h1>SCRIM RECORD</h1>
+        <a href="index.html" class="back-btn">BACK TO HOME</a>
+    </div>
+
+    <div id="admin-editor">
+        <span class="editor-title">내전 및 스크림 결과 등록 (관리자 전용)</span>
+        <div class="input-group">
+            <input type="date" id="match-date" required>
+            <input type="text" id="match-title" placeholder="매치명 (예: 제 1회 클랜 정기 내전)">
+            <input type="text" id="match-result" placeholder="핵심 결과 (예: Team A 우승 / 총 25킬)">
+        </div>
+        <textarea id="match-details" placeholder="상세 참가자 명단 및 매치 기록을 입력하세요."></textarea>
+        <button class="btn-save" onclick="saveScrim()">기록 등록하기</button>
+    </div>
+
+    <div class="scrim-list" id="scrim-container">
+        <p style="text-align:center; color:#555; padding: 50px 0;">데이터를 불러오는 중입니다...</p>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAFSAu2aynX6YPiJEatWy9IQgWgUuTx8ds",
+            authDomain: "korclix.firebaseapp.com",
+            projectId: "korclix",
+            storageBucket: "korclix.firebasestorage.app",
+            messagingSenderId: "472792477536",
+            appId: "1:472792477536:web:14907e228c343b72fd7805"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let isUserAdmin = false;
+
+        document.getElementById('match-date').valueAsDate = new Date();
+
+        auth.onAuthStateChanged((user) => {
+            if (user && user.emailVerified) {
+                db.collection("users").doc(user.uid).get().then((doc) => {
+                    isUserAdmin = doc.exists ? (doc.data().isAdmin === true) : false;
+                    updateAdminUI();
+                    loadScrims();
+                });
+            } else {
+                isUserAdmin = false;
+                updateAdminUI();
+                loadScrims();
+            }
+        });
+
+        function updateAdminUI() {
+            document.getElementById('admin-editor').style.display = isUserAdmin ? 'block' : 'none';
+        }
+
+        function loadScrims() {
+            db.collection("scrims").orderBy("date", "desc").onSnapshot((querySnapshot) => {
+                const container = document.getElementById('scrim-container');
+                container.innerHTML = ""; 
+
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<p style="text-align:center; color:#555; padding: 50px 0;">등록된 매치 기록이 없습니다.</p>';
+                    return;
+                }
+
+                const adminDisplay = isUserAdmin ? 'block' : 'none';
+
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    
+                    container.innerHTML += `
+                        <div class="scrim-card">
+                            <div class="scrim-header">
+                                <div class="scrim-title">${data.title}</div>
+                                <div class="scrim-date-badge">${data.date}</div>
+                            </div>
+                            <div class="scrim-result">${data.result}</div>
+                            <div class="scrim-details">${data.details}</div>
+                            <div class="btn-del" style="display:${adminDisplay}" onclick="deleteScrim('${doc.id}')">DELETE</div>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        function saveScrim() {
+            if (!isUserAdmin) return alert("권한이 없습니다.");
+
+            const date = document.getElementById('match-date').value;
+            const title = document.getElementById('match-title').value.trim();
+            const result = document.getElementById('match-result').value.trim();
+            const details = document.getElementById('match-details').value.trim();
+
+            if(!date || !title || !result || !details) {
+                return alert("모든 항목을 입력하십시오.");
+            }
+
+            db.collection("scrims").add({
+                date: date,
+                title: title,
+                result: result,
+                details: details,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                document.getElementById('match-title').value = '';
+                document.getElementById('match-result').value = '';
+                document.getElementById('match-details').value = '';
+                alert("기록이 성공적으로 등록되었습니다.");
+            }).catch((error) => {
+                alert("등록 실패: " + error.message);
+            });
+        }
+
+        function deleteScrim(docId) {
+            if (!isUserAdmin) return alert("권한이 없습니다.");
+            if(confirm("이 매치 기록을 영구적으로 삭제하시겠습니까?")) {
+                db.collection("scrims").doc(docId).delete()
+                .catch((error) => alert("삭제 실패: " + error.message));
+            }
+        }
+    </script>
+</body>
+</html>
