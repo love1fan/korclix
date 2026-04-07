@@ -175,6 +175,12 @@
         <div class="auth-container" id="auth-form-screen">
             <input type="email" id="auth-email" class="auth-input" placeholder="이메일 주소">
             <input type="password" id="auth-password" class="auth-input" placeholder="비밀번호 (6자 이상)">
+            
+            <div id="login-options" style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #888; margin-bottom: 15px;">
+                <label style="cursor: pointer;"><input type="checkbox" id="remember-email"> 이메일 기억하기</label>
+                <label style="cursor: pointer;"><input type="checkbox" id="keep-logged-in" checked> 로그인 유지</label>
+            </div>
+            
             <div id="signup-extra-fields">
                 <input type="text" id="auth-nickname" class="auth-input" placeholder="배그 닉네임">
                 <input type="number" id="auth-age" class="auth-input" placeholder="나이">
@@ -339,6 +345,14 @@
         let isUserAdmin = false;
         let userNick = "익명";
 
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedEmail = localStorage.getItem('clix_saved_email');
+            if (savedEmail) {
+                document.getElementById('auth-email').value = savedEmail;
+                document.getElementById('remember-email').checked = true;
+            }
+        });
+
         auth.onAuthStateChanged((user) => {
             const overlay = document.getElementById('lock-overlay');
             const formScreen = document.getElementById('auth-form-screen');
@@ -438,14 +452,30 @@
             btn.innerText = isLoginMode ? "회원가입" : "로그인";
             document.getElementById('auth-toggle-text').innerText = isLoginMode ? "이미 계정이 있나요? 로그인" : "계정이 없으신가요? 회원가입";
             document.getElementById('signup-extra-fields').style.display = isLoginMode ? "block" : "none";
+            
+            document.getElementById('login-options').style.display = isLoginMode ? "none" : "flex";
         }
 
         function handleAuth() {
-            const email = document.getElementById('auth-email').value;
+            const email = document.getElementById('auth-email').value.trim();
             const password = document.getElementById('auth-password').value;
             const isLoginMode = document.getElementById('auth-main-btn').innerText === "로그인";
+            
             if (isLoginMode) {
-                auth.signInWithEmailAndPassword(email, password).catch(err => alert("로그인 오류: " + err.message));
+                const keepLoggedIn = document.getElementById('keep-logged-in').checked;
+                const rememberEmail = document.getElementById('remember-email').checked;
+
+                const persistence = keepLoggedIn ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION;
+                
+                if (rememberEmail) {
+                    localStorage.setItem('clix_saved_email', email);
+                } else {
+                    localStorage.removeItem('clix_saved_email');
+                }
+
+                auth.setPersistence(persistence)
+                    .then(() => auth.signInWithEmailAndPassword(email, password))
+                    .catch(err => alert("로그인 오류: " + err.message));
             } else {
                 const nickname = document.getElementById('auth-nickname').value;
                 const age = document.getElementById('auth-age').value;
