@@ -338,24 +338,31 @@
             }
         }
 
-        // 🔥 실시간 채팅 로직
-        function loadMessages() {
-            const chatBox = document.getElementById('chat-messages');
-            db.collection("chats")
-                .orderBy("createdAt", "asc")
-                .limitToLast(50)
-                .onSnapshot((snapshot) => {
-                    chatBox.innerHTML = "";
-                    snapshot.forEach((doc) => {
-                        const data = doc.data();
-                        const div = document.createElement('div');
-                        div.className = 'chat-msg-item';
-                        div.innerHTML = `<span class="chat-nickname">${data.nickname}</span> ${data.text}`;
-                        chatBox.appendChild(div);
-                    });
-                    chatBox.scrollTop = chatBox.scrollHeight;
+       // 🔥 실시간 채팅 로직 (자동 스크롤 개선 버전)
+function loadMessages() {
+    const chatBox = document.getElementById('chat-messages');
+    db.collection("chats")
+        .orderBy("createdAt", "asc")
+        .limitToLast(50)
+        .onSnapshot((snapshot) => {
+            chatBox.innerHTML = "";
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                const div = document.createElement('div');
+                div.className = 'chat-msg-item';
+                div.innerHTML = `<span class="chat-nickname">${data.nickname}</span> ${data.text}`;
+                chatBox.appendChild(div);
+            });
+            
+            // ✅ 핵심: 메시지 렌더링 후 약간의 시간차를 두고 스크롤을 맨 아래로 이동
+            setTimeout(() => {
+                chatBox.scrollTo({
+                    top: chatBox.scrollHeight,
+                    behavior: 'smooth' // 부드럽게 스크롤
                 });
-        }
+            }, 50); 
+        });
+}
 
         function sendMessage() {
             const user = auth.currentUser;
