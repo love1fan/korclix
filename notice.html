@@ -6,7 +6,7 @@
     <title>CLIX NOTICE</title>
     
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script> <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 
     <style>
         body { 
@@ -26,8 +26,6 @@
         .header-btns { display: flex; gap: 10px; }
         .back-btn { color: #888; text-decoration: none; border: 1px solid #333; padding: 10px 25px; border-radius: 4px; font-weight: bold; transition: 0.3s; display: flex; align-items: center; }
         .back-btn:hover { background: #ff5e00; color: #fff; border-color: #ff5e00; }
-        .admin-btn { background: transparent; color: #ff5e00; border: 1px solid #ff5e00; padding: 10px 25px; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.3s; font-family: inherit; }
-        .admin-btn:hover { background: #ff5e00; color: #fff; }
 
         #admin-editor { display: none; border: 2px solid #ff5e00; padding: 25px; margin-bottom: 40px; border-radius: 4px; background: #111; }
         .editor-title { color: #ff5e00; font-weight: bold; margin-bottom: 15px; display: block; }
@@ -43,7 +41,6 @@
         .notice-date { color: #666; font-size: 0.9rem; }
         .notice-content { color: #bbb; white-space: pre-wrap; line-height: 1.8; }
         
-        /* 삭제 버튼 스타일 */
         .btn-del { 
             color: #ff3333; cursor: pointer; font-size: 0.8rem; 
             position: absolute; bottom: 20px; right: 30px; 
@@ -67,7 +64,6 @@
     <div class="header">
         <h1>CLIX NOTICE</h1>
         <div class="header-btns">
-            <button class="admin-btn" onclick="authAdmin()">관리자 로그인</button>
             <a href="index.html" class="back-btn">BACK TO HOME</a>
         </div>
     </div>
@@ -91,7 +87,6 @@
     </div>
 
     <script>
-        // Firebase 설정 (API Key 오타 수정 및 통합)
         const firebaseConfig = {
             apiKey: "AIzaSyAFSAu2aynX6YPiJEatWy9IQgWgUuTx8ds",
             authDomain: "korclix.firebaseapp.com",
@@ -102,37 +97,29 @@
         };
 
         firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
         const db = firebase.firestore();
 
-        window.onload = function() {
-            if(sessionStorage.getItem('clix_master') === 'true') {
-                showAdminUI();
-            }
-            loadNotices();
-        };
+        let isUserAdmin = false;
 
-        // 관리자 인증 (비밀번호: 9763)
-        function authAdmin() {
-            const input = prompt("관리자 코드를 입력하세요.");
-            if(input === "9763") {
-                sessionStorage.setItem('clix_master', 'true');
-                showAdminUI();
-                alert("관리자 모드가 활성화되었습니다.");
-                location.reload(); // 즉시 UI 반영을 위해 새로고침
-            } else if (input !== null) {
-                alert("비밀번호가 일치하지 않습니다.");
+        auth.onAuthStateChanged((user) => {
+            if (user && user.emailVerified) {
+                db.collection("users").doc(user.uid).get().then((doc) => {
+                    isUserAdmin = doc.exists ? (doc.data().isAdmin === true) : false;
+                    updateAdminUI();
+                    loadNotices();
+                });
+            } else {
+                isUserAdmin = false;
+                updateAdminUI();
+                loadNotices();
             }
+        });
+
+        function updateAdminUI() {
+            document.getElementById('admin-editor').style.display = isUserAdmin ? 'block' : 'none';
         }
 
-        function showAdminUI() {
-            document.getElementById('admin-editor').style.display = 'block';
-            const delBtns = document.querySelectorAll('.btn-del');
-            delBtns.forEach(b => b.style.display = 'block');
-            const adminLoginBtn = document.querySelector('.admin-btn');
-            if(adminLoginBtn) adminLoginBtn.style.display = 'none';
-        }
-
-        // 공지사항 실시간 로드
         function loadNotices() {
             db.collection("notices").orderBy("timestamp", "desc").onSnapshot((querySnapshot) => {
                 const container = document.getElementById('notice-container');
@@ -143,10 +130,11 @@
                     return;
                 }
 
+                const adminDisplay = isUserAdmin ? 'block' : 'none';
+
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
                     const dateStr = data.timestamp ? data.timestamp.toDate().toLocaleDateString('ko-KR') : '방금 전';
-                    const adminDisplay = sessionStorage.getItem('clix_master') === 'true' ? 'block' : 'none';
 
                     container.innerHTML += `
                         <div class="notice-card">
@@ -162,8 +150,12 @@
             });
         }
 
-        // 공지 등록
         function saveNotice() {
+            if (!isUserAdmin) {
+                alert("권한이 없습니다.");
+                return;
+            }
+
             const t = document.getElementById('title').value.trim();
             const g = document.getElementById('tag').value.trim() || '[공지]';
             const c = document.getElementById('content').value.trim();
@@ -188,8 +180,12 @@
             });
         }
 
-        // 공지 삭제
         function deleteNotice(docId) {
+            if (!isUserAdmin) {
+                alert("권한이 없습니다.");
+                return;
+            }
+
             if(confirm("이 공지사항을 정말로 삭제하시겠습니까?")) {
                 db.collection("notices").doc(docId).delete()
                 .then(() => alert("삭제되었습니다."))
