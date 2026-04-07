@@ -74,7 +74,7 @@
         }
         
         /* 🔥 채팅 UI 스타일 */
-        .chat-box-wrapper { background: #111; border: 1px solid #222; border-radius: 8px; display: flex; flex-direction: column; height: 100%; min-height: 400px; }
+        .chat-box-wrapper { background: #111; border: 1px solid #222; border-radius: 8px; display: flex; flex-direction: column; height: 100%; min-height: 400px; max-height: 500px; overflow: hidden; }
         #chat-messages { flex: 1; padding: 15px; overflow-y: auto; font-size: 0.85rem; color: #ccc; scroll-behavior: smooth; }
         .chat-msg-item { margin-bottom: 10px; line-height: 1.4; border-bottom: 1px solid #1a1a1a; padding-bottom: 5px; }
         .chat-nickname { color: #ff5e00; font-weight: 800; margin-right: 5px; font-size: 0.75rem; }
@@ -195,7 +195,7 @@
                     <span style="font-size: 0.8rem; font-weight: 900; letter-spacing: 1px;">CLIX LIVE CHAT</span>
                 </div>
                 <div id="chat-messages">
-                    </div>
+                </div>
                 <div class="chat-input-area">
                     <input type="text" id="chat-input" placeholder="로그인 후 채팅 가능..." autocomplete="off">
                     <button class="chat-send-btn" onclick="sendMessage()">SEND</button>
@@ -269,7 +269,6 @@
                     db.collection("users").doc(user.uid).get().then((doc) => {
                         const nick = doc.exists ? doc.data().nickname : user.email.split('@')[0];
                         document.getElementById('nav-user-info').innerText = nick + "님 반갑습니다";
-                        // 로그인 성공 시 채팅방 초기화
                         loadMessages();
                     });
                 } else {
@@ -338,31 +337,31 @@
             }
         }
 
-       // 🔥 실시간 채팅 로직 (자동 스크롤 개선 버전)
-function loadMessages() {
-    const chatBox = document.getElementById('chat-messages');
-    db.collection("chats")
-        .orderBy("createdAt", "asc")
-        .limitToLast(50)
-        .onSnapshot((snapshot) => {
-            chatBox.innerHTML = "";
-            snapshot.forEach((doc) => {
-                const data = doc.data();
-                const div = document.createElement('div');
-                div.className = 'chat-msg-item';
-                div.innerHTML = `<span class="chat-nickname">${data.nickname}</span> ${data.text}`;
-                chatBox.appendChild(div);
-            });
-            
-            // ✅ 핵심: 메시지 렌더링 후 약간의 시간차를 두고 스크롤을 맨 아래로 이동
-            setTimeout(() => {
-                chatBox.scrollTo({
-                    top: chatBox.scrollHeight,
-                    behavior: 'smooth' // 부드럽게 스크롤
+        // 🔥 실시간 채팅 로직 (자동 스크롤 개선 버전)
+        function loadMessages() {
+            const chatBox = document.getElementById('chat-messages');
+            db.collection("chats")
+                .orderBy("createdAt", "asc")
+                .limitToLast(50)
+                .onSnapshot((snapshot) => {
+                    chatBox.innerHTML = "";
+                    snapshot.forEach((doc) => {
+                        const data = doc.data();
+                        const div = document.createElement('div');
+                        div.className = 'chat-msg-item';
+                        div.innerHTML = `<span class="chat-nickname">${data.nickname}</span> ${data.text}`;
+                        chatBox.appendChild(div);
+                    });
+                    
+                    // ✅ 메시지 렌더링 후 스크롤 하단 이동 (부드럽게)
+                    setTimeout(() => {
+                        chatBox.scrollTo({
+                            top: chatBox.scrollHeight,
+                            behavior: 'smooth'
+                        });
+                    }, 50); 
                 });
-            }, 50); 
-        });
-}
+        }
 
         function sendMessage() {
             const user = auth.currentUser;
