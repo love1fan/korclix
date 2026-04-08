@@ -3,163 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PUBG CLIX | 자유게시판</title>
+    <title>PUBG CLIX | BOARD</title>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
     <style>
-        body { margin: 0; padding: 140px 8% 50px 8%; background-color: #0a0a0a; color: #ffffff; font-family: 'Inter', sans-serif; line-height: 1.6; -webkit-user-select: none; user-select: none; }
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(0,0,0,0.95) !important; position: fixed; width: 100%; top: 0; left: 0; box-sizing: border-box; z-index: 100; border-bottom: 1px solid #222; }
-        nav .logo { font-weight: 900; font-size: 26px; color: #ff5e00 !important; text-decoration: none; text-transform: uppercase; }
+        body { margin: 0; padding: 120px 8% 50px 8%; background-color: #080808; color: #ffffff; font-family: 'Inter', sans-serif; line-height: 1.6; }
+        
+        /* 블러 네비게이션 */
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(8, 8, 8, 0.8) !important; backdrop-filter: blur(10px); position: fixed; width: 100%; top: 0; left: 0; box-sizing: border-box; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        nav .logo { font-weight: 900; font-size: 26px; color: #ff5e00; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; }
         nav ul { list-style: none; display: flex; margin: 0; padding: 0; }
-        nav ul li a { margin-left: 20px; font-size: 12px; color: #999; text-decoration: none; text-transform: uppercase; font-weight: 600; }
-        .header { border-bottom: 2px solid #ff5e00; padding-bottom: 20px; margin-bottom: 40px; }
-        h1 { color: #ff5e00; letter-spacing: 3px; margin: 0; font-size: 2.5rem; text-transform: uppercase; font-weight: 900; }
+        nav ul li a { margin-left: 20px; font-size: 12px; color: #888; text-decoration: none; text-transform: uppercase; font-weight: 600; transition: 0.3s; }
+        nav ul li a:hover { color: #ff5e00; }
+
+        /* 고급 헤더 */
+        .header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid rgba(255, 94, 0, 0.2); position: relative; }
+        .header::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 150px; height: 2px; background: #ff5e00; box-shadow: 0 0 15px rgba(255, 94, 0, 0.6); }
+        h1 { color: #fff; letter-spacing: 3px; margin: 0; font-size: 2.5rem; text-transform: uppercase; font-weight: 900; }
+
+        /* 작성 에어리어 (글래스모피즘) */
+        #write-section { display: none; background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); padding: 30px; margin-bottom: 50px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        #display-nick { display: inline-block; background: rgba(255, 94, 0, 0.1); border: 1px solid rgba(255, 94, 0, 0.2); color: #ff5e00; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 800; margin-bottom: 15px; }
         
-        #write-section { display: none; border: 1px solid #222; padding: 30px; margin-bottom: 50px; border-radius: 8px; background: #111; }
-        textarea { width: 100%; padding: 15px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 4px; box-sizing: border-box; resize: none; margin-bottom: 15px; font-family: inherit; }
-        input[type="text"] { width: 100%; padding: 12px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 4px; margin-bottom: 15px; box-sizing: border-box; font-family: inherit; }
-        .btn-post { background: #ff5e00; color: #fff; padding: 15px; border: none; font-weight: 900; cursor: pointer; width: 100%; text-transform: uppercase; border-radius: 4px; }
+        textarea, input[type="text"] { width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; border-radius: 8px; box-sizing: border-box; font-family: inherit; margin-bottom: 15px; transition: 0.3s; outline: none; }
+        textarea:focus, input[type="text"]:focus { border-color: #ff5e00; background: rgba(0,0,0,0.6); box-shadow: 0 0 15px rgba(255,94,0,0.1); }
+        textarea { resize: none; min-height: 100px; }
         
-        .post-card { background: #111; border: 1px solid #222; border-radius: 12px; padding: 30px; margin-bottom: 25px; position: relative; transition: 0.3s; }
-        .post-card:hover { border-color: #444; }
-        .post-header { display: flex; justify-content: space-between; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #222; }
-        .post-author { color: #ff5e00; font-weight: 800; }
-        .post-date { color: #555; font-size: 0.8rem; }
-        .post-content { color: #ddd; white-space: pre-wrap; font-size: 1.1rem; margin-bottom: 15px; }
+        .btn-post { background: linear-gradient(135deg, #ff5e00, #e65500); color: #fff; padding: 15px; border: none; font-weight: 900; cursor: pointer; width: 100%; text-transform: uppercase; border-radius: 8px; font-size: 1rem; transition: 0.3s; letter-spacing: 2px; }
+        .btn-post:hover { box-shadow: 0 5px 20px rgba(255, 94, 0, 0.4); transform: translateY(-2px); }
         
-        .post-media { margin-top: 15px; text-align: center; background: #000; border-radius: 8px; overflow: hidden; border: 1px solid #333; }
-        .post-media img, .post-media video, .post-media iframe { max-width: 100%; max-height: 600px; border: none; display: block; margin: 0 auto; }
+        /* 피드 스타일의 게시글 카드 */
+        #board-container { display: flex; flex-direction: column; gap: 20px; }
+        .post-card { background: rgba(15, 15, 15, 0.8); border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 12px; padding: 30px; position: relative; transition: 0.3s; backdrop-filter: blur(5px); display: flex; flex-direction: column; }
+        .post-card:hover { border-color: rgba(255, 255, 255, 0.1); background: rgba(20, 20, 20, 0.9); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
         
-        .btn-del { 
-            color: #ff3333; cursor: pointer; font-size: 0.75rem; 
-            position: absolute; bottom: 25px; right: 30px; 
-            font-weight: 900; border: 1px solid #422; 
-            padding: 6px 12px; border-radius: 4px; text-transform: uppercase;
-            background: rgba(0,0,0,0.5); transition: 0.3s;
-        }
-        .btn-del:hover { background: #ff3333; color: #fff; border-color: #ff3333; }
+        .post-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .author-info { display: flex; align-items: center; gap: 10px; }
+        .author-avatar { width: 35px; height: 35px; background: #ff5e00; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: 900; color: #000; font-size: 1.2rem; }
+        .post-author { color: #fff; font-weight: 900; font-size: 1.1rem; letter-spacing: 1px; }
+        .post-date { color: #666; font-size: 0.85rem; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 20px; }
+        
+        .post-content { color: #ccc; white-space: pre-wrap; font-size: 1.05rem; line-height: 1.7; margin-bottom: 20px; padding-left: 45px; }
+        
+        .post-media { margin-left: 45px; margin-top: 15px; background: #000; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: center; }
+        .post-media img, .post-media video, .post-media iframe { max-width: 100%; max-height: 500px; border: none; display: block; border-radius: 12px; }
+        
+        .btn-del { color: #888; cursor: pointer; font-size: 0.8rem; position: absolute; top: 30px; right: 30px; font-weight: 800; background: none; border: none; transition: 0.3s; text-decoration: underline; }
+        .btn-del:hover { color: #ff3333; }
     </style>
 </head>
 <body>
-    <nav><a href="index.html" class="logo">CLAN CLIX</a><ul><li><a href="index.html#about">ABOUT</a></li><li><a href="notice.html">NOTICE</a></li><li><a href="board.html" style="color:#ff5e00;">BOARD</a></li></ul></nav>
-    <div class="header"><h1>BOARD</h1></div>
-
-    <div id="write-section">
-        <div id="display-nick" style="color:#ff5e00; font-weight:800; margin-bottom:10px;">작성자 로딩 중...</div>
-        <textarea id="post-content" rows="4" placeholder="내용을 입력하세요."></textarea>
-        <input type="text" id="media-url" placeholder="사진, 영상 또는 유튜브 주소를 입력하세요.">
-        <button class="btn-post" onclick="savePost()">POST MESSAGE</button>
+    <nav>
+        <a href="index.html" class="logo">CLAN CLIX</a>
+        <ul>
+            <li><a href="index.html#about">ABOUT</a></li>
+            <li><a href="notice.html">NOTICE</a></li>
+            <li><a href="board.html" style="color:#ff5e00;">BOARD</a></li>
+            <li><a href="tactics.html">TACTICS</a></li>
+        </ul>
+    </nav>
+    
+    <div class="header">
+        <h1>CLAN BOARD</h1>
     </div>
 
-    <div id="login-notice" style="text-align:center; padding:30px; border:1px dashed #333; color:#555;">로그인 회원만 작성 가능합니다. <a href="index.html" style="color:#ff5e00;">로그인하기</a></div>
+    <div id="write-section">
+        <span id="display-nick">ID 로딩 중...</span>
+        <textarea id="post-content" placeholder="클랜원들과 자유롭게 이야기를 나누세요."></textarea>
+        <input type="text" id="media-url" placeholder="이미지, 동영상, 또는 유튜브 링크를 입력하세요.">
+        <button class="btn-post" onclick="savePost()">UPLOAD</button>
+    </div>
+
+    <div id="login-notice" style="text-align:center; padding:40px; background:rgba(255,255,255,0.02); border-radius:12px; border:1px dashed rgba(255,255,255,0.1); color:#888;">게시글을 작성하려면 로그인이 필요합니다. <a href="index.html" style="color:#ff5e00; font-weight:bold; text-decoration:none;">홈으로 가기</a></div>
+    
     <div id="board-container"></div>
 
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyAFSAu2aynX6YPiJEatWy9IQgWgUuTx8ds",
-            authDomain: "korclix.firebaseapp.com",
-            projectId: "korclix",
-            storageBucket: "korclix.firebasestorage.app",
-            messagingSenderId: "472792477536",
-            appId: "1:472792477536:web:14907e228c343b72fd7805"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        
-        let isUserAdmin = false;
-        let userNick = "익명";
-
-        // 디스코드 웹훅 설정
-        const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1491074950436622526/tgez-sHf5xBnZY-gENB5DceaKhYfHhDyKoEsucRj-GhQtSe_OztiE73XbqYS22_-1j-a";
-
-        async function sendDiscordWebhook(author, content, mediaUrl) {
-            const payload = {
-                content: "📢 **[자유게시판] 새 글이 등록되었습니다.**",
-                embeds: [{
-                    description: content.length > 200 ? content.substring(0, 200) + "..." : content,
-                    color: 16735744, 
-                    author: { name: author },
-                    fields: mediaUrl ? [{ name: "첨부 미디어/링크", value: mediaUrl }] : [],
-                    timestamp: new Date().toISOString()
-                }]
-            };
-
-            try {
-                await fetch(DISCORD_WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                console.log("Discord Webhook 전송 성공");
-            } catch (error) {
-                console.error("Discord Webhook 전송 실패:", error);
-            }
-        }
+        const firebaseConfig = { apiKey: "AIzaSyAFSAu2aynX6YPiJEatWy9IQgWgUuTx8ds", authDomain: "korclix.firebaseapp.com", projectId: "korclix", storageBucket: "korclix.firebasestorage.app", messagingSenderId: "472792477536", appId: "1:472792477536:web:14907e228c343b72fd7805" };
+        firebase.initializeApp(firebaseConfig); const auth = firebase.auth(); const db = firebase.firestore();
+        let isUserAdmin = false; let userNick = "익명";
 
         auth.onAuthStateChanged((user) => {
             if (user && user.emailVerified) {
-                document.getElementById('write-section').style.display = 'block';
-                document.getElementById('login-notice').style.display = 'none';
+                document.getElementById('write-section').style.display = 'block'; document.getElementById('login-notice').style.display = 'none';
                 db.collection("users").doc(user.uid).get().then(doc => {
-                    if (doc.exists) {
-                        const data = doc.data();
-                        userNick = data.nickname || user.email.split('@')[0];
-                        isUserAdmin = data.isAdmin === true;
-                    } else {
-                        userNick = user.email.split('@')[0];
-                        isUserAdmin = false;
-                    }
-                    document.getElementById('display-nick').innerText = "작성자: " + userNick;
-                    loadPosts();
+                    if (doc.exists) { userNick = doc.data().nickname || user.email.split('@')[0]; isUserAdmin = doc.data().isAdmin === true; } 
+                    else { userNick = user.email.split('@')[0]; isUserAdmin = false; }
+                    document.getElementById('display-nick').innerText = "작성자 : " + userNick; loadPosts();
                 });
-            } else {
-                document.getElementById('write-section').style.display = 'none';
-                document.getElementById('login-notice').style.display = 'block';
-                isUserAdmin = false;
-                userNick = "익명";
-                loadPosts();
-            }
+            } else { document.getElementById('write-section').style.display = 'none'; document.getElementById('login-notice').style.display = 'block'; loadPosts(); }
         });
 
         function loadPosts() {
             db.collection("board").orderBy("timestamp", "desc").onSnapshot(snapshot => {
-                const container = document.getElementById('board-container');
-                container.innerHTML = "";
-                
+                const container = document.getElementById('board-container'); container.innerHTML = "";
                 snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const date = data.timestamp ? data.timestamp.toDate().toLocaleString('ko-KR') : '방금 전';
-                    
+                    const data = doc.data(); const date = data.timestamp ? data.timestamp.toDate().toLocaleString('ko-KR', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}) : '방금 전';
+                    const avatarChar = data.nickname.charAt(0).toUpperCase();
                     let mediaHtml = "";
                     if (data.mediaUrl) {
                         const url = data.mediaUrl.trim();
-                        
                         if (url.includes('youtube.com') || url.includes('youtu.be')) {
                             let videoId = "";
                             if (url.includes('youtu.be/')) videoId = url.split('youtu.be/')[1].split(/[?#]/)[0];
                             else if (url.includes('v=')) videoId = url.split('v=')[1].split(/[&?#]/)[0];
                             else if (url.includes('embed/')) videoId = url.split('embed/')[1].split(/[?#]/)[0];
-
-                            if (videoId) {
-                                mediaHtml = `<div class="post-media"><iframe width="100%" height="400" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe></div>`;
-                            }
-                        } 
-                        else if (url.toLowerCase().match(/\.(mp4|webm|ogg|mov)$/i)) {
-                            mediaHtml = `<div class="post-media"><video controls preload="metadata" style="width:100%;"><source src="${data.mediaUrl}"></video></div>`;
-                        } 
-                        else {
-                            mediaHtml = `<div class="post-media"><img src="${data.mediaUrl}" onerror="this.parentElement.style.display='none'"></div>`;
-                        }
+                            if (videoId) mediaHtml = `<div class="post-media"><iframe width="100%" height="400" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe></div>`;
+                        } else if (url.toLowerCase().match(/\.(mp4|webm|ogg|mov)$/i)) { mediaHtml = `<div class="post-media"><video controls preload="metadata" style="width:100%;"><source src="${data.mediaUrl}"></video></div>`; } 
+                        else { mediaHtml = `<div class="post-media"><img src="${data.mediaUrl}" onerror="this.parentElement.style.display='none'"></div>`; }
                     }
-
-                    const delBtn = isUserAdmin ? `<div class="btn-del" onclick="deletePost('${doc.id}')">DELETE</div>` : "";
+                    const delBtn = isUserAdmin ? `<button class="btn-del" onclick="deletePost('${doc.id}')">삭제</button>` : "";
 
                     container.innerHTML += `
                         <div class="post-card">
                             <div class="post-header">
-                                <span class="post-author">${data.nickname}</span>
+                                <div class="author-info">
+                                    <div class="author-avatar">${avatarChar}</div>
+                                    <span class="post-author">${data.nickname}</span>
+                                </div>
                                 <span class="post-date">${date}</span>
                             </div>
                             <div class="post-content">${data.content}</div>
@@ -171,41 +133,15 @@
         }
 
         async function savePost() {
-            const content = document.getElementById('post-content').value.trim();
-            const mediaUrl = document.getElementById('media-url').value.trim();
-            if (!content && !mediaUrl) return alert("내용 또는 주소를 입력하세요.");
-
+            const content = document.getElementById('post-content').value.trim(); const mediaUrl = document.getElementById('media-url').value.trim();
+            if (!content && !mediaUrl) return alert("내용을 입력하세요.");
             try {
-                // 1. Firestore 데이터베이스에 글 저장
-                await db.collection("board").add({
-                    nickname: userNick,
-                    content: content,
-                    mediaUrl: mediaUrl || null,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                });
-
-                // 2. 저장 성공 후 디스코드 알림 발송 호출
-                await sendDiscordWebhook(userNick, content, mediaUrl);
-                
-                // 3. 입력창 초기화 및 완료 알림
-                document.getElementById('post-content').value = "";
-                document.getElementById('media-url').value = "";
-                alert("게시글이 성공적으로 등록되었습니다.");
-            } catch (err) {
-                console.error("저장 중 오류 발생:", err);
-                alert("등록 실패: " + err.message);
-            }
+                await db.collection("board").add({ nickname: userNick, content: content, mediaUrl: mediaUrl || null, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+                document.getElementById('post-content').value = ""; document.getElementById('media-url').value = "";
+            } catch (err) { alert("등록 실패: " + err.message); }
         }
 
-        function deletePost(id) {
-            if (!isUserAdmin) {
-                alert("삭제 권한이 없습니다.");
-                return;
-            }
-            if(confirm("이 게시글을 삭제하시겠습니까?")) {
-                db.collection("board").doc(id).delete().then(() => alert("삭제되었습니다."));
-            }
-        }
+        function deletePost(id) { if (isUserAdmin && confirm("삭제하시겠습니까?")) db.collection("board").doc(id).delete(); }
     </script>
 </body>
 </html>
