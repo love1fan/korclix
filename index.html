@@ -134,6 +134,13 @@
         .tier-gold { color: #ffcc00; border-color: #ffcc00; }
         .tier-bronze { color: #cd7f32; border-color: #cd7f32; }
 
+        /* API 스탯용 추가 CSS */
+        .mode-tabs { display: flex; gap: 5px; margin-bottom: 15px; background: #000; padding: 5px; border-radius: 6px; border: 1px solid #222; }
+        .mode-btn { flex: 1; padding: 5px; background: transparent; border: none; color: #666; font-size: 0.7rem; font-weight: 800; cursor: pointer; border-radius: 4px; transition: 0.2s; text-transform: uppercase; }
+        .mode-btn.active { background: #333; color: #ff5e00; }
+        .loading-text { font-size: 0.8rem; color: #888; text-align: center; padding: 20px 0; font-weight: bold; animation: blink 1s infinite; grid-column: 1 / -1; }
+        @keyframes blink { 50% { opacity: 0.5; } }
+
         footer { padding: 80px; text-align: center; color: #444; border-top: 1px solid #222; text-transform: uppercase; }
         @media (max-width: 900px) { .about-wrapper, .stats-grid, .stream-container, .discord-container { grid-template-columns: 1fr; } .hero h1 { font-size: 4rem; } .stream-container { height: auto; max-height: none; } }
 
@@ -317,16 +324,27 @@
     <section class="section" id="members">
         <h2 class="section-title">CLIX SQUAD STATS</h2>
         <div class="stats-grid">
-            <div class="stat-card">
-                <span class="rank-badge tier-platinum">Platinum</span>
-                <div class="card-header"><h3 class="player-name">CLIX_0dB</h3><span class="player-role">Main Order</span></div>
-                <div class="data-row">
-                    <div class="data-item"><span class="data-label">K/D Ratio</span><span class="data-value">1.25</span></div>
-                    <div class="data-item"><span class="data-label">Avg Damage</span><span class="data-value">208</span></div>
-                    <div class="data-item"><span class="data-label">Win Rate</span><span class="data-value">7.7<span class="data-unit">%</span></span></div>
-                    <div class="data-item"><span class="data-label">Top 10</span><span class="data-value">25.3<span class="data-unit">%</span></span></div>
+            
+            <!-- API 연동 카드 (CLX_0dB) -->
+            <div class="stat-card" id="player-card-0db">
+                <span class="rank-badge" id="badge-0db">Loading...</span>
+                <div class="card-header">
+                    <h3 class="player-name">CLX_0dB</h3>
+                    <span class="player-role">Main Order</span>
+                </div>
+                
+                <div class="mode-tabs">
+                    <button class="mode-btn active" onclick="updateUI_0db('squad', this)">스쿼드</button>
+                    <button class="mode-btn" onclick="updateUI_0db('duo', this)">듀오</button>
+                    <button class="mode-btn" onclick="updateUI_0db('solo', this)">솔로</button>
+                </div>
+            
+                <div class="data-row" id="stats-0db">
+                    <div class="loading-text">PUBG API 연동 중...</div>
                 </div>
             </div>
+
+            <!-- 하드코딩된 나머지 멤버 카드들 -->
             <div class="stat-card">
                 <span class="rank-badge tier-gold">Gold</span>
                 <div class="card-header"><h3 class="player-name">Viper789456</h3><span class="player-role">Sub Order</span></div>
@@ -354,6 +372,7 @@
     <footer>&copy; 2026 CLAN CLIX. ALL RIGHTS RESERVED.</footer>
 
     <script>
+        // --- Firebase 설정 ---
         const firebaseConfig = {
             apiKey: "AIzaSyAFSAu2aynX6YPiJEatWy9IQgWgUuTx8ds",
             authDomain: "korclix.firebaseapp.com",
@@ -369,7 +388,103 @@
         let isUserAdmin = false;
         let userNick = "익명";
 
-        // --- 맵 그리기 로직 추가 ---
+        // --- PUBG API 연동 설정 추가 ---
+        const PUBG_API_KEY = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIyZDM0N2Y2MC0xNGJjLTAxM2YtMjljYy01MmJjZWJmMWUzMTYiLCJpc3MiOiJnYW1lbG9ja2VyIiwiaWF0IjoxNzc1NTcyMTk3LCJwdWIiOiJibHVlaG9sZSIsInRpdGxlIjoicHViZyIsImFwcCI6ImNsaXgtY2xhbi1zdGF0In0.uV5HbysN7Yb8MtfPNFWxxTz1o62sCS60thT5uy8MsUM"; 
+        const PLATFORM = "steam";
+        const TARGET_NICKNAME = "CLX_0dB";
+        let pubgStatsData_0db = { solo: null, duo: null, squad: null };
+
+        async function fetchPubgStats() {
+            const headers = {
+                "Authorization": `Bearer ${PUBG_API_KEY}`,
+                "Accept": "application/vnd.api+json"
+            };
+
+            try {
+                const playerRes = await fetch(`https://api.pubg.com/shards/${PLATFORM}/players?filter[playerNames]=${TARGET_NICKNAME}`, { headers });
+                if (!playerRes.ok) throw new Error("유저를 찾을 수 없습니다.");
+                const playerData = await playerRes.json();
+                const accountId = playerData.data[0].id;
+
+                const seasonRes = await fetch(`https://api.pubg.com/shards/${PLATFORM}/seasons`, { headers });
+                const seasonData = await seasonRes.json();
+                const currentSeason = seasonData.data.find(s => s.attributes.isCurrentSeason).id;
+
+                const statsRes = await fetch(`https://api.pubg.com/shards/${PLATFORM}/players/${accountId}/seasons/${currentSeason}/ranked`, { headers });
+                const statsData = await statsRes.json();
+                
+                const modes = statsData.data.attributes.rankedGameModeStats;
+
+                pubgStatsData_0db.solo = getBestMode(modes, 'solo', 'solo-fpp');
+                pubgStatsData_0db.duo = getBestMode(modes, 'duo', 'duo-fpp');
+                pubgStatsData_0db.squad = getBestMode(modes, 'squad', 'squad-fpp');
+
+                // 기본값 스쿼드 로드
+                const firstBtn = document.querySelector('#player-card-0db .mode-btn');
+                updateUI_0db('squad', firstBtn);
+
+            } catch (error) {
+                console.error("PUBG API Error:", error);
+                document.getElementById('stats-0db').innerHTML = `<div class="loading-text" style="color:#ff3333; animation:none;">데이터를 불러오지 못했습니다.</div>`;
+                document.getElementById('badge-0db').innerText = "ERROR";
+            }
+        }
+
+        function getBestMode(modes, tppKey, fppKey) {
+            const tpp = modes[tppKey] || { roundsPlayed: 0 };
+            const fpp = modes[fppKey] || { roundsPlayed: 0 };
+            return (tpp.roundsPlayed >= fpp.roundsPlayed) ? tpp : fpp;
+        }
+
+        function updateUI_0db(mode, clickedBtn) {
+            if(clickedBtn) {
+                const btns = document.querySelectorAll('#player-card-0db .mode-btn');
+                btns.forEach(btn => btn.classList.remove('active'));
+                clickedBtn.classList.add('active');
+            }
+
+            const data = pubgStatsData_0db[mode];
+            const statsContainer = document.getElementById('stats-0db');
+            const badgeContainer = document.getElementById('badge-0db');
+
+            if (!data || data.roundsPlayed === 0) {
+                badgeContainer.innerText = "Unranked";
+                badgeContainer.style.color = "#888";
+                badgeContainer.style.borderColor = "#888";
+                statsContainer.innerHTML = `<div class="loading-text" style="animation:none;">이번 시즌 기록이 없습니다.</div>`;
+                return;
+            }
+
+            const deaths = data.roundsPlayed - data.wins;
+            const kd = deaths === 0 ? data.kills : (data.kills / deaths); 
+            const avgDmg = data.damageDealt / data.roundsPlayed;
+            
+            const rp = data.currentRankPoint || 0;
+            const tierName = data.currentTier ? data.currentTier.tier : "Unranked";
+            const subTier = data.currentTier ? data.currentTier.subTier : "";
+            
+            let tierColor = "#fff";
+            if (tierName === "Bronze") tierColor = "#cd7f32";
+            else if (tierName === "Silver") tierColor = "#c0c0c0";
+            else if (tierName === "Gold") tierColor = "#ffcc00";
+            else if (tierName === "Platinum") tierColor = "#4ee29d";
+            else if (tierName === "Diamond") tierColor = "#00d4ff";
+            else if (tierName === "Master") tierColor = "#ff5e00";
+
+            badgeContainer.innerText = `${tierName} ${subTier}`;
+            badgeContainer.style.color = tierColor;
+            badgeContainer.style.borderColor = tierColor;
+
+            statsContainer.innerHTML = `
+                <div class="data-item"><span class="data-label">Rank Points</span><span class="data-value">${rp}</span></div>
+                <div class="data-item"><span class="data-label">K/D</span><span class="data-value">${kd.toFixed(2)}</span></div>
+                <div class="data-item"><span class="data-label">Avg Damage</span><span class="data-value">${Math.round(avgDmg)}</span></div>
+                <div class="data-item"><span class="data-label">Matches</span><span class="data-value">${data.roundsPlayed}</span></div>
+            `;
+        }
+        // --- PUBG API 설정 끝 ---
+
+        // --- 맵 그리기 로직 ---
         let canvas, ctx;
         let isDrawing = false;
         let currentTool = 'pen';
@@ -399,6 +514,7 @@
             if(img && img.complete) initCanvas();
         });
 
+        // 페이지 로드시 실행되는 메인 초기화 블록
         document.addEventListener('DOMContentLoaded', () => {
             const savedEmail = localStorage.getItem('clix_saved_email');
             if (savedEmail) {
@@ -411,6 +527,9 @@
                 if(img.complete) initCanvas(); 
                 else img.onload = initCanvas;
             }
+
+            // PUBG API 연동 실행
+            fetchPubgStats();
         });
 
         function getMousePos(evt) {
@@ -464,8 +583,8 @@
             if (!ctx || !canvas) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
-        // --- 맵 그리기 로직 끝 ---
 
+        // --- 인증 및 사이트 동작 관련 ---
         auth.onAuthStateChanged((user) => {
             const overlay = document.getElementById('lock-overlay');
             const formScreen = document.getElementById('auth-form-screen');
@@ -603,7 +722,6 @@
         function resendEmail() { auth.currentUser.sendEmailVerification().then(() => alert("재발송 완료")); }
         function logout() { if(confirm("로그아웃 하시겠습니까?")) auth.signOut(); }
 
-        // 기존 showMap 함수 교체
         function showMap(mapName, btn) {
             const btns = document.querySelectorAll('.map-nav-btn'); 
             btns.forEach(b => b.classList.remove('active')); 
