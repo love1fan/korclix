@@ -52,11 +52,14 @@
         .notice-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; margin-bottom: 20px; }
         .notice-title { font-size: 1.3rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 12px; }
         .notice-tag { background: #ff5e00; color: #000; padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: 900; letter-spacing: 1px; box-shadow: 0 0 10px rgba(255,94,0,0.3); }
-        .notice-date { color: #666; font-size: 0.9rem; font-weight: 600; background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 20px; margin-right: 60px; }
+        
+        /* 마진 속성 초기화 (JS에서 Flexbox로 제어) */
+        .notice-date { color: #666; font-size: 0.9rem; font-weight: 600; background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 20px; margin: 0; }
         .notice-content { color: #bbb; white-space: pre-wrap; line-height: 1.8; font-size: 1.05rem; }
         
-        .btn-del { color: #888; cursor: pointer; font-size: 0.8rem; position: absolute; top: 30px; right: 30px; font-weight: 800; display: none; transition: 0.3s; background: none; border: none; text-decoration: underline; }
-        .btn-del:hover { color: #ff3333; }
+        /* 절대 좌표 위치(position: absolute) 제거 */
+        .btn-del { color: #888; cursor: pointer; font-size: 0.8rem; font-weight: 800; display: none; transition: 0.3s; background: none; border: 1px solid #444; border-radius: 4px; padding: 4px 10px; text-decoration: none; margin: 0; }
+        .btn-del:hover { color: #ff3333; border-color: #ff3333; }
     </style>
 </head>
 <body>
@@ -92,7 +95,7 @@
     </div>
 
     <div class="notice-list" id="notice-container">
-        <p style="text-align:center; color:#555; margin-right: 60px;">데이터를 불러오는 중입니다...</p>
+        <p style="text-align:center; color:#555;">데이터를 불러오는 중입니다...</p>
     </div>
 
     <script>
@@ -153,10 +156,12 @@
                         <div class="notice-card">
                             <div class="notice-header">
                                 <div class="notice-title"><span class="notice-tag">${data.tag || '[공지]'}</span>${data.title}</div>
-                                <div class="notice-date">${dateStr}</div>
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <div class="notice-date">${dateStr}</div>
+                                    <button class="btn-del" style="display:${adminDisplay}" onclick="deleteNotice('${doc.id}')">삭제</button>
+                                </div>
                             </div>
                             <div class="notice-content">${data.content}</div>
-                            <button class="btn-del" style="display:${adminDisplay}" onclick="deleteNotice('${doc.id}')">삭제</button>
                         </div>`;
                 });
             }, (error) => {
