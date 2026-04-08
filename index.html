@@ -43,8 +43,34 @@
         .logout-link { margin-left: 10px; font-size: 10px; color: #ff3333 !important; cursor: pointer; border: 1px solid #444; padding: 5px 10px; border-radius: 4px; font-weight: bold; }
         .logout-link:hover { background: rgba(255,255,255,0.1); }
 
-        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1920&q=80'); background-size: cover; background-position: center; }
-        .hero h1 { font-size: 8rem; margin: 0; letter-spacing: 20px; font-weight: 900; text-shadow: 0 0 30px rgba(255, 94, 0, 0.5); text-transform: uppercase; }
+        /* --- HERO 영상 및 글리치 효과 CSS --- */
+        .hero { position: relative; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; overflow: hidden; }
+        .hero-video { position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; transform: translateX(-50%) translateY(-50%); z-index: -2; object-fit: cover; }
+        .hero-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: -1; }
+        
+        .glitch { font-size: 8rem; margin: 0; letter-spacing: 20px; font-weight: 900; text-transform: uppercase; position: relative; color: white; text-shadow: 0 0 30px rgba(255, 94, 0, 0.8); }
+        .glitch::before, .glitch::after { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: transparent; }
+        .glitch::before { left: 4px; text-shadow: -2px 0 #ff00c1; clip: rect(44px, 450px, 56px, 0); animation: glitch-anim 5s infinite linear alternate-reverse; }
+        .glitch::after { left: -4px; text-shadow: -2px 0 #00fff9, 2px 2px #ff5e00; clip: rect(44px, 450px, 56px, 0); animation: glitch-anim2 5s infinite linear alternate-reverse; }
+        
+        @keyframes glitch-anim {
+            0% { clip: rect(10px, 9999px, 86px, 0); }
+            20% { clip: rect(32px, 9999px, 12px, 0); }
+            40% { clip: rect(74px, 9999px, 43px, 0); }
+            60% { clip: rect(21px, 9999px, 98px, 0); }
+            80% { clip: rect(54px, 9999px, 32px, 0); }
+            100% { clip: rect(89px, 9999px, 65px, 0); }
+        }
+        @keyframes glitch-anim2 {
+            0% { clip: rect(65px, 9999px, 100px, 0); }
+            20% { clip: rect(12px, 9999px, 78px, 0); }
+            40% { clip: rect(43px, 9999px, 21px, 0); }
+            60% { clip: rect(87px, 9999px, 54px, 0); }
+            80% { clip: rect(34px, 9999px, 99px, 0); }
+            100% { clip: rect(11px, 9999px, 44px, 0); }
+        }
+        .hero p { font-size: 1.2rem; letter-spacing: 5px; font-weight: bold; color: #ccc; margin-top: 10px; text-transform: uppercase; }
+
         .section { padding: 120px 8%; max-width: 1200px; margin: 0 auto; }
         .section-title { font-size: 2.8rem; font-weight: 800; margin-bottom: 60px; text-align: center; letter-spacing: 8px; color: #ff5e00; text-transform: uppercase; }
 
@@ -56,7 +82,6 @@
         .map-nav-btn.active { background: #ff5e00; color: white; }
         .map-content-area { padding: 30px; display: grid; grid-template-columns: 150px 1fr; gap: 30px; }
         
-        /* 맵 드로잉 관련 스타일 변경 */
         .map-drawing-container { position: relative; width: 100%; border: 2px solid #333; border-radius: 8px; overflow: hidden; background: #000; }
         .map-drawing-container img { width: 100%; height: auto; display: block; object-fit: cover; }
         #tactical-canvas { position: absolute; top: 0; left: 0; z-index: 10; cursor: crosshair; touch-action: none; }
@@ -67,41 +92,19 @@
         .tool-color.active { border-color: #fff; box-shadow: 0 0 5px #fff; }
 
         .stream-tabs { display: flex; gap: 10px; margin-bottom: 30px; justify-content: center; }
-        .stream-tab-btn { 
-            background: #111; border: 1px solid #333; color: #888; padding: 12px 25px; 
-            cursor: pointer; font-weight: 800; border-radius: 4px; transition: 0.3s; font-size: 0.8rem;
-        }
+        .stream-tab-btn { background: #111; border: 1px solid #333; color: #888; padding: 12px 25px; cursor: pointer; font-weight: 800; border-radius: 4px; transition: 0.3s; font-size: 0.8rem; }
         .stream-tab-btn.active { background: #ff5e00; color: #fff; border-color: #ff5e00; box-shadow: 0 0 15px rgba(255, 94, 0, 0.3); }
         .stream-tab-btn:hover { border-color: #ff5e00; color: #fff; }
 
-        .stream-container { 
-            display: grid; grid-template-columns: 2.5fr 1fr; gap: 20px; 
-            background: #0d0d0d; padding: 25px; border-radius: 12px; border: 1px solid #222; 
-            align-items: stretch; margin: 0 auto 50px auto; max-width: 1400px; height: 600px;
-        }
-        .video-wrapper { 
-            background: #000; border-radius: 8px; overflow: hidden; 
-            border: 1px solid #333; position: relative; width: 100%; height: 100%;
-        }
+        .stream-container { display: grid; grid-template-columns: 2.5fr 1fr; gap: 20px; background: #0d0d0d; padding: 25px; border-radius: 12px; border: 1px solid #222; align-items: stretch; margin: 0 auto 50px auto; max-width: 1400px; height: 600px; }
+        .video-wrapper { background: #000; border-radius: 8px; overflow: hidden; border: 1px solid #333; position: relative; width: 100%; height: 100%; }
         #live-iframe { width: 100%; height: 100%; border: none; }
 
-        .chat-box-wrapper { 
-            background: #111; border: 1px solid #222; border-radius: 8px; 
-            display: flex; flex-direction: column; height: 100%; min-width: 350px; overflow: hidden; 
-        }
-        #chat-messages { 
-            flex: 1; padding: 15px; overflow-y: auto; font-size: 0.85rem; color: #ccc; 
-            scroll-behavior: smooth; background: #080808; 
-        }
-        .chat-msg-item { 
-            margin-bottom: 12px; padding: 10px 15px; background: rgba(255, 255, 255, 0.03); 
-            border-radius: 8px; border-left: 3px solid #333; transition: 0.2s; word-break: break-all;
-        }
+        .chat-box-wrapper { background: #111; border: 1px solid #222; border-radius: 8px; display: flex; flex-direction: column; height: 100%; min-width: 350px; overflow: hidden; }
+        #chat-messages { flex: 1; padding: 15px; overflow-y: auto; font-size: 0.85rem; color: #ccc; scroll-behavior: smooth; background: #080808; }
+        .chat-msg-item { margin-bottom: 12px; padding: 10px 15px; background: rgba(255, 255, 255, 0.03); border-radius: 8px; border-left: 3px solid #333; transition: 0.2s; word-break: break-all; }
         .chat-msg-item:hover { background: rgba(255, 94, 0, 0.05); border-left-color: #ff5e00; }
-        .chat-nickname { 
-            display: block; font-weight: 900; font-size: 0.75rem; 
-            text-transform: uppercase; margin-bottom: 4px; letter-spacing: 1px;
-        }
+        .chat-nickname { display: block; font-weight: 900; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 1px; }
         .chat-input-area { padding: 10px; border-top: 1px solid #222; display: flex; gap: 8px; background: #151515; }
         #chat-input { flex: 1; background: #000; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 4px; font-size: 0.85rem; outline: none; }
         #chat-input:focus { border-color: #ff5e00; }
@@ -112,15 +115,23 @@
         #chat-messages::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
         #chat-messages::-webkit-scrollbar-thumb:hover { background: #ff5e00; }
 
-        .discord-container { 
-            display: grid; grid-template-columns: 1fr 2fr; gap: 40px; 
-            background: #0d0d0d; padding: 40px; border-radius: 12px; border: 1px solid #222; align-items: center; 
-        }
+        .discord-container { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; background: #0d0d0d; padding: 40px; border-radius: 12px; border: 1px solid #222; align-items: center; }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-top: 50px; }
-        .stat-card { background: rgba(17, 17, 17, 0.9); border: 1px solid #222; border-radius: 12px; padding: 35px; transition: 0.3s; position: relative; overflow: hidden; }
-        .stat-card:hover { border-color: #ff5e00; transform: translateY(-5px); box-shadow: 0 10px 30px rgba(255, 94, 0, 0.1); }
-        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #ff5e00; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-top: 50px; perspective: 1000px; }
+        
+        /* 3D 카드를 위한 CSS 변경 */
+        .stat-card { 
+            background: rgba(17, 17, 17, 0.9); border: 1px solid #222; border-radius: 12px; padding: 35px; 
+            position: relative; 
+            transform-style: preserve-3d; transition: transform 0.1s ease, box-shadow 0.1s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            /* overflow: hidden; 지움 (3D 효과를 위해) */
+        }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #ff5e00; border-top-left-radius: 12px; border-top-right-radius: 12px; }
+        
+        /* 카드 내부 요소들을 조금씩 띄워서 입체감 부여 */
+        .card-header, .rank-badge, .mode-tabs, .match-type-tabs, .data-row { transform: translateZ(30px); }
+        
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #222; }
         .player-name { font-size: 1.5rem; font-weight: 900; color: #fff; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
         .player-role { font-size: 0.75rem; color: #ff5e00; font-weight: 700; text-transform: uppercase; background: rgba(255, 94, 0, 0.1); padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(255, 94, 0, 0.2); }
@@ -130,11 +141,7 @@
         .data-value { font-size: 1.8rem; font-weight: 900; color: #ff5e00; line-height: 1; }
         .data-unit { font-size: 0.8rem; color: #fff; font-weight: 700; margin-left: 2px; }
         .rank-badge { position: absolute; top: 15px; right: 15px; font-size: 0.7rem; font-weight: 900; padding: 3px 8px; border: 1px solid; border-radius: 4px; }
-        .tier-platinum { color: #4ee29d; border-color: #4ee29d; }
-        .tier-gold { color: #ffcc00; border-color: #ffcc00; }
-        .tier-bronze { color: #cd7f32; border-color: #cd7f32; }
-
-        /* API 스탯용 추가 CSS */
+        
         .match-type-tabs { display: flex; gap: 5px; margin-bottom: 10px; }
         .match-type-btn { flex: 1; padding: 6px; background: #1a1a1a; border: 1px solid #333; color: #888; font-size: 0.75rem; font-weight: 800; cursor: pointer; border-radius: 4px; transition: 0.2s; }
         .match-type-btn.active { background: #ff5e00; color: #fff; border-color: #ff5e00; }
@@ -145,30 +152,13 @@
         @keyframes blink { 50% { opacity: 0.5; } }
 
         footer { padding: 80px; text-align: center; color: #444; border-top: 1px solid #222; text-transform: uppercase; }
-        @media (max-width: 900px) { .about-wrapper, .stats-grid, .stream-container, .discord-container { grid-template-columns: 1fr; } .hero h1 { font-size: 4rem; } .stream-container { height: auto; max-height: none; } }
+        @media (max-width: 900px) { .about-wrapper, .stats-grid, .stream-container, .discord-container { grid-template-columns: 1fr; } .glitch { font-size: 4rem; } .stream-container { height: auto; max-height: none; } }
 
-        #music-player {
-            position: fixed; bottom: 30px; left: 30px; 
-            background: rgba(0, 0, 0, 0.85); border: 1px solid #222; 
-            padding: 12px 20px; border-radius: 12px; 
-            display: flex; align-items: center; gap: 15px; 
-            z-index: 1000; backdrop-filter: blur(5px); transition: 0.3s;
-        }
+        #music-player { position: fixed; bottom: 30px; left: 30px; background: rgba(0, 0, 0, 0.85); border: 1px solid #222; padding: 12px 20px; border-radius: 12px; display: flex; align-items: center; gap: 15px; z-index: 1000; backdrop-filter: blur(5px); transition: 0.3s; }
         #music-player:hover { border-color: #ff5e00; }
-        .play-toggle {
-            background: #ff5e00; border: none; width: 36px; height: 36px; 
-            border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: 0.3s;
-        }
-        .music-on {
-            animation: pulse 1.5s infinite;
-            box-shadow: 0 0 15px #ff5e00 !important;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
+        .play-toggle { background: #ff5e00; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .music-on { animation: pulse 1.5s infinite; box-shadow: 0 0 15px #ff5e00 !important; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
@@ -193,12 +183,10 @@
         <div class="auth-container" id="auth-form-screen">
             <input type="email" id="auth-email" class="auth-input" placeholder="이메일 주소">
             <input type="password" id="auth-password" class="auth-input" placeholder="비밀번호 (6자 이상)">
-            
             <div id="login-options" style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #888; margin-bottom: 15px;">
                 <label style="cursor: pointer;"><input type="checkbox" id="remember-email"> 이메일 기억하기</label>
                 <label style="cursor: pointer;"><input type="checkbox" id="keep-logged-in" checked> 로그인 유지</label>
             </div>
-            
             <div id="signup-extra-fields">
                 <input type="text" id="auth-nickname" class="auth-input" placeholder="배그 닉네임">
                 <input type="number" id="auth-age" class="auth-input" placeholder="나이">
@@ -230,7 +218,17 @@
         </ul>
     </nav>
 
-    <section class="hero" id="home"><h1>CLIX</h1><p>BATTLEGROUND KOR CLIX</p></section>
+    <!-- HREO 섹션 비디오 & 글리치 적용 -->
+    <section class="hero" id="home">
+        <!-- 배경 비디오 (추후 클랜 매드무비 mp4 링크로 교체 가능) -->
+        <video autoplay muted loop playsinline class="hero-video">
+            <source src="https://cdn.pixabay.com/video/2023/11/09/188445-883049280_large.mp4" type="video/mp4">
+        </video>
+        <div class="hero-overlay"></div>
+        
+        <h1 class="glitch" data-text="CLIX">CLIX</h1>
+        <p>BATTLEGROUND KOR CLIX</p>
+    </section>
 
     <section class="section" id="about">
         <div class="about-wrapper">
@@ -310,7 +308,7 @@
 
     <section class="section" id="discord">
         <h2 class="section-title">CLIX DISCORD</h2>
-        <div class="discord-container" style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 40px; background: #0d0d0d; padding: 50px; border-radius: 12px; border: 1px solid #222; align-items: center;">
+        <div class="discord-container">
             <div style="background: linear-gradient(45deg, #5865F2, #4752C4); padding: 60px; border-radius: 12px; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 30px rgba(88, 101, 242, 0.2);">
                 <svg width="100" height="100" viewBox="0 0 127.14 96.36" fill="#fff">
                     <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.93A97.68,97.68,0,0,0,49,6.93,72.06,72.06,0,0,0,45.67,0,105.15,105.15,0,0,0,19.44,8.07C2.7,33.15-1.79,57.67.45,81.69a105.73,105.73,0,0,0,32.89,16.54,74.8,74.8,0,0,0,7.74-12.63,67.59,67.59,0,0,1-11.89-5.69c1,.74,2.06,1.53,3.07,2.25a74.6,74.6,0,0,0,62.88,0c1.01-.72,2-1.51,3.07-2.25a67.59,67.59,0,0,1-11.89,5.69,74.8,74.8,0,0,0,7.74,12.63,105.73,105.73,0,0,0,32.89-16.54C129.44,51.15,124.69,27.05,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
@@ -326,10 +324,7 @@
 
     <section class="section" id="members">
         <h2 class="section-title">CLIX SQUAD STATS</h2>
-        
-        <!-- JavaScript가 클랜원 카드를 이곳에 자동으로 생성합니다 -->
         <div class="stats-grid" id="stats-grid"></div>
-
         <div style="margin-top:50px; text-align:center;">
             <a href="https://pubg.op.gg" target="_blank" style="color:#ff5e00; text-decoration:none; font-weight:800; border: 1px solid #ff5e00; padding: 10px 20px; border-radius: 4px;">PUBG.OP.GG 바로가기</a>
         </div>
@@ -338,7 +333,6 @@
     <footer>&copy; 2026 CLAN CLIX. ALL RIGHTS RESERVED.</footer>
 
     <script>
-        // --- Firebase 설정 ---
         const firebaseConfig = {
             apiKey: "AIzaSyAFSAu2aynX6YPiJEatWy9IQgWgUuTx8ds",
             authDomain: "korclix.firebaseapp.com",
@@ -358,7 +352,6 @@
         const PUBG_API_KEY = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIyZDM0N2Y2MC0xNGJjLTAxM2YtMjljYy01MmJjZWJmMWUzMTYiLCJpc3MiOiJnYW1lbG9ja2VyIiwiaWF0IjoxNzc1NTcyMTk3LCJwdWIiOiJibHVlaG9sZSIsInRpdGxlIjoicHViZyIsImFwcCI6ImNsaXgtY2xhbi1zdGF0In0.uV5HbysN7Yb8MtfPNFWxxTz1o62sCS60thT5uy8MsUM"; 
         const PLATFORM = "steam"; 
         
-        // 💡 [여기에 클랜원 추가] 나중에 클랜원이 늘어나면 아래 배열에 추가만 하시면 됩니다!
         const CLAN_MEMBERS = [
             { nickname: "CLX_0dB", role: "Main Order" },
             { nickname: "Viper789456", role: "Sub Order" },
@@ -369,7 +362,7 @@
 
         function initStatCards() {
             const grid = document.getElementById('stats-grid');
-            grid.innerHTML = '';
+            let htmlContent = '';
 
             CLAN_MEMBERS.forEach(member => {
                 const nick = member.nickname;
@@ -380,30 +373,62 @@
                     data: { ranked: { solo: null, duo: null, squad: null }, normal: { solo: null, duo: null, squad: null } }
                 };
 
-                grid.innerHTML += `
+                htmlContent += `
                     <div class="stat-card" id="card-${safeId}">
                         <span class="rank-badge" id="badge-${safeId}">Loading...</span>
                         <div class="card-header">
                             <h3 class="player-name">${nick}</h3>
                             <span class="player-role">${member.role}</span>
                         </div>
-                        
                         <div class="match-type-tabs">
                             <button class="match-type-btn active" onclick="changeMatchType('${nick}', 'ranked', this)">경쟁전</button>
                             <button class="match-type-btn" onclick="changeMatchType('${nick}', 'normal', this)">일반전</button>
                         </div>
-
                         <div class="mode-tabs">
                             <button class="mode-btn active" onclick="changeTeamMode('${nick}', 'squad', this)">스쿼드</button>
                             <button class="mode-btn" onclick="changeTeamMode('${nick}', 'duo', this)">듀오</button>
                             <button class="mode-btn" onclick="changeTeamMode('${nick}', 'solo', this)">솔로</button>
                         </div>
-                    
                         <div class="data-row" id="stats-${safeId}">
                             <div class="loading-text">PUBG API 연동 중...</div>
                         </div>
                     </div>
                 `;
+            });
+
+            grid.innerHTML = htmlContent;
+            
+            // 카드가 HTML에 그려진 후 3D 틸트 효과 적용!
+            applyTiltEffect();
+        }
+
+        // --- 3D 카드 틸트(Tilt) 애니메이션 함수 ---
+        function applyTiltEffect() {
+            const cards = document.querySelectorAll('.stat-card');
+            
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left; // 카드 내 마우스 X 좌표
+                    const y = e.clientY - rect.top;  // 카드 내 마우스 Y 좌표
+                    
+                    // 카드의 중심점 계산
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    // 회전 각도 계산 (마우스가 중심에서 멀어질수록 많이 꺾임)
+                    const rotateX = ((y - centerY) / centerY) * -10; // 위아래 기울기
+                    const rotateY = ((x - centerX) / centerX) * 10;  // 좌우 기울기
+                    
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                    card.style.boxShadow = `${-rotateY * 2}px ${rotateX * 2 + 15}px 30px rgba(255, 94, 0, 0.2)`;
+                });
+                
+                // 마우스가 카드에서 나가면 원상복구
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)`;
+                    card.style.boxShadow = `0 10px 30px rgba(0, 0, 0, 0.5)`;
+                });
             });
         }
 
@@ -537,8 +562,7 @@
                 `;
             }
         }
-        // --- PUBG API 설정 끝 ---
-
+        
         // --- 맵 그리기 로직 ---
         let canvas, ctx;
         let isDrawing = false;
@@ -583,28 +607,17 @@
                 else img.onload = initCanvas;
             }
 
-            // PUBG API 다중 유저 연동 실행
             initStatCards();
             fetchAllPubgStats();
         });
 
         function getMousePos(evt) {
             const rect = canvas.getBoundingClientRect();
-            return {
-                x: evt.clientX - rect.left,
-                y: evt.clientY - rect.top
-            };
+            return { x: evt.clientX - rect.left, y: evt.clientY - rect.top };
         }
 
-        function startPosition(e) { 
-            isDrawing = true; 
-            draw(e); 
-        }
-        
-        function endPosition() { 
-            isDrawing = false; 
-            ctx.beginPath(); 
-        }
+        function startPosition(e) { isDrawing = true; draw(e); }
+        function endPosition() { isDrawing = false; ctx.beginPath(); }
         
         function draw(e) {
             if (!isDrawing) return;
@@ -658,10 +671,8 @@
                             userNick = user.email.split('@')[0];
                             isUserAdmin = false;
                         }
-                        
                         document.getElementById('nav-user-info').innerText = userNick + "님 반갑습니다";
                         document.getElementById('clear-all-btn').style.display = isUserAdmin ? 'block' : 'none';
-                        
                         loadMessages();
                     });
                 } else {
@@ -679,16 +690,10 @@
         });
 
         function getNicknameColor(nickname) {
-            const colors = [
-                '#ff5e00', '#4ee29d', '#00d4ff', '#ffcc00', 
-                '#ff4e50', '#8e44ad', '#3498db', '#f1c40f'
-            ];
+            const colors = ['#ff5e00', '#4ee29d', '#00d4ff', '#ffcc00', '#ff4e50', '#8e44ad', '#3498db', '#f1c40f'];
             let hash = 0;
-            for (let i = 0; i < nickname.length; i++) {
-                hash = nickname.charCodeAt(i) + ((hash << 5) - hash);
-            }
-            const index = Math.abs(hash) % colors.length;
-            return colors[index];
+            for (let i = 0; i < nickname.length; i++) { hash = nickname.charCodeAt(i) + ((hash << 5) - hash); }
+            return colors[Math.abs(hash) % colors.length];
         }
 
         function toggleMusic() {
@@ -719,18 +724,13 @@
         async function clearAllChats() {
             if (!isUserAdmin) return alert("권한이 없습니다.");
             if (!confirm("모든 채팅 기록을 삭제하시겠습니까? (복구 불가)")) return;
-            
             try {
                 const snapshot = await db.collection("chats").get();
                 const batch = db.batch();
-                snapshot.docs.forEach((doc) => {
-                    batch.delete(doc.ref);
-                });
+                snapshot.docs.forEach((doc) => { batch.delete(doc.ref); });
                 await batch.commit();
                 alert("전체 채팅이 초기화되었습니다.");
-            } catch (err) {
-                alert("삭제 중 오류 발생: " + err.message);
-            }
+            } catch (err) { alert("삭제 중 오류 발생: " + err.message); }
         }
 
         function toggleAuthMode() {
@@ -740,7 +740,6 @@
             btn.innerText = isLoginMode ? "회원가입" : "로그인";
             document.getElementById('auth-toggle-text').innerText = isLoginMode ? "이미 계정이 있나요? 로그인" : "계정이 없으신가요? 회원가입";
             document.getElementById('signup-extra-fields').style.display = isLoginMode ? "block" : "none";
-            
             document.getElementById('login-options').style.display = isLoginMode ? "none" : "flex";
         }
 
@@ -752,14 +751,10 @@
             if (isLoginMode) {
                 const keepLoggedIn = document.getElementById('keep-logged-in').checked;
                 const rememberEmail = document.getElementById('remember-email').checked;
-
                 const persistence = keepLoggedIn ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION;
                 
-                if (rememberEmail) {
-                    localStorage.setItem('clix_saved_email', email);
-                } else {
-                    localStorage.removeItem('clix_saved_email');
-                }
+                if (rememberEmail) localStorage.setItem('clix_saved_email', email);
+                else localStorage.removeItem('clix_saved_email');
 
                 auth.setPersistence(persistence)
                     .then(() => auth.signInWithEmailAndPassword(email, password))
@@ -811,30 +806,22 @@
         function loadMessages() {
             const chatBox = document.getElementById('chat-messages');
             
-            db.collection("chats")
-                .orderBy("createdAt", "asc")
-                .limitToLast(50)
-                .onSnapshot((snapshot) => {
-                    chatBox.innerHTML = "";
+            db.collection("chats").orderBy("createdAt", "asc").limitToLast(50).onSnapshot((snapshot) => {
+                chatBox.innerHTML = "";
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const msgId = doc.id;
+                    const div = document.createElement('div');
+                    div.className = 'chat-msg-item';
                     
-                    snapshot.forEach((doc) => {
-                        const data = doc.data();
-                        const msgId = doc.id;
-                        const div = document.createElement('div');
-                        div.className = 'chat-msg-item';
-                        
-                        const deleteBtn = isUserAdmin ? `<span onclick="deleteMessage('${msgId}')" style="color:#ff3333; cursor:pointer; float:right; font-size:10px; font-weight:bold;">[X]</span>` : "";
-                        const nickColor = getNicknameColor(data.nickname);
+                    const deleteBtn = isUserAdmin ? `<span onclick="deleteMessage('${msgId}')" style="color:#ff3333; cursor:pointer; float:right; font-size:10px; font-weight:bold;">[X]</span>` : "";
+                    const nickColor = getNicknameColor(data.nickname);
 
-                        div.innerHTML = `
-                            ${deleteBtn}
-                            <span class="chat-nickname" style="color: ${nickColor};">${data.nickname}</span>
-                            <div class="chat-text" style="color: #eee;">${data.text}</div>
-                        `;
-                        chatBox.appendChild(div);
-                    });
-                    chatBox.scrollTop = chatBox.scrollHeight;
+                    div.innerHTML = `${deleteBtn}<span class="chat-nickname" style="color: ${nickColor};">${data.nickname}</span><div class="chat-text" style="color: #eee;">${data.text}</div>`;
+                    chatBox.appendChild(div);
                 });
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
         }
 
         function sendMessage() {
@@ -844,16 +831,11 @@
             if (!user) return alert("로그인 후 이용 가능합니다.");
             if (!message) return;
             
-            db.collection("chats").add({
-                nickname: userNick,
-                text: message,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            }).then(() => { input.value = ""; });
+            db.collection("chats").add({ nickname: userNick, text: message, createdAt: firebase.firestore.FieldValue.serverTimestamp() })
+            .then(() => { input.value = ""; });
         }
 
-        document.getElementById('chat-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
-        });
+        document.getElementById('chat-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
     </script>
 </body>
 </html>
