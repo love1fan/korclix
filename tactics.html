@@ -52,7 +52,6 @@
         <a href="index.html" class="logo">CLAN CLIX</a>
         <ul>
             <li><a href="index.html">HOME</a></li>
-            <!-- TACTICS 색상 통일 (인라인 스타일 제거) -->
             <li><a href="tactics.html">TACTICS</a></li>
         </ul>
     </nav>
@@ -70,8 +69,8 @@
                 <button class="map-nav-btn" onclick="showMap('miramar', this)">MIRAMAR</button>
             </div>
             <div class="map-canvas-wrapper">
-                <!-- 고화질 에란겔 맵 적용 -->
-                <img id="map-image" src="https://raw.githubusercontent.com/pubg/api-assets/master/Assets/Maps/Erangel_Main_High_Res.png" alt="Map">
+                <!-- 이미지 링크를 다시 로컬 파일로 롤백 (엑스박스 방지) -->
+                <img id="map-image" src="erangel.jpg" alt="Map" onerror="this.src='ERANGEL.JPG'">
                 <canvas id="tactical-canvas"></canvas>
             </div>
         </div>
@@ -191,15 +190,15 @@
             document.querySelectorAll('.map-nav-btn').forEach(b => b.classList.remove('active')); 
             btn.classList.add('active');
             
-            // 고화질 맵 링크 적용
+            // 로컬 이미지 경로로 롤백
             const data = { 
                 'erangel': [
-                    'https://raw.githubusercontent.com/pubg/api-assets/master/Assets/Maps/Erangel_Main_High_Res.png', 
+                    'erangel.jpg', 
                     'ERANGEL 핵심 전술', 
                     '- 주요 차량 스폰: 강남, 포친키. 1페 중앙 점령 추천.<br><br>- 외곽 강하: 밀타 파워, 노보 보트/차량 선점 필수.<br><br>- 밀베 자기장: 다리 검문 대비 및 해안가 시야 확보.'
                 ],
                 'miramar': [
-                    'https://raw.githubusercontent.com/pubg/api-assets/master/Assets/Maps/Miramar_Main_High_Res.png', 
+                    'miramar.jpg', 
                     'MIRAMAR 핵심 전술', 
                     '- 고지대 능선 점령 필수 시야 확보가 핵심<br><br>- 무기 구성: DMR/SR 장거리 무기 필수<br><br>- 차량: 픽업트럭 확보 및 능선 하단 회전.'
                 ]
@@ -207,6 +206,8 @@
             const m = data[mapName];
             const img = document.getElementById('map-image');
             img.src = m[0]; 
+            // 이미지 오류 시 대문자로 한 번 더 시도
+            img.onerror = function() { this.src = m[0].toUpperCase(); };
             img.onload = initCanvas; 
             document.getElementById('map-title').innerText = m[1];
             document.getElementById('map-desc').innerHTML = m[2];
