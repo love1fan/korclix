@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PUBG CLIX | NOTICE</title>
     
+    <!-- 파이어베이스 SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script> 
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 
     <style>
+        /* 기본 배경 및 폰트 설정 */
         body { 
             margin: 0; padding: 140px 8% 50px 8%; 
             background-color: #080808; color: #ffffff; 
@@ -17,21 +19,21 @@
             -webkit-user-select: none; user-select: none; 
         }
 
-        /* 💎 네비게이션바: 반투명 유리 블러 효과 */
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(8, 8, 8, 0.7) !important; backdrop-filter: blur(12px); position: fixed; width: 100%; top: 0; left: 0; box-sizing: border-box; z-index: 100; border-bottom: 1px solid rgba(255, 255, 255, 0.05); transition: 0.3s; }
+        /* 💎 네비게이션바 (투명 유리 블러 효과) */
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(8, 8, 8, 0.7) !important; backdrop-filter: blur(12px); position: fixed; width: 100%; top: 0; left: 0; box-sizing: border-box; z-index: 100; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
         nav .logo { font-weight: 900; font-size: 26px; color: #ff5e00; text-decoration: none; text-transform: uppercase; letter-spacing: 1.5px; text-shadow: 0 0 10px rgba(255,94,0,0.3); }
         nav ul { list-style: none; display: flex; margin: 0; padding: 0; }
         nav ul li a { margin-left: 20px; font-size: 12px; color: #888; text-decoration: none; text-transform: uppercase; font-weight: 600; transition: color 0.3s; }
         nav ul li a:hover { color: #ff5e00; }
 
-        /* 💎 헤더: 제목과 뒤로가기 버튼 */
+        /* 💎 헤더 타이틀 및 뒤로가기 버튼 */
         .header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid rgba(255, 94, 0, 0.2); position: relative; }
         .header::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 150px; height: 2px; background: #ff5e00; box-shadow: 0 0 15px rgba(255, 94, 0, 0.6); }
         h1 { color: #fff; letter-spacing: 3px; margin: 0; font-size: 2.5rem; text-transform: uppercase; font-weight: 900; }
         .back-btn { color: #aaa; text-decoration: none; border: 1px solid rgba(255,255,255,0.1); padding: 10px 25px; border-radius: 6px; font-weight: bold; font-size: 0.85rem; transition: 0.3s; background: rgba(255,255,255,0.03); backdrop-filter: blur(5px); }
         .back-btn:hover { background: #ff5e00; color: #fff; border-color: #ff5e00; box-shadow: 0 0 15px rgba(255,94,0,0.3); }
 
-        /* 💎 관리자 에디터: 그림자 피드백 */
+        /* 💎 관리자 에디터 (모서리 둥글게, 반투명) */
         #admin-editor { display: none; background: rgba(15, 15, 15, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255, 94, 0, 0.3); padding: 30px; margin-bottom: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
         .editor-title { color: #ff5e00; font-weight: 900; font-size: 1.1rem; margin-bottom: 20px; display: block; letter-spacing: 1px; }
         input, textarea { width: 100%; padding: 15px; margin-bottom: 15px; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; box-sizing: border-box; font-family: inherit; border-radius: 8px; transition: 0.3s; outline: none; }
@@ -99,6 +101,8 @@
         firebase.initializeApp(firebaseConfig); const auth = firebase.auth(); const db = firebase.firestore();
 
         let isUserAdmin = false;
+        
+        // 디스코드 공지사항 전용 웹훅
         const DISCORD_NOTICE_WEBHOOK = "https://discord.com/api/webhooks/1491075955714686977/lkbFUkqu2fipvYSmKA8T_BVLyrw2jqTOCN0WbaSRzThuQne2f_ofGAkkqPZTHJiSem_g";
 
         async function sendNoticeWebhook(tag, title, content) {
@@ -122,6 +126,7 @@
                 const container = document.getElementById('notice-container'); container.innerHTML = ""; 
                 if (querySnapshot.empty) { container.innerHTML = '<p style="text-align:center; color:#555;">등록된 공지가 없습니다.</p>'; return; }
                 const adminDisplay = isUserAdmin ? 'block' : 'none';
+                
                 querySnapshot.forEach((doc) => {
                     const data = doc.data(); const dateStr = data.timestamp ? data.timestamp.toDate().toLocaleDateString('ko-KR') : '방금 전';
                     container.innerHTML += `
@@ -148,7 +153,7 @@
             } catch (error) { alert("오류: " + error.message); }
         }
 
-        function deleteNotice(docId) { if (isUserAdmin && confirm("삭제하시겠습니까?")) db.collection("notices").doc(docId).delete(); }
+        function deleteNotice(docId) { if (isUserAdmin && confirm("이 공지사항을 삭제하시겠습니까?")) db.collection("notices").doc(docId).delete(); }
     </script>
 </body>
 </html>
