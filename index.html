@@ -18,21 +18,17 @@
             margin: 0; font-family: 'Inter', 'Segoe UI', sans-serif; background-color: #0a0a0a; color: #ffffff; 
             line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth;
             -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
-            /* 기본 마우스 커서를 하얀색 크로스헤어로 변경 */
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line></svg>') 12 12, auto;
         }
 
-        /* 버튼이나 링크에 마우스를 올렸을 때 오렌지색 조준점으로 변경 */
-        a, button, .auth-switch, .logout-link, .tool-btn, .map-nav-btn, .play-toggle, .tool-color, label {
+        /* 갤러리 아이템(gallery-item)에도 커스텀 포인터 추가 */
+        a, button, .auth-switch, .logout-link, .tool-btn, .map-nav-btn, .play-toggle, .tool-color, label, .gallery-item {
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23ff5e00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><circle cx="12" cy="12" r="2" fill="%23ff5e00"></circle></svg>') 12 12, pointer !important;
         }
         
         #lock-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0, 0, 0, 0.98); z-index: 9999; 
-            display: none; 
-            flex-direction: column; justify-content: center; align-items: center; 
-            text-align: center; overflow-y: auto; padding: 20px 0; 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98); z-index: 9999; 
+            display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; overflow-y: auto; padding: 20px 0; 
         }
         #lock-overlay h2 { font-size: 3.5rem; color: #ff5e00; margin-bottom: 20px; letter-spacing: 5px; font-weight: 900; text-transform: uppercase; }
         
@@ -40,9 +36,7 @@
         .auth-input { width: 100%; padding: 12px; margin-bottom: 10px; background: #1a1a1a; border: 1px solid #333; color: #fff; box-sizing: border-box; font-family: inherit; }
         .auth-btn { width: 100%; padding: 15px; background: #ff5e00; color: white; border: none; font-weight: 800; margin-bottom: 10px; font-size: 1rem; text-transform: uppercase; }
         .auth-switch { font-size: 0.8rem; color: #666; text-decoration: underline; margin-top: 10px; }
-
-        #verify-screen { display: none; }
-        #signup-extra-fields { display: none; margin-bottom: 10px; }
+        #verify-screen, #signup-extra-fields { display: none; margin-bottom: 10px; }
 
         .live-status-bar { background: #1a1a1a; padding: 12px; text-align: center; border-bottom: 2px solid #ff5e00; font-size: 0.9rem; position: fixed; width: 100%; z-index: 101; top: 0; }
         .status-tag { background: #ff5e00; color: #fff; padding: 2px 8px; border-radius: 3px; font-weight: 800; margin-right: 10px; }
@@ -54,51 +48,54 @@
         .logout-link { margin-left: 10px; font-size: 10px; color: #ff3333 !important; border: 1px solid #444; padding: 5px 10px; border-radius: 4px; font-weight: bold; }
         .logout-link:hover { background: rgba(255,255,255,0.1); }
 
-        /* --- HERO 섹션 --- */
-        .hero { 
-            position: relative; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; 
-            background: linear-gradient(to bottom, rgba(10, 10, 10, 0.7), #0a0a0a), 
-                        url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1920&q=80'); 
-            background-size: cover; background-position: center; background-attachment: fixed;
-        }
-        .hero::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px; z-index: 1; pointer-events: none;
-        }
-        
-        /* 불티 파티클 캔버스 CSS */
-        #particles-canvas {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1; pointer-events: none;
-        }
-
+        .hero { position: relative; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: linear-gradient(to bottom, rgba(10, 10, 10, 0.7), #0a0a0a), url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1920&q=80'); background-size: cover; background-position: center; background-attachment: fixed; }
+        .hero::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px); background-size: 40px 40px; z-index: 1; pointer-events: none; }
+        #particles-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
         .hero-content { position: relative; z-index: 2; }
         .glitch { font-size: 8rem; margin: 0; letter-spacing: 20px; font-weight: 900; text-transform: uppercase; position: relative; color: white; text-shadow: 0 0 30px rgba(255, 94, 0, 0.8); }
         .glitch::before, .glitch::after { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: transparent; }
         .glitch::before { left: 4px; text-shadow: -2px 0 #ff00c1; clip: rect(44px, 450px, 56px, 0); animation: glitch-anim 5s infinite linear alternate-reverse; }
         .glitch::after { left: -4px; text-shadow: -2px 0 #00fff9, 2px 2px #ff5e00; clip: rect(44px, 450px, 56px, 0); animation: glitch-anim2 5s infinite linear alternate-reverse; }
-        
-        @keyframes glitch-anim {
-            0% { clip: rect(10px, 9999px, 86px, 0); }
-            20% { clip: rect(32px, 9999px, 12px, 0); }
-            40% { clip: rect(74px, 9999px, 43px, 0); }
-            60% { clip: rect(21px, 9999px, 98px, 0); }
-            80% { clip: rect(54px, 9999px, 32px, 0); }
-            100% { clip: rect(89px, 9999px, 65px, 0); }
-        }
-        @keyframes glitch-anim2 {
-            0% { clip: rect(65px, 9999px, 100px, 0); }
-            20% { clip: rect(12px, 9999px, 78px, 0); }
-            40% { clip: rect(43px, 9999px, 21px, 0); }
-            60% { clip: rect(87px, 9999px, 54px, 0); }
-            80% { clip: rect(34px, 9999px, 99px, 0); }
-            100% { clip: rect(11px, 9999px, 44px, 0); }
-        }
+        @keyframes glitch-anim { 0% { clip: rect(10px, 9999px, 86px, 0); } 20% { clip: rect(32px, 9999px, 12px, 0); } 40% { clip: rect(74px, 9999px, 43px, 0); } 60% { clip: rect(21px, 9999px, 98px, 0); } 80% { clip: rect(54px, 9999px, 32px, 0); } 100% { clip: rect(89px, 9999px, 65px, 0); } }
+        @keyframes glitch-anim2 { 0% { clip: rect(65px, 9999px, 100px, 0); } 20% { clip: rect(12px, 9999px, 78px, 0); } 40% { clip: rect(43px, 9999px, 21px, 0); } 60% { clip: rect(87px, 9999px, 54px, 0); } 80% { clip: rect(34px, 9999px, 99px, 0); } 100% { clip: rect(11px, 9999px, 44px, 0); } }
         .hero p { font-size: 1.2rem; letter-spacing: 5px; font-weight: bold; color: #ccc; margin-top: 10px; text-transform: uppercase; }
 
         .section { padding: 120px 8%; max-width: 1200px; margin: 0 auto; }
         .section-title { font-size: 2.8rem; font-weight: 800; margin-bottom: 60px; text-align: center; letter-spacing: 8px; color: #ff5e00; text-transform: uppercase; }
+
+        /* ========================================= */
+        /* --- [NEW] 이달의 MVP & 하이라이트 CSS --- */
+        /* ========================================= */
+        .mvp-container { display: flex; justify-content: center; margin-bottom: 80px; }
+        .mvp-card { 
+            background: linear-gradient(135deg, #1f1a00 0%, #000000 100%); border: 1px solid #ffd700; border-radius: 16px; 
+            padding: 40px; width: 100%; max-width: 600px; text-align: center; position: relative; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.15), inset 0 0 20px rgba(255, 215, 0, 0.05);
+            transition: transform 0.3s;
+        }
+        .mvp-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(255, 215, 0, 0.25); }
+        .mvp-card::before { content: '👑'; font-size: 8rem; position: absolute; top: -30px; right: -20px; opacity: 0.1; filter: grayscale(100%); transition: 0.5s; }
+        .mvp-card:hover::before { filter: grayscale(0%); opacity: 0.3; transform: scale(1.1) rotate(15deg); }
+        .mvp-tag { display: inline-block; background: #ffd700; color: #000; font-size: 0.75rem; font-weight: 900; padding: 4px 12px; border-radius: 20px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        .mvp-name { font-size: 2.8rem; font-weight: 900; color: #fff; margin: 0 0 5px 0; text-transform: uppercase; text-shadow: 0 0 15px rgba(255,215,0,0.5); }
+        .mvp-reason { color: #aaa; font-size: 0.9rem; margin-bottom: 25px; }
+        .mvp-stats { display: flex; justify-content: space-around; background: rgba(0,0,0,0.6); padding: 20px; border-radius: 12px; border: 1px solid #332b00; }
+        .mvp-stat-item { display: flex; flex-direction: column; }
+        .mvp-stat-label { font-size: 0.7rem; color: #888; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; margin-bottom: 5px; }
+        .mvp-stat-value { font-size: 1.8rem; color: #ffd700; font-weight: 900; line-height: 1; }
+
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+        .gallery-item { position: relative; border-radius: 12px; overflow: hidden; border: 1px solid #222; aspect-ratio: 16/9; background: #111; }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .gallery-item:hover img { transform: scale(1.08); filter: brightness(0.7); }
+        .gallery-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; flex-direction: column; justify-content: flex-end; padding: 25px; box-sizing: border-box; opacity: 0; transition: opacity 0.3s; }
+        .gallery-item:hover .gallery-overlay { opacity: 1; }
+        .play-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8); background: #ff5e00; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; opacity: 0; transition: all 0.3s; box-shadow: 0 0 20px rgba(255,94,0,0.5); }
+        .gallery-item:hover .play-icon { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        .play-icon svg { width: 24px; height: 24px; fill: #fff; margin-left: 4px; }
+        .gallery-title { color: #fff; font-weight: 800; font-size: 1.2rem; margin: 0; text-transform: uppercase; }
+        .gallery-date { color: #ff5e00; font-size: 0.75rem; font-weight: 700; }
+        /* ========================================= */
 
         .about-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
         .tag { padding: 15px 25px; background: #111; border-left: 3px solid #ff5e00; font-weight: 700; margin-right: 10px; display: inline-block; }
@@ -223,6 +220,7 @@
         <a href="#" class="logo">CLAN CLIX</a>
         <ul>
             <li><a href="#about">ABOUT</a></li>
+            <li><a href="#hall-of-fame">HALL OF FAME</a></li> <!-- 추가됨 -->
             <li><a href="#stream">LIVE</a></li>
             <li><a href="#discord">DISCORD</a></li>
             <li><a href="notice.html">NOTICE</a></li>
@@ -236,17 +234,15 @@
     </nav>
 
     <section class="hero" id="home">
-        <!-- 불티 효과를 위한 캔버스 추가 -->
         <canvas id="particles-canvas"></canvas>
-
         <div class="hero-content">
             <h1 class="glitch" data-text="CLIX">CLIX</h1>
             <p>BATTLEGROUND KOR CLIX</p>
         </div>
     </section>
 
+    <!-- 기존 ABOUT 섹션 -->
     <section class="section" id="about">
-        <!-- data-aos="fade-up" 속성으로 스크롤 애니메이션 적용 -->
         <div class="about-wrapper" data-aos="fade-up">
             <div class="about-intro-box">
                 <h3 style="color:#888; letter-spacing:2px;">Who We Are</h3>
@@ -287,6 +283,72 @@
                             - 기습 포인트: 해우소 지붕 위 점령으로 통행세 징수
                         </p>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- [NEW] HALL OF FAME (이달의 MVP) 섹션 -->
+    <section class="section" id="hall-of-fame" style="background: #0d0d0d; border-top: 1px solid #222; border-bottom: 1px solid #222;">
+        <h2 class="section-title" data-aos="fade-up">HALL OF FAME</h2>
+        
+        <div class="mvp-container" data-aos="zoom-in" data-aos-delay="100">
+            <div class="mvp-card">
+                <span class="mvp-tag">2026년 3월 MVP</span>
+                <h3 class="mvp-name">CLX_0dB</h3>
+                <p class="mvp-reason">"가장 완벽한 오더, 위기의 순간 스쿼드를 구출한 영웅"</p>
+                <div class="mvp-stats">
+                    <div class="mvp-stat-item">
+                        <span class="mvp-stat-label">이번달 치킨</span>
+                        <span class="mvp-stat-value">18<span style="font-size: 0.8rem; color: #aaa;">회</span></span>
+                    </div>
+                    <div class="mvp-stat-item">
+                        <span class="mvp-stat-label">월간 K/D</span>
+                        <span class="mvp-stat-value">3.45</span>
+                    </div>
+                    <div class="mvp-stat-item">
+                        <span class="mvp-stat-label">최다 연속 킬</span>
+                        <span class="mvp-stat-value">7<span style="font-size: 0.8rem; color: #aaa;">Kills</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- [NEW] HIGHLIGHTS (갤러리) 섹션 -->
+        <h2 class="section-title" data-aos="fade-up" style="font-size: 2rem; margin-top: 40px; margin-bottom: 40px; color: #fff;">CLIX HIGHLIGHTS</h2>
+        <div class="gallery-grid" data-aos="fade-up" data-aos-delay="200">
+            <!-- 하이라이트 1 -->
+            <div class="gallery-item" onclick="alert('영상 재생 기능 연결 예정입니다.')">
+                <!-- 이미지 소스는 원하는 배그 스크린샷으로 변경 가능 -->
+                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80" alt="Highlight 1">
+                <div class="play-icon">
+                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+                <div class="gallery-overlay">
+                    <span class="gallery-date">2026. 03. 15</span>
+                    <p class="gallery-title">에란겔 1 vs 4 클러치</p>
+                </div>
+            </div>
+            <!-- 하이라이트 2 -->
+            <div class="gallery-item" onclick="alert('영상 재생 기능 연결 예정입니다.')">
+                <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80" alt="Highlight 2">
+                <div class="play-icon">
+                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+                <div class="gallery-overlay">
+                    <span class="gallery-date">2026. 03. 10</span>
+                    <p class="gallery-title">미라마 600m 저격 명장면</p>
+                </div>
+            </div>
+            <!-- 하이라이트 3 -->
+            <div class="gallery-item" onclick="alert('영상 재생 기능 연결 예정입니다.')">
+                <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=800&q=80" alt="Highlight 3">
+                <div class="play-icon">
+                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+                <div class="gallery-overlay">
+                    <span class="gallery-date">2026. 03. 02</span>
+                    <p class="gallery-title">스쿼드 전원 생존 완벽한 치킨</p>
                 </div>
             </div>
         </div>
@@ -352,13 +414,7 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     
     <script>
-        // --- AOS 초기화 ---
-        AOS.init({
-            duration: 800,   // 애니메이션 지속 시간 (0.8초)
-            once: true,      // 스크롤을 내릴 때 한 번만 실행 (부드러운 UX)
-            offset: 100,     // 요소가 화면에 100px 정도 보일 때 애니메이션 시작
-            easing: 'ease-out-cubic'
-        });
+        AOS.init({ duration: 800, once: true, offset: 100, easing: 'ease-out-cubic' });
 
         const firebaseConfig = {
             apiKey: "AIzaSyAFSAu2aynX6YPiJEatWy9IQgWgUuTx8ds",
@@ -375,7 +431,6 @@
         let isUserAdmin = false;
         let userNick = "익명";
 
-        // --- PUBG API ---
         const PUBG_API_KEY = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIyZDM0N2Y2MC0xNGJjLTAxM2YtMjljYy01MmJjZWJmMWUzMTYiLCJpc3MiOiJnYW1lbG9ja2VyIiwiaWF0IjoxNzc1NTcyMTk3LCJwdWIiOiJibHVlaG9sZSIsInRpdGxlIjoicHViZyIsImFwcCI6ImNsaXgtY2xhbi1zdGF0In0.uV5HbysN7Yb8MtfPNFWxxTz1o62sCS60thT5uy8MsUM"; 
         const PLATFORM = "steam"; 
         
@@ -600,7 +655,6 @@
             }
         }
 
-        // --- 맵 그리기 로직 ---
         let canvas, ctx;
         let isDrawing = false;
         let currentTool = 'pen';
@@ -630,7 +684,6 @@
             if(img && img.complete) initCanvas();
         });
 
-        // --- 파티클 애니메이션 ---
         function initParticles() {
             const particleCanvas = document.getElementById('particles-canvas');
             if (!particleCanvas) return;
@@ -681,7 +734,6 @@
             });
         }
 
-        // --- 페이지 로드시 실행되는 메인 초기화 블록 ---
         document.addEventListener('DOMContentLoaded', () => {
             const savedEmail = localStorage.getItem('clix_saved_email');
             if (savedEmail) {
@@ -742,7 +794,6 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
 
-        // --- 인증 및 사이트 동작 관련 ---
         auth.onAuthStateChanged((user) => {
             const overlay = document.getElementById('lock-overlay');
             const formScreen = document.getElementById('auth-form-screen');
