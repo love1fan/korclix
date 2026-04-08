@@ -19,14 +19,28 @@
             line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth;
             -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
             
-            /* 깔끔하고 날렵한 게이밍 화살표 커서 (기본: 화이트) */
+            /* 깔끔하고 날렵한 게이밍 화살표 커서 */
             cursor: url('data:image/svg+xml;utf8,<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4 L22 11 L13 14 L9 24 Z" fill="%23ffffff" stroke="%23000000" stroke-width="1.5"/></svg>') 4 4, auto;
         }
 
-        /* 링크 및 버튼에 올렸을 때 화살표 커서 (포인터: 오렌지) */
+        /* 링크 및 버튼에 올렸을 때 화살표 커서 */
         a, button, .auth-switch, .logout-link, .tool-btn, .map-nav-btn, .play-toggle, .tool-color, label, .gallery-item, .match-type-btn, .mode-btn {
             cursor: url('data:image/svg+xml;utf8,<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4 L22 11 L13 14 L9 24 Z" fill="%23ff5e00" stroke="%23ffffff" stroke-width="1.5"/></svg>') 4 4, pointer !important;
         }
+
+        /* ================= 시네마틱 로딩 스크린 추가 ================= */
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #050505; z-index: 100000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.8s cubic-bezier(0.8, 0, 0.2, 1), visibility 0.8s;
+        }
+        #splash-screen.hidden { opacity: 0; visibility: hidden; }
+        .loading-bar-container { width: 250px; height: 2px; background: #222; margin-top: 40px; position: relative; overflow: hidden; }
+        .loading-bar { position: absolute; top: 0; left: 0; height: 100%; width: 50%; background: #ff5e00; animation: loadingAnim 1.5s infinite ease-in-out; }
+        .loading-text-sub { margin-top: 15px; font-size: 0.7rem; color: #666; letter-spacing: 3px; font-weight: bold; text-transform: uppercase; animation: blink 1s infinite; }
+        @keyframes loadingAnim { 0% { left: -50%; width: 30%; } 50% { width: 30%; } 100% { left: 100%; width: 10%; } }
+        /* ========================================================= */
         
         #lock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; overflow-y: auto; padding: 20px 0; }
         #lock-overlay h2 { font-size: 3.5rem; color: #ff5e00; margin-bottom: 20px; letter-spacing: 5px; font-weight: 900; text-transform: uppercase; }
@@ -170,6 +184,15 @@
 </head>
 <body oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
 
+    <!-- 시네마틱 로딩 스크린 -->
+    <div id="splash-screen">
+        <h1 class="glitch" data-text="CLIX">CLIX</h1>
+        <div class="loading-bar-container">
+            <div class="loading-bar"></div>
+        </div>
+        <div class="loading-text-sub">INITIALIZING TACTICAL SYSTEM...</div>
+    </div>
+
     <div class="live-status-bar">
         <span class="status-tag">LIVE</span> 서버 상태: <span style="color: #4ee29d;">정상</span> | 오늘의 맵: <span style="color: #fff;">에란겔 / 미라마 / 비켄디 / 테이고 / 론도</span>
     </div>
@@ -192,7 +215,6 @@
             <input type="password" id="auth-password" class="auth-input" placeholder="비밀번호 (6자 이상)">
             <div id="login-options" style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #888; margin-bottom: 15px;">
                 <label style="cursor: pointer;"><input type="checkbox" id="remember-email"> 이메일 기억하기</label>
-                <!-- 수정된 부분: checked 속성 제거 -->
                 <label style="cursor: pointer;"><input type="checkbox" id="keep-logged-in"> 로그인 유지</label>
             </div>
             <div id="signup-extra-fields">
@@ -254,15 +276,31 @@
                             <img id="map-image" src="erangel.jpg" alt="Map" onerror="this.src='ERANGEL.JPG'">
                             <canvas id="tactical-canvas"></canvas>
                         </div>
+                        
+                        <!-- 전술 드로잉 툴 및 스탬프 아이콘 추가 -->
                         <div class="drawing-tools">
-                            <button class="tool-btn active" id="tool-pen" onclick="setTool('pen')">펜</button>
-                            <button class="tool-btn" id="tool-eraser" onclick="setTool('eraser')">지우개</button>
-                            <button class="tool-btn" style="color:#ff3333;" onclick="clearCanvas()">전체 지우기</button>
+                            <!-- 그리기 툴 -->
+                            <div style="display:flex; gap:5px; border-right: 1px solid #333; padding-right: 10px;">
+                                <button class="tool-btn active" id="tool-pen" onclick="setTool('pen')">펜</button>
+                                <button class="tool-btn" id="tool-eraser" onclick="setTool('eraser')">지우개</button>
+                                <button class="tool-btn" style="color:#ff3333;" onclick="clearCanvas()">지우기</button>
+                            </div>
+                            <!-- 스탬프 툴 (새로 추가됨) -->
+                            <div style="display:flex; gap:5px;">
+                                <button class="tool-btn" id="tool-stamp-car" onclick="setTool('stamp-car')">🚙 차량</button>
+                                <button class="tool-btn" id="tool-stamp-enemy" onclick="setTool('stamp-enemy')">💀 적</button>
+                                <button class="tool-btn" id="tool-stamp-ping" onclick="setTool('stamp-ping')">📍 핑</button>
+                            </div>
+                            
                             <div style="flex:1;"></div>
-                            <div class="tool-color active" style="background:#ff3333;" onclick="setColor('#ff3333', this)"></div>
-                            <div class="tool-color" style="background:#33cc33;" onclick="setColor('#33cc33', this)"></div>
-                            <div class="tool-color" style="background:#3399ff;" onclick="setColor('#3399ff', this)"></div>
-                            <div class="tool-color" style="background:#ffffff;" onclick="setColor('#ffffff', this)"></div>
+                            
+                            <!-- 색상 선택 -->
+                            <div style="display:flex; gap:8px;">
+                                <div class="tool-color active" style="background:#ff3333;" onclick="setColor('#ff3333', this)"></div>
+                                <div class="tool-color" style="background:#33cc33;" onclick="setColor('#33cc33', this)"></div>
+                                <div class="tool-color" style="background:#3399ff;" onclick="setColor('#3399ff', this)"></div>
+                                <div class="tool-color" style="background:#ffffff;" onclick="setColor('#ffffff', this)"></div>
+                            </div>
                         </div>
                     </div>
                     <div class="map-strategy-box" id="map-strategy-box">
@@ -395,6 +433,14 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     
     <script>
+        // 로딩 화면 페이드아웃 (2.5초 후)
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                if(splash) splash.classList.add('hidden');
+            }, 2500); 
+        });
+
         AOS.init({ duration: 800, once: true, offset: 100, easing: 'ease-out-cubic' });
 
         const firebaseConfig = {
@@ -650,6 +696,7 @@
             canvas.width = img.clientWidth;
             canvas.height = img.clientHeight;
             
+            // 기존 이벤트에 스탬프 기능 분기 추가
             canvas.addEventListener('mousedown', startPosition);
             canvas.addEventListener('mouseup', endPosition);
             canvas.addEventListener('mousemove', draw);
@@ -738,9 +785,18 @@
             return { x: evt.clientX - rect.left, y: evt.clientY - rect.top };
         }
 
-        function startPosition(e) { isDrawing = true; draw(e); }
+        // 마우스를 클릭했을 때 (그리기 시작 OR 스탬프 찍기)
+        function startPosition(e) { 
+            if (currentTool.startsWith('stamp-')) {
+                drawStamp(e);
+            } else {
+                isDrawing = true; 
+                draw(e); 
+            }
+        }
         function endPosition() { isDrawing = false; ctx.beginPath(); }
         
+        // 펜, 지우개 그리기 로직
         function draw(e) {
             if (!isDrawing) return;
             const pos = getMousePos(e);
@@ -756,16 +812,46 @@
             ctx.moveTo(pos.x, pos.y);
         }
 
+        // 스탬프(아이콘) 찍기 로직 추가
+        function drawStamp(e) {
+            const pos = getMousePos(e);
+            ctx.font = '28px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.globalCompositeOperation = 'source-over';
+            
+            // 살짝의 그림자 효과로 아이콘이 맵에서 잘 보이게 처리
+            ctx.shadowColor = 'rgba(0,0,0,0.8)';
+            ctx.shadowBlur = 5;
+
+            let stampIcon = '';
+            if (currentTool === 'stamp-car') stampIcon = '🚙';
+            if (currentTool === 'stamp-enemy') stampIcon = '💀';
+            if (currentTool === 'stamp-ping') stampIcon = '📍';
+
+            ctx.fillText(stampIcon, pos.x, pos.y);
+            ctx.shadowBlur = 0; // 그림자 초기화
+        }
+
+        // 툴 선택 변경 (스탬프 버튼 포함)
         function setTool(tool) {
             currentTool = tool;
+            
+            // 모든 툴 버튼의 active 클래스 제거
             document.getElementById('tool-pen').classList.remove('active');
             document.getElementById('tool-eraser').classList.remove('active');
-            document.getElementById('tool-' + tool).classList.add('active');
+            document.getElementById('tool-stamp-car').classList.remove('active');
+            document.getElementById('tool-stamp-enemy').classList.remove('active');
+            document.getElementById('tool-stamp-ping').classList.remove('active');
+            
+            // 선택된 툴 버튼 활성화
+            const activeBtn = document.getElementById('tool-' + tool);
+            if(activeBtn) activeBtn.classList.add('active');
         }
 
         function setColor(color, element) {
             currentColor = color;
-            setTool('pen');
+            setTool('pen'); // 색상을 누르면 자동으로 펜 모드로 변경
             document.querySelectorAll('.tool-color').forEach(el => el.classList.remove('active'));
             element.classList.add('active');
         }
