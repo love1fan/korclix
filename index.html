@@ -18,11 +18,14 @@
             margin: 0; font-family: 'Inter', 'Segoe UI', sans-serif; background-color: #0a0a0a; color: #ffffff; 
             line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth;
             -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line></svg>') 12 12, auto;
+            
+            /* [NEW] 깔끔하고 날렵한 게이밍 화살표 커서 (기본: 화이트) */
+            cursor: url('data:image/svg+xml;utf8,<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4 L22 11 L13 14 L9 24 Z" fill="%23ffffff" stroke="%23000000" stroke-width="1.5"/></svg>') 4 4, auto;
         }
 
+        /* [NEW] 링크 및 버튼에 올렸을 때 화살표 커서 (포인터: 오렌지) */
         a, button, .auth-switch, .logout-link, .tool-btn, .map-nav-btn, .play-toggle, .tool-color, label, .gallery-item, .match-type-btn, .mode-btn {
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23ff5e00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><circle cx="12" cy="12" r="2" fill="%23ff5e00"></circle></svg>') 12 12, pointer !important;
+            cursor: url('data:image/svg+xml;utf8,<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4 L22 11 L13 14 L9 24 Z" fill="%23ff5e00" stroke="%23ffffff" stroke-width="1.5"/></svg>') 4 4, pointer !important;
         }
         
         #lock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; overflow-y: auto; padding: 20px 0; }
