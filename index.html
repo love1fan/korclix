@@ -19,11 +19,11 @@
             line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth;
             -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
             
-            /* [NEW] 깔끔하고 날렵한 게이밍 화살표 커서 (기본: 화이트) */
+            /* 깔끔하고 날렵한 게이밍 화살표 커서 (기본: 화이트) */
             cursor: url('data:image/svg+xml;utf8,<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4 L22 11 L13 14 L9 24 Z" fill="%23ffffff" stroke="%23000000" stroke-width="1.5"/></svg>') 4 4, auto;
         }
 
-        /* [NEW] 링크 및 버튼에 올렸을 때 화살표 커서 (포인터: 오렌지) */
+        /* 링크 및 버튼에 올렸을 때 화살표 커서 (포인터: 오렌지) */
         a, button, .auth-switch, .logout-link, .tool-btn, .map-nav-btn, .play-toggle, .tool-color, label, .gallery-item, .match-type-btn, .mode-btn {
             cursor: url('data:image/svg+xml;utf8,<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4 L22 11 L13 14 L9 24 Z" fill="%23ff5e00" stroke="%23ffffff" stroke-width="1.5"/></svg>') 4 4, pointer !important;
         }
@@ -421,39 +421,6 @@
         ];
 
         let statsState = {};
-
-        // --- [NEW] UI 사운드 효과 (Web Audio API) ---
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        const audioCtx = new AudioContext();
-
-        function playClickSound() {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            
-            // "틱" 하는 타격음 주파수 설정
-            oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
-            oscillator.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.05);
-            
-            // 볼륨 감쇄 설정
-            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            
-            oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 0.05);
-        }
-
-        // 클릭 가능한 요소에 소리 이벤트 연결
-        document.addEventListener('click', (e) => {
-            if (e.target.closest('button, a, .tool-color, .gallery-item, .match-type-btn, .mode-btn, .auth-switch')) {
-                playClickSound();
-            }
-        });
-        // ------------------------------------------
 
         function initStatCards() {
             const grid = document.getElementById('stats-grid');
@@ -970,12 +937,11 @@
                     const deleteBtn = isUserAdmin ? `<span onclick="deleteMessage('${msgId}')" style="color:#ff3333; cursor:pointer; float:right; font-size:10px; font-weight:bold;">[X]</span>` : "";
                     const nickColor = getNicknameColor(data.nickname);
 
-                    // --- [NEW] 유저 뱃지 시스템 로직 ---
-                    let badge = '🔰'; // 기본 뱃지 (새싹)
+                    let badge = '🔰'; 
                     if (data.nickname === 'CLX_0dB' || data.isAdmin) {
-                        badge = '👑'; // 방장/관리자
+                        badge = '👑'; 
                     } else if (data.nickname.startsWith('CLX_') || CLAN_MEMBERS.some(m => m.nickname === data.nickname)) {
-                        badge = '🔫'; // 클랜원
+                        badge = '🔫'; 
                     }
 
                     div.innerHTML = `${deleteBtn}
