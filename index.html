@@ -153,7 +153,7 @@
         @keyframes blink { 50% { opacity: 0.5; } }
 
         footer { padding: 80px; text-align: center; color: #444; border-top: 1px solid #222; text-transform: uppercase; }
-        @media (max-width: 900px) { .stats-grid, .stream-container, .discord-container { grid-template-columns: 1fr; } .glitch { font-size: 4rem; } .stream-container { height: auto; max-height: none; } }
+        @media (max-width: 900px) { .about-wrapper, .stats-grid, .stream-container, .discord-container { grid-template-columns: 1fr; } .glitch { font-size: 4rem; } .stream-container { height: auto; max-height: none; } }
 
         #music-player { position: fixed; bottom: 30px; left: 30px; background: rgba(0, 0, 0, 0.85); border: 1px solid #222; padding: 12px 20px; border-radius: 12px; display: flex; align-items: center; gap: 15px; z-index: 1000; backdrop-filter: blur(5px); transition: 0.3s; }
         #music-player:hover { border-color: #ff5e00; }
@@ -164,6 +164,7 @@
 </head>
 <body oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
 
+    <!-- 시네마틱 로딩 스크린 -->
     <div id="splash-screen">
         <h1 class="glitch" data-text="CLIX">CLIX</h1>
         <div class="loading-bar-container">
@@ -221,7 +222,6 @@
             <li><a href="notice.html">NOTICE</a></li>
             <li><a href="board.html">BOARD</a></li>
             <li><a href="scrim.html">SCRIM</a></li>
-            <!-- TACTICS 색상 통일 (인라인 스타일 제거) -->
             <li><a href="tactics.html">TACTICS</a></li>
             <li><a href="#members">STATS</a></li>
             <li><a href="members.html">MEMBERS</a></li>
@@ -368,7 +368,25 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     
     <script>
-        window.addEventListener('load', () => { setTimeout(() => { const splash = document.getElementById('splash-screen'); if(splash) splash.classList.add('hidden'); }, 2500); });
+        // ================= 수정된 로딩 스크린 로직 =================
+        window.addEventListener('load', () => { 
+            const splash = document.getElementById('splash-screen'); 
+            if(splash) {
+                // 세션 스토리지를 확인해서 이번 방문에 이미 로딩창을 봤다면 즉시 숨김
+                if(sessionStorage.getItem('clix_splash_seen') === 'true') {
+                    splash.style.display = 'none';
+                } else {
+                    // 처음 방문했다면 2.5초 후 로딩창을 숨기고, 봤다는 기록을 남김
+                    setTimeout(() => { 
+                        splash.classList.add('hidden'); 
+                        sessionStorage.setItem('clix_splash_seen', 'true');
+                        // 애니메이션 끝난 후 완전 제거
+                        setTimeout(() => splash.style.display = 'none', 800);
+                    }, 2500); 
+                }
+            }
+        });
+        // =======================================================
 
         AOS.init({ duration: 800, once: true, offset: 100, easing: 'ease-out-cubic' });
 
