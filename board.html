@@ -11,19 +11,30 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-storage-compat.js"></script>
 
-    <!-- AOS (Animate On Scroll) CSS -->
+    <!-- AOS CSS & SweetAlert2 -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        /* ⭐️ 고급스러운 커스텀 스크롤바 적용 */
+        /* 기본 스타일 */
+        body { margin: 0; font-family: 'Inter', 'Segoe UI', sans-serif; background-color: #0a0a0a; color: #ffffff; line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth; -webkit-user-select: none; user-select: none; cursor: url('data:image/svg+xml;utf8,<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4 L22 11 L13 14 L9 24 Z" fill="%23ffffff" stroke="%23000000" stroke-width="1.5"/></svg>') 4 4, auto; }
+        a, button, .logout-link, .board-row, .modal-close, label[for="write-file"], .btn-like { cursor: url('data:image/svg+xml;utf8,<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4 L22 11 L13 14 L9 24 Z" fill="%23ff5e00" stroke="%23ffffff" stroke-width="1.5"/></svg>') 4 4, pointer !important; }
+
+        /* 🚀 커스텀 알림창(SweetAlert2) CLIX 스타일 */
+        .swal2-container { z-index: 99999 !important; }
+        .swal2-popup { background: #111 !important; border: 1px solid #333 !important; border-top: 4px solid #ff5e00 !important; color: #fff !important; border-radius: 8px !important; }
+        .swal2-title { color: #fff !important; font-weight: 900 !important; font-size: 1.5rem !important; }
+        .swal2-html-container { color: #aaa !important; font-weight: bold !important; line-height: 1.6 !important; }
+        .swal2-confirm { background: #ff5e00 !important; color: #fff !important; font-weight: 900 !important; border-radius: 4px !important; padding: 12px 25px !important; }
+        .swal2-cancel { background: #333 !important; color: #fff !important; font-weight: 900 !important; border-radius: 4px !important; padding: 12px 25px !important; }
+        .swal2-confirm:hover { background: #e65500 !important; }
+        .swal2-cancel:hover { background: #444 !important; }
+
+        /* 스크롤바 세련되게 */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #0a0a0a; border-left: 1px solid #1a1a1a; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #ff5e00; }
-
-        /* 기본 스타일 */
-        body { margin: 0; font-family: 'Inter', 'Segoe UI', sans-serif; background-color: #0a0a0a; color: #ffffff; line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth; -webkit-user-select: none; user-select: none; cursor: url('data:image/svg+xml;utf8,<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4 L22 11 L13 14 L9 24 Z" fill="%23ffffff" stroke="%23000000" stroke-width="1.5"/></svg>') 4 4, auto; }
-        a, button, .logout-link, .board-row, .modal-close, label[for="write-file"], .btn-like { cursor: url('data:image/svg+xml;utf8,<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4 L22 11 L13 14 L9 24 Z" fill="%23ff5e00" stroke="%23ffffff" stroke-width="1.5"/></svg>') 4 4, pointer !important; }
 
         /* 로그인 잠금 화면 */
         #lock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
@@ -42,86 +53,104 @@
         nav ul li a:hover { color: #ff5e00 !important; }
         .logout-link { margin-left: 10px; font-size: 10px; color: #ff3333 !important; border: 1px solid #444; padding: 5px 10px; border-radius: 4px; font-weight: bold; }
 
-        /* 서브페이지 헤더 */
-        .page-header { margin-top: 130px; padding: 60px 8% 40px; text-align: center; background: linear-gradient(to bottom, #111, #0a0a0a); border-bottom: 1px solid #222; }
-        .page-title { font-size: 3.5rem; font-weight: 900; color: #ff5e00; letter-spacing: 8px; margin: 0; text-transform: uppercase; text-shadow: 0 0 20px rgba(255,94,0,0.3); }
-        .page-subtitle { color: #888; font-size: 1rem; letter-spacing: 2px; margin-top: 10px; }
+        /* 💎 고급스러운 페이지 헤더 */
+        .page-header { margin-top: 130px; padding: 80px 8% 60px; text-align: center; background: radial-gradient(circle at center, #1a0a00 0%, #0a0a0a 70%); border-bottom: 1px solid #222; position: relative; overflow: hidden; }
+        .page-header::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px); background-size: 30px 30px; z-index: 1; pointer-events: none; }
+        .page-title { position: relative; z-index: 2; font-size: 4rem; font-weight: 900; color: #ff5e00; letter-spacing: 10px; margin: 0; text-transform: uppercase; text-shadow: 0 0 30px rgba(255,94,0,0.4); }
+        .page-subtitle { position: relative; z-index: 2; color: #aaa; font-size: 1.1rem; letter-spacing: 3px; margin-top: 15px; font-weight: 600; }
 
-        /* 게시판 스타일 */
-        .board-container { max-width: 1200px; margin: 40px auto 80px auto; padding: 0 8%; min-height: 50vh; }
-        .board-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .board-count { color: #888; font-size: 0.9rem; }
-        .btn-write { background: #ff5e00; color: #fff; border: none; padding: 10px 20px; font-weight: 800; border-radius: 4px; transition: 0.3s; box-shadow: 0 5px 15px rgba(255,94,0,0.2); }
-        .btn-write:hover { background: #e65500; box-shadow: 0 8px 25px rgba(255,94,0,0.5); transform: translateY(-2px); }
+        /* 게시판 레이아웃 */
+        .board-container { max-width: 1200px; margin: 50px auto 100px auto; padding: 0 8%; min-height: 50vh; position: relative; z-index: 10; }
+        .board-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .board-count { color: #fff; font-size: 1.2rem; font-weight: 800; letter-spacing: 1px; }
+        .board-count span { color: #ff5e00; font-size: 1.5rem; }
+        .btn-write { background: #222; color: #fff; border: 1px solid #ff5e00; padding: 10px 25px; font-weight: 800; border-radius: 4px; transition: 0.3s; letter-spacing: 1px; }
+        .btn-write:hover { background: #ff5e00; box-shadow: 0 0 20px rgba(255,94,0,0.4); }
 
-        .board-list { border-top: 2px solid #ff5e00; background: #111; border-radius: 0 0 8px 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .board-header-row { display: grid; grid-template-columns: 80px 1fr 120px 120px 100px; padding: 15px 20px; background: #1a1a1a; font-weight: 800; color: #888; font-size: 0.85rem; text-align: center; border-bottom: 1px solid #333; }
-        .board-row { display: grid; grid-template-columns: 80px 1fr 120px 120px 100px; padding: 18px 20px; border-bottom: 1px solid #222; align-items: center; text-align: center; transition: all 0.2s; background: #0d0d0d; }
-        .board-row:hover { background: rgba(255, 94, 0, 0.05); border-left: 3px solid #ff5e00; transform: translateX(5px); }
+        /* 💎 게시판 리스트 디자인 */
+        .board-list { border-top: 3px solid #ff5e00; background: linear-gradient(145deg, #121212, #050505); border-radius: 0 0 12px 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.5); overflow: hidden; }
+        .board-header-row { display: grid; grid-template-columns: 80px 1fr 150px 120px 100px; padding: 18px 20px; background: rgba(0,0,0,0.6); font-weight: 900; color: #888; font-size: 0.85rem; text-align: center; border-bottom: 2px solid #222; letter-spacing: 1px; }
+        .board-row { display: grid; grid-template-columns: 80px 1fr 150px 120px 100px; padding: 22px 20px; border-bottom: 1px solid #1a1a1a; align-items: center; text-align: center; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); background: transparent; position: relative; }
+        .board-row:last-child { border-bottom: none; }
+        .board-row:hover { background: rgba(255, 94, 0, 0.05); transform: translateX(8px); }
+        .board-row:hover::before { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 4px; background: #ff5e00; box-shadow: 0 0 15px #ff5e00; }
         
-        .col-id { color: #666; font-size: 0.9rem; font-weight: bold; }
-        .col-title { text-align: left; font-weight: 700; color: #eee; padding: 0 20px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 8px; }
-        .col-author { color: #aaa; font-size: 0.85rem; font-weight: 600; }
-        .col-date { color: #666; font-size: 0.8rem; }
-        .col-likes { color: #ff5e00; font-weight: 900; font-size: 0.85rem; background: rgba(255,94,0,0.1); padding: 4px 10px; border-radius: 20px; display: inline-block; margin: 0 auto; }
+        .col-id { color: #666; font-size: 0.95rem; font-weight: bold; }
+        .col-title { text-align: left; font-weight: 700; color: #ccc; padding: 0 20px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 8px; transition: color 0.3s; }
+        .board-row:hover .col-title { color: #ff5e00; }
+        .col-author { color: #aaa; font-size: 0.85rem; font-weight: 800; }
+        .col-date { color: #666; font-size: 0.85rem; font-weight: bold; }
+        .col-likes { color: #ff5e00; font-weight: 900; font-size: 0.85rem; background: rgba(255,94,0,0.1); padding: 4px 10px; border-radius: 20px; display: inline-block; box-shadow: 0 0 10px rgba(255,94,0,0.1); }
         
-        .empty-board { text-align: center; padding: 80px 0; color: #666; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        .empty-board { text-align: center; padding: 80px 0; color: #666; display: flex; flex-direction: column; align-items: center; gap: 15px; font-weight: bold; font-size: 1.1rem;}
         .empty-icon { font-size: 3rem; opacity: 0.3; }
 
-        .attach-icon { display: inline-block; background: #333; color: #aaa; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+        .attach-icon { display: inline-flex; align-items: center; justify-content: center; background: #333; color: #aaa; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; font-weight: 900; letter-spacing: 1px; }
         .comment-count-badge { color: #4ee29d; font-size: 0.8rem; font-weight: 900; margin-left: 5px; }
 
-        /* 모달 스타일 */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
-        .modal-content { background: #111; border: 1px solid #333; border-radius: 8px; width: 90%; max-width: 800px; max-height: 90vh; overflow-y: auto; padding: 40px; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .modal-close { position: absolute; top: 20px; right: 25px; background: none; border: none; color: #888; font-size: 2rem; transition: 0.3s; line-height: 1; }
-        .modal-close:hover { color: #ff5e00; transform: scale(1.1); }
+        /* 💎 모달 스타일 고급화 */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
+        .modal-content { background: linear-gradient(to bottom, #151515, #0a0a0a); border: 1px solid #333; border-top: 4px solid #ff5e00; border-radius: 12px; width: 90%; max-width: 800px; max-height: 90vh; overflow-y: auto; padding: 0; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.8); }
+        
+        .modal-header { padding: 40px 40px 20px 40px; border-bottom: 1px solid #222; position: relative; }
+        .modal-body { padding: 30px 40px 40px 40px; }
+        
+        .modal-close { position: absolute; top: 25px; right: 30px; background: none; border: none; color: #666; font-size: 2.5rem; transition: 0.3s; line-height: 1; z-index: 100; }
+        .modal-close:hover { color: #ff5e00; transform: scale(1.1) rotate(90deg); }
 
         /* 글 읽기 모달 */
-        #read-title { font-size: 1.8rem; color: #fff; font-weight: 900; margin: 0 0 15px 0; }
-        .read-info { display: flex; gap: 15px; color: #888; font-size: 0.85rem; padding-bottom: 20px; border-bottom: 1px solid #333; margin-bottom: 30px; align-items: center; }
-        .read-info-badge { background: #333; padding: 2px 8px; border-radius: 4px; color: #fff; font-weight: bold; }
+        #read-title { font-size: 2.2rem; color: #fff; font-weight: 900; margin: 0 0 15px 0; word-break: keep-all; line-height: 1.3; }
+        .read-info { display: flex; gap: 15px; color: #888; font-size: 0.9rem; font-weight: bold; align-items: center; }
+        .read-info-badge { background: #333; padding: 4px 10px; border-radius: 4px; color: #fff; font-weight: 900; }
         
-        #read-media-container { margin-bottom: 20px; text-align: center; }
-        #read-media-container img, #read-media-container video { max-width: 100%; border-radius: 8px; border: 1px solid #333; max-height: 500px; }
-        #read-body { color: #ddd; line-height: 1.8; white-space: pre-wrap; font-size: 1rem; min-height: 100px; }
+        #read-media-container { margin-bottom: 30px; text-align: center; }
+        #read-media-container img, #read-media-container video { max-width: 100%; border-radius: 8px; border: 1px solid #333; max-height: 500px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        #read-body { color: #ccc; line-height: 1.8; white-space: pre-wrap; font-size: 1.05rem; min-height: 100px; }
         
-        /* ⭐️ 좋아요 버튼 */
-        .action-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #222; }
-        .btn-like { background: transparent; border: 1px solid #ff5e00; color: #ff5e00; padding: 8px 20px; border-radius: 20px; font-weight: 900; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
-        .btn-like:hover { background: rgba(255, 94, 0, 0.1); }
-        .btn-like.liked { background: #ff5e00; color: #fff; box-shadow: 0 0 15px rgba(255,94,0,0.3); }
+        /* ⭐️ 좋아요 & 수정/삭제 컨트롤 */
+        .action-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #222; }
+        .btn-like { background: transparent; border: 2px solid #ff5e00; color: #ff5e00; padding: 10px 25px; border-radius: 30px; font-weight: 900; transition: 0.3s; display: flex; align-items: center; gap: 8px; font-size: 1rem; }
+        .btn-like:hover { background: rgba(255, 94, 0, 0.1); box-shadow: 0 0 15px rgba(255,94,0,0.3); }
+        .btn-like.liked { background: #ff5e00; color: #fff; box-shadow: 0 0 20px rgba(255,94,0,0.4); }
 
-        /* ⭐️ 댓글 섹션 */
-        .comments-section { margin-top: 30px; background: #0a0a0a; border-radius: 8px; border: 1px solid #222; overflow: hidden; }
-        .comments-header { background: #151515; padding: 15px; font-weight: 800; border-bottom: 1px solid #222; color: #aaa; }
+        .author-controls { display: flex; gap: 10px; }
+        .btn-edit-post { background: #333; color: #ff5e00; border: 1px solid #ff5e00; padding: 8px 15px; font-weight: bold; border-radius: 4px; transition: 0.3s; }
+        .btn-edit-post:hover { background: rgba(255,94,0,0.1); }
+
+        /* ⭐️ 댓글 섹션 고급화 */
+        .comments-section { margin-top: 40px; background: #050505; border-radius: 8px; border: 1px solid #222; overflow: hidden; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
+        .comments-header { background: #111; padding: 15px 20px; font-weight: 900; border-bottom: 1px solid #222; color: #aaa; letter-spacing: 1px; }
         #comments-list { max-height: 300px; overflow-y: auto; }
-        .comment-item { padding: 15px; border-bottom: 1px solid #1a1a1a; display: flex; justify-content: space-between; }
+        .comment-item { padding: 18px 20px; border-bottom: 1px solid #1a1a1a; display: flex; justify-content: space-between; }
         .comment-item:last-child { border-bottom: none; }
         .comment-author { font-weight: 900; color: #4ee29d; font-size: 0.85rem; margin-bottom: 5px; display: flex; align-items: center; gap: 8px;}
-        .comment-text { color: #ccc; font-size: 0.9rem; word-break: break-all; }
-        .comment-date { font-size: 0.7rem; color: #666; }
-        .btn-del-comment { background: none; border: none; color: #ff3333; font-size: 0.7rem; font-weight: bold; cursor: pointer; opacity: 0.7; }
-        .btn-del-comment:hover { opacity: 1; }
+        .comment-text { color: #ccc; font-size: 0.95rem; word-break: break-all; }
+        .comment-date { font-size: 0.75rem; color: #666; font-weight: normal; }
+        .btn-del-comment { background: none; border: none; color: #ff3333; font-size: 0.75rem; font-weight: bold; cursor: pointer; opacity: 0.7; }
+        .btn-del-comment:hover { opacity: 1; text-decoration: underline; }
         
         .comment-input-area { display: flex; border-top: 1px solid #222; background: #111; }
-        .comment-input { flex-grow: 1; background: transparent; border: none; padding: 15px; color: #fff; font-family: inherit; outline: none; }
-        .btn-comment-submit { background: #ff5e00; color: #fff; border: none; padding: 0 20px; font-weight: 900; transition: 0.3s; cursor: pointer; }
+        .comment-input { flex-grow: 1; background: transparent; border: none; padding: 18px 20px; color: #fff; font-family: inherit; outline: none; font-size: 0.95rem; }
+        .comment-input:focus { background: rgba(255,94,0,0.02); }
+        .btn-comment-submit { background: #ff5e00; color: #fff; border: none; padding: 0 30px; font-weight: 900; transition: 0.3s; cursor: pointer; letter-spacing: 1px; }
         .btn-comment-submit:hover { background: #e65500; }
 
         /* 글 쓰기 모달 */
-        .write-input { width: 100%; background: #0a0a0a; border: 1px solid #333; color: #fff; padding: 15px; font-family: inherit; font-size: 1rem; margin-bottom: 15px; border-radius: 4px; box-sizing: border-box; outline: none; transition: border-color 0.3s; }
-        .write-input:focus { border-color: #ff5e00; }
-        textarea.write-input { height: 200px; resize: none; }
-        .file-upload-wrapper { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; background: #1a1a1a; padding: 10px; border-radius: 4px; border: 1px dashed #444; }
-        .file-upload-wrapper label { background: #333; color: #fff; padding: 8px 15px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; transition: 0.3s; }
+        .write-input { width: 100%; background: #000; border: 1px solid #333; color: #fff; padding: 15px; font-family: inherit; font-size: 1rem; margin-bottom: 20px; border-radius: 6px; box-sizing: border-box; outline: none; transition: 0.3s; }
+        .write-input:focus { border-color: #ff5e00; box-shadow: 0 0 10px rgba(255,94,0,0.2); }
+        textarea.write-input { height: 250px; resize: none; }
+        
+        .file-upload-wrapper { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; background: #050505; padding: 15px; border-radius: 6px; border: 1px dashed #444; }
+        .file-upload-wrapper label { background: #333; color: #fff; padding: 10px 20px; border-radius: 4px; font-size: 0.85rem; font-weight: 900; transition: 0.3s; letter-spacing: 1px; }
         .file-upload-wrapper label:hover { background: #ff5e00; }
-        #file-name-display { font-size: 0.85rem; color: #888; }
+        #file-name-display { font-size: 0.9rem; color: #888; font-weight: bold; }
+        
         #upload-progress-container { display: none; margin-bottom: 20px; }
         .progress-bar-bg { background: #222; height: 8px; border-radius: 4px; overflow: hidden; }
         #upload-progress-bar { background: #ff5e00; height: 100%; width: 0%; transition: width 0.1s; }
+        #upload-status-text { color:#aaa; font-size:12px; margin-top:5px; text-align:right; font-weight: bold; }
 
-        footer { padding: 40px; text-align: center; color: #444; border-top: 1px solid #222; text-transform: uppercase; }
+        footer { padding: 60px; text-align: center; color: #444; border-top: 1px solid #222; text-transform: uppercase; font-weight: bold; font-size: 0.9rem; letter-spacing: 2px; background: #050505; }
     </style>
 </head>
 <body>
@@ -163,8 +192,8 @@
 
     <div class="board-container" data-aos="fade-up" data-aos-delay="100">
         <div class="board-top">
-            <div class="board-count">전체 게시글 <span id="total-count" style="color:#ff5e00; font-weight:bold;">0</span>건</div>
-            <button class="btn-write" onclick="openWriteModal()">새 게시글 작성</button>
+            <div class="board-count">TOTAL POSTS: <span id="total-count">0</span></div>
+            <button class="btn-write" onclick="openWriteModal()">+ 새 게시글 작성</button>
         </div>
 
         <div class="board-list">
@@ -176,65 +205,79 @@
                 <div>LIKES</div>
             </div>
             <div id="board-body">
-                <div class="empty-board">게시글을 불러오는 중입니다...</div>
+                <div class="empty-board">서버와 동기화 중입니다...</div>
             </div>
         </div>
     </div>
 
-    <!-- 글 읽기 모달 -->
+    <!-- 💎 글 읽기 모달 -->
     <div class="modal-overlay" id="read-modal">
         <div class="modal-content" data-aos="zoom-in" data-aos-duration="300">
             <button class="modal-close" onclick="closeModal('read-modal')">&times;</button>
-            <h2 id="read-title">게시글 제목</h2>
-            <div class="read-info">
-                <span id="read-author" class="read-info-badge">작성자</span>
-                <span id="read-date">작성일: 2026.04.10</span>
-            </div>
             
-            <div id="read-media-container"></div>
-            <div id="read-body">본문 내용이 여기에 표시됩니다.</div>
-            
-            <!-- 좋아요 & 삭제 컨트롤 -->
-            <div class="action-bar">
-                <button id="btn-like" class="btn-like" onclick="toggleLike()">❤️ 좋아요 <span id="like-count">0</span></button>
-                <button id="btn-delete-post" class="auth-btn" style="width:auto; background:#ff3333; padding:8px 15px; font-size:0.8rem; display:none;" onclick="deleteBoard()">게시글 삭제</button>
+            <div class="modal-header">
+                <h2 id="read-title">게시글 제목</h2>
+                <div class="read-info">
+                    <span id="read-author" class="read-info-badge">작성자</span>
+                    <span id="read-date">2026.04.10</span>
+                </div>
             </div>
 
-            <!-- 댓글 영역 -->
-            <div class="comments-section">
-                <div class="comments-header">💬 댓글 <span id="comment-total-count" style="color:#ff5e00;">0</span></div>
-                <div id="comments-list">
-                    <!-- 댓글이 여기에 렌더링 됩니다 -->
+            <div class="modal-body">
+                <div id="read-media-container"></div>
+                <div id="read-body">본문 내용이 여기에 표시됩니다.</div>
+                
+                <!-- 좋아요 & 수정/삭제 컨트롤 -->
+                <div class="action-bar">
+                    <button id="btn-like" class="btn-like" onclick="toggleLike()">❤️ LIKE <span id="like-count">0</span></button>
+                    
+                    <div class="author-controls" id="author-controls" style="display:none;">
+                        <button class="btn-edit-post" onclick="openEditModal()">게시글 수정</button>
+                        <button class="auth-btn" style="width:auto; background:transparent; border:1px solid #ff3333; color:#ff3333; padding:8px 15px; font-size:0.8rem;" onclick="deleteBoard()">삭제</button>
+                    </div>
                 </div>
-                <div class="comment-input-area">
-                    <input type="text" id="comment-input" class="comment-input" placeholder="바르고 고운 말을 사용해주세요..." autocomplete="off">
-                    <button class="btn-comment-submit" onclick="addComment()">등록</button>
+
+                <!-- 댓글 영역 -->
+                <div class="comments-section">
+                    <div class="comments-header">💬 COMMENTS <span id="comment-total-count" style="color:#ff5e00; margin-left: 5px;">0</span></div>
+                    <div id="comments-list">
+                        <!-- 댓글이 여기에 렌더링 됩니다 -->
+                    </div>
+                    <div class="comment-input-area">
+                        <input type="text" id="comment-input" class="comment-input" placeholder="바르고 고운 말을 사용해주세요..." autocomplete="off">
+                        <button class="btn-comment-submit" onclick="addComment()">SEND</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 글 쓰기 모달 -->
+    <!-- 💎 글 쓰기 / 수정 모달 -->
     <div class="modal-overlay" id="write-modal">
         <div class="modal-content" data-aos="zoom-in" data-aos-duration="300">
             <button class="modal-close" onclick="closeModal('write-modal')">&times;</button>
-            <h2 style="color:#ff5e00; margin-bottom:20px;">게시글 작성</h2>
-            <input type="text" id="write-title" class="write-input" placeholder="제목을 입력하세요">
             
-            <div class="file-upload-wrapper">
-                <label for="write-file">사진/영상 첨부</label>
-                <input type="file" id="write-file" accept="image/*,video/*" style="display:none;" onchange="updateFileName()">
-                <span id="file-name-display">선택된 파일 없음</span>
-                <button type="button" id="btn-cancel-file" onclick="cancelFile()" style="display:none; background:none; border:none; color:#ff3333; font-weight:bold; font-size:12px;">X 취소</button>
-            </div>
+            <div class="modal-body" style="padding-top: 50px;">
+                <h2 id="write-modal-title" style="color:#ff5e00; margin-top:0; margin-bottom:30px; font-size: 2rem; font-weight: 900; letter-spacing: 2px;">NEW POST</h2>
+                
+                <input type="text" id="write-title" class="write-input" placeholder="제목을 입력하세요">
+                
+                <div class="file-upload-wrapper">
+                    <label for="write-file">사진/영상 첨부</label>
+                    <input type="file" id="write-file" accept="image/*,video/*" style="display:none;" onchange="updateFileName()">
+                    <span id="file-name-display">선택된 파일 없음</span>
+                    <button type="button" id="btn-cancel-file" onclick="cancelFile()" style="display:none; background:none; border:none; color:#ff3333; font-weight:bold; font-size:12px; cursor:pointer;">[X 취소]</button>
+                </div>
 
-            <div id="upload-progress-container">
-                <div class="progress-bar-bg"><div id="upload-progress-bar"></div></div>
-                <div id="upload-status-text" style="color:#aaa; font-size:12px; margin-top:5px; text-align:right;">업로드 준비 중...</div>
-            </div>
+                <div id="upload-progress-container">
+                    <div class="progress-bar-bg"><div id="upload-progress-bar"></div></div>
+                    <div id="upload-status-text">업로드 준비 중...</div>
+                </div>
 
-            <textarea id="write-content" class="write-input" placeholder="클랜원들과 나누고 싶은 이야기를 적어주세요."></textarea>
-            <button id="btn-submit" class="auth-btn" onclick="submitBoard()">등록하기</button>
+                <textarea id="write-content" class="write-input" placeholder="클랜원들과 나누고 싶은 이야기를 적어주세요."></textarea>
+                
+                <button id="btn-submit" class="auth-btn" onclick="submitBoard()">게시글 등록</button>
+            </div>
         </div>
     </div>
 
@@ -258,7 +301,9 @@
         let userId = ""; 
         let currentReadDocId = null;
         let boardsDataList = []; 
-        let unsubscribeComments = null; // 댓글 실시간 리스너 해제용
+        let unsubscribeComments = null; 
+
+        let isEditMode = false; // 글 작성인지 수정인지 판별
 
         // 1. 인증
         auth.onAuthStateChanged((user) => {
@@ -281,7 +326,7 @@
             } else { overlay.style.display = 'flex'; }
         });
 
-        // 2. 게시글 목록 불러오기 (좋아요, 댓글 수 포함)
+        // 2. 게시글 목록 불러오기
         function loadBoards() {
             const boardBody = document.getElementById('board-body');
             const totalCountSpan = document.getElementById('total-count');
@@ -291,8 +336,7 @@
                     boardBody.innerHTML = `
                         <div class="empty-board">
                             <div class="empty-icon">📝</div>
-                            <div style="font-weight:bold; font-size:1.1rem;">등록된 게시글이 없습니다.</div>
-                            <div style="font-size:0.9rem; color:#888;">첫 글의 주인공이 되어보세요!</div>
+                            <div>등록된 게시글이 없습니다. 첫 글의 주인공이 되어보세요!</div>
                         </div>
                     `;
                     totalCountSpan.innerText = "0";
@@ -311,11 +355,8 @@
                     const dateObj = data.createdAt ? data.createdAt.toDate() : new Date();
                     const dateStr = `${dateObj.getFullYear()}.${String(dateObj.getMonth() + 1).padStart(2, '0')}.${String(dateObj.getDate()).padStart(2, '0')}`;
                     
-                    // 좋아요 배열 처리
                     const likes = data.likes || [];
                     const likeCount = likes.length;
-                    
-                    // 댓글 갯수 (Firestore에 미리 저장해둔 count 필드 사용)
                     const commentCount = data.commentCount || 0;
                     const commentBadge = commentCount > 0 ? `<span class="comment-count-badge">[${commentCount}]</span>` : '';
 
@@ -323,7 +364,7 @@
 
                     let attachIcon = '';
                     if(data.mediaUrl) {
-                        attachIcon = data.mediaType.includes('video') ? `<span class="attach-icon">▶ VID</span>` : `<span class="attach-icon">📷 IMG</span>`;
+                        attachIcon = data.mediaType.includes('video') ? `<span class="attach-icon">VID</span>` : `<span class="attach-icon">IMG</span>`;
                     }
 
                     const rowHtml = `
@@ -340,7 +381,7 @@
             });
         }
 
-        // 3. 게시글 읽기 및 댓글 로드
+        // 3. 게시글 읽기
         function readBoard(docId) {
             currentReadDocId = docId;
             const docData = boardsDataList.find(b => b.id === docId);
@@ -348,7 +389,7 @@
 
             document.getElementById('read-title').innerText = docData.title;
             document.getElementById('read-author').innerText = docData.author;
-            document.getElementById('read-date').innerText = "작성일: " + docData.dateStr;
+            document.getElementById('read-date').innerText = docData.dateStr;
             document.getElementById('read-body').innerText = docData.content;
             
             // 미디어 렌더링
@@ -368,17 +409,15 @@
             document.getElementById('like-count').innerText = docData.likes.length;
             if(hasLiked) { btnLike.classList.add('liked'); } else { btnLike.classList.remove('liked'); }
 
-            // 권한 체크 (삭제 버튼)
-            const btnDelete = document.getElementById('btn-delete-post');
-            btnDelete.style.display = (isUserAdmin || userId === docData.authorUid) ? 'block' : 'none';
+            // 권한 체크 (수정/삭제 버튼)
+            const authorControls = document.getElementById('author-controls');
+            authorControls.style.display = (isUserAdmin || userId === docData.authorUid) ? 'flex' : 'none';
 
-            // 댓글 실시간 로드 시작
             loadComments(docId);
-
             document.getElementById('read-modal').style.display = 'flex';
         }
 
-        // 4. 좋아요(❤️) 토글 로직
+        // 4. 좋아요(❤️) 토글
         async function toggleLike() {
             if(!currentReadDocId) return;
             const docRef = db.collection("boards").doc(currentReadDocId);
@@ -396,12 +435,11 @@
             } catch (error) { console.error("좋아요 오류:", error); }
         }
 
-        // 5. 댓글(Comments) 관련 기능
+        // 5. 댓글(Comments) 처리
         function loadComments(boardId) {
             const commentsList = document.getElementById('comments-list');
             const commentTotal = document.getElementById('comment-total-count');
 
-            // 기존 리스너가 있다면 해제
             if(unsubscribeComments) unsubscribeComments();
 
             unsubscribeComments = db.collection("boards").doc(boardId).collection("comments")
@@ -411,7 +449,7 @@
                     commentTotal.innerText = snapshot.docs.length;
 
                     if(snapshot.empty) {
-                        commentsList.innerHTML = `<div style="padding:30px; text-align:center; color:#666; font-size:0.85rem; font-weight:bold;">가장 먼저 댓글을 남겨보세요!</div>`;
+                        commentsList.innerHTML = `<div style="padding:30px; text-align:center; color:#666; font-size:0.9rem; font-weight:bold;">가장 먼저 댓글을 남겨보세요!</div>`;
                         return;
                     }
 
@@ -434,8 +472,6 @@
                         `;
                         commentsList.insertAdjacentHTML('beforeend', html);
                     });
-                    
-                    // 스크롤 맨 아래로 이동
                     commentsList.scrollTop = commentsList.scrollHeight;
                 });
         }
@@ -445,127 +481,230 @@
             const text = input.value.trim();
             if(!text || !currentReadDocId) return;
 
-            input.value = ""; // 입력창 초기화
+            input.value = ""; 
             
             try {
-                // 1. 댓글 subcollection에 추가
                 await db.collection("boards").doc(currentReadDocId).collection("comments").add({
-                    uid: userId,
-                    nickname: userNick,
-                    text: text,
+                    uid: userId, nickname: userNick, text: text,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
-
-                // 2. 게시물 본체의 commentCount 1 증가
                 await db.collection("boards").doc(currentReadDocId).update({
                     commentCount: firebase.firestore.FieldValue.increment(1)
                 });
-            } catch (error) { alert("댓글 작성 실패: " + error.message); }
+            } catch (error) { 
+                Swal.fire({ icon: 'error', title: '댓글 작성 실패', text: error.message, background: '#111', color: '#fff' }); 
+            }
         }
 
-        // 엔터키로 댓글 작성
         document.getElementById('comment-input').addEventListener('keypress', function(e) {
             if(e.key === 'Enter') addComment();
         });
 
         async function deleteComment(commentId) {
-            if(!confirm("이 댓글을 삭제하시겠습니까?")) return;
-            try {
-                await db.collection("boards").doc(currentReadDocId).collection("comments").doc(commentId).delete();
-                await db.collection("boards").doc(currentReadDocId).update({
-                    commentCount: firebase.firestore.FieldValue.increment(-1)
-                });
-            } catch (error) { alert("댓글 삭제 실패"); }
+            Swal.fire({
+                title: '댓글 삭제', text: "이 댓글을 삭제하시겠습니까?", icon: 'warning',
+                showCancelButton: true, confirmButtonColor: '#ff3333', cancelButtonColor: '#333',
+                confirmButtonText: '삭제', cancelButtonText: '취소', background: '#111', color: '#fff'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        await db.collection("boards").doc(currentReadDocId).collection("comments").doc(commentId).delete();
+                        await db.collection("boards").doc(currentReadDocId).update({
+                            commentCount: firebase.firestore.FieldValue.increment(-1)
+                        });
+                    } catch (error) { Swal.fire({ icon: 'error', title: '삭제 실패', text: error.message, background: '#111', color: '#fff' }); }
+                }
+            });
         }
 
-        // 6. 모달 및 글쓰기 (기존과 동일)
+        // 6. 모달 닫기
         function closeModal(modalId) { 
             document.getElementById(modalId).style.display = 'none'; 
             if(modalId === 'read-modal') {
                 document.getElementById('read-media-container').innerHTML = ""; 
-                if(unsubscribeComments) unsubscribeComments(); // 모달 닫을때 댓글 리스너 해제 (비용 절감)
+                if(unsubscribeComments) unsubscribeComments(); 
             }
         }
         
+        // 7. 파일 업로드 UI 제어
         function updateFileName() {
             const fileInput = document.getElementById('write-file');
             const fileNameDisplay = document.getElementById('file-name-display');
             const cancelBtn = document.getElementById('btn-cancel-file');
             if(fileInput.files.length > 0) {
-                if(fileInput.files[0].size > 50 * 1024 * 1024) return alert("50MB 이하만 가능합니다."), cancelFile();
+                if(fileInput.files[0].size > 50 * 1024 * 1024) {
+                    Swal.fire({ icon: 'warning', title: '용량 초과', text: '50MB 이하의 파일만 업로드 가능합니다.', background: '#111', color: '#fff' });
+                    cancelFile(); return;
+                }
                 fileNameDisplay.innerText = fileInput.files[0].name;
                 fileNameDisplay.style.color = "#ff5e00";
                 cancelBtn.style.display = "inline-block";
-            } else cancelFile();
+            } else { cancelFile(); }
         }
 
         function cancelFile() {
             document.getElementById('write-file').value = "";
+            
+            // 수정 모드일 때 기존 파일이 존재하면 안내 문구 변경
+            if(isEditMode && currentReadDocId) {
+                const docData = boardsDataList.find(b => b.id === currentReadDocId);
+                if(docData && docData.mediaUrl) {
+                    document.getElementById('file-name-display').innerText = "(기존 파일 유지됨) 새 파일 선택 시 교체";
+                    document.getElementById('file-name-display').style.color = "#4ee29d";
+                    document.getElementById('btn-cancel-file').style.display = "none";
+                    return;
+                }
+            }
+            
             document.getElementById('file-name-display').innerText = "선택된 파일 없음";
-            document.getElementById('file-name-display').style.color = "#aaa";
+            document.getElementById('file-name-display').style.color = "#888";
             document.getElementById('btn-cancel-file').style.display = "none";
         }
 
+        // 8. 글 쓰기 / 수정 창 열기
         function openWriteModal() {
+            isEditMode = false;
+            document.getElementById('write-modal-title').innerText = "NEW POST";
             document.getElementById('write-title').value = '';
             document.getElementById('write-content').value = '';
             cancelFile();
             document.getElementById('upload-progress-container').style.display = 'none';
+            document.getElementById('btn-submit').innerText = "게시글 등록";
             document.getElementById('write-modal').style.display = 'flex';
         }
 
+        function openEditModal() {
+            if(!currentReadDocId) return;
+            const docData = boardsDataList.find(b => b.id === currentReadDocId);
+            if(!docData) return;
+
+            isEditMode = true;
+            document.getElementById('write-modal-title').innerText = "EDIT POST";
+            document.getElementById('write-title').value = docData.title;
+            document.getElementById('write-content').value = docData.content;
+            
+            cancelFile(); // 수정 모드에 맞게 파일 상태 초기화
+            
+            document.getElementById('upload-progress-container').style.display = 'none';
+            document.getElementById('btn-submit').innerText = "게시글 수정 완료";
+            
+            closeModal('read-modal');
+            document.getElementById('write-modal').style.display = 'flex';
+        }
+
+        // 9. 등록 및 수정 로직 (통합)
         async function submitBoard() {
             const title = document.getElementById('write-title').value.trim();
             const content = document.getElementById('write-content').value.trim();
             const file = document.getElementById('write-file').files[0];
             const btnSubmit = document.getElementById('btn-submit');
 
-            if (!title || !content) return alert("제목과 내용을 모두 입력해주세요.");
+            if (!title || !content) {
+                Swal.fire({ icon: 'warning', title: '입력 오류', html: '제목과 내용을 모두 입력해주세요.<br><br><span style="color:#ff5e00; font-size:0.85rem;">* 버튼이 클릭되지 않으면 엔터(Enter) 키를 눌러주세요.</span>', background: '#111', color: '#fff' });
+                return;
+            }
+
             btnSubmit.disabled = true; btnSubmit.innerText = "처리 중...";
 
-            let mediaUrl = null, mediaType = null, storagePath = null;
+            // 기존 데이터 가져오기 (수정 모드일 경우)
+            const docData = (isEditMode && currentReadDocId) ? boardsDataList.find(b => b.id === currentReadDocId) : null;
+            
+            let finalMediaUrl = docData ? docData.mediaUrl : null;
+            let finalMediaType = docData ? docData.mediaType : null;
+            let finalStoragePath = docData ? docData.storagePath : null;
 
             try {
+                // 새로운 파일이 선택된 경우 (업로드 및 기존 파일 삭제 진행)
                 if(file) {
                     document.getElementById('upload-progress-container').style.display = 'block';
+                    
+                    // 수정 모드인데 기존에 파일이 있었다면 Storage에서 삭제
+                    if(isEditMode && docData && docData.storagePath) {
+                        await storage.ref().child(docData.storagePath).delete().catch(e => console.log("기존 파일 삭제 실패/무시", e));
+                    }
+
+                    // 새 파일 업로드
                     const ext = file.name.split('.').pop();
-                    storagePath = `board_media/${Date.now()}_${userId}.${ext}`;
-                    const uploadTask = storage.ref().child(storagePath).put(file);
+                    finalStoragePath = `board_media/${Date.now()}_${userId}.${ext}`;
+                    const uploadTask = storage.ref().child(finalStoragePath).put(file);
 
                     await new Promise((resolve, reject) => {
                         uploadTask.on('state_changed', 
-                            (snap) => { document.getElementById('upload-progress-bar').style.width = (snap.bytesTransferred / snap.totalBytes * 100) + '%'; }, 
+                            (snap) => { 
+                                const progress = (snap.bytesTransferred / snap.totalBytes * 100);
+                                document.getElementById('upload-progress-bar').style.width = progress + '%'; 
+                                document.getElementById('upload-status-text').innerText = `업로드 중... ${Math.round(progress)}%`;
+                            }, 
                             reject, 
-                            async () => { mediaUrl = await uploadTask.snapshot.ref.getDownloadURL(); mediaType = file.type; resolve(); }
+                            async () => { 
+                                finalMediaUrl = await uploadTask.snapshot.ref.getDownloadURL(); 
+                                finalMediaType = file.type; 
+                                resolve(); 
+                            }
                         );
                     });
                 }
 
-                await db.collection("boards").add({
-                    title: title, content: content, author: userNick, authorUid: userId,
-                    mediaUrl: mediaUrl, mediaType: mediaType, storagePath: storagePath,
-                    likes: [], commentCount: 0, // 초기값 세팅
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
+                // Firestore 데이터 저장/업데이트
+                if(isEditMode && currentReadDocId) {
+                    await db.collection("boards").doc(currentReadDocId).update({
+                        title: title, 
+                        content: content,
+                        mediaUrl: finalMediaUrl, 
+                        mediaType: finalMediaType, 
+                        storagePath: finalStoragePath
+                    });
+                    Swal.fire({ icon: 'success', title: '수정 완료', html: '게시글이 성공적으로 수정되었습니다.<br><br><span style="color:#ff5e00; font-size:0.85rem;">* 버튼이 클릭되지 않으면 엔터(Enter) 키를 눌러주세요.</span>', background: '#111', color: '#fff', confirmButtonColor: '#ff5e00' });
+                } else {
+                    await db.collection("boards").add({
+                        title: title, content: content, author: userNick, authorUid: userId,
+                        mediaUrl: finalMediaUrl, mediaType: finalMediaType, storagePath: finalStoragePath,
+                        likes: [], commentCount: 0, 
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    Swal.fire({ icon: 'success', title: '등록 완료', html: '게시글이 성공적으로 등록되었습니다.<br><br><span style="color:#ff5e00; font-size:0.85rem;">* 버튼이 클릭되지 않으면 엔터(Enter) 키를 눌러주세요.</span>', background: '#111', color: '#fff', confirmButtonColor: '#ff5e00' });
+                }
 
-                alert("등록되었습니다.");
                 closeModal('write-modal');
-            } catch (error) { alert("실패: " + error.message); } 
-            finally { btnSubmit.disabled = false; btnSubmit.innerText = "등록하기"; document.getElementById('upload-progress-container').style.display = 'none'; }
+            } catch (error) { 
+                Swal.fire({ icon: 'error', title: '처리 실패', text: error.message, background: '#111', color: '#fff' });
+            } finally { 
+                btnSubmit.disabled = false; btnSubmit.innerText = isEditMode ? "게시글 수정 완료" : "게시글 등록"; 
+                document.getElementById('upload-progress-container').style.display = 'none'; 
+            }
         }
 
+        // 10. 게시글 삭제
         async function deleteBoard() {
-            if(!confirm("이 게시글을 삭제하시겠습니까?")) return;
-            const docData = boardsDataList.find(b => b.id === currentReadDocId);
-            try {
-                if(docData.storagePath) await storage.ref().child(docData.storagePath).delete().catch(e=>console.log(e));
-                await db.collection("boards").doc(currentReadDocId).delete();
-                alert("삭제되었습니다.");
-                closeModal('read-modal');
-            } catch (error) { alert("삭제 오류"); }
+            if(!currentReadDocId) return;
+            
+            Swal.fire({
+                title: '게시글 삭제', html: "이 게시글을 완전히 삭제하시겠습니까? (복구 불가)<br><br><span style='color:#ff5e00; font-size:0.85rem;'>* 버튼이 클릭되지 않으면 엔터(Enter) 키를 눌러주세요.</span>", icon: 'warning',
+                showCancelButton: true, confirmButtonColor: '#ff3333', cancelButtonColor: '#333',
+                confirmButtonText: '삭제하기', cancelButtonText: '취소', background: '#111', color: '#fff'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const docData = boardsDataList.find(b => b.id === currentReadDocId);
+                    try {
+                        if(docData && docData.storagePath) await storage.ref().child(docData.storagePath).delete().catch(e=>console.log(e));
+                        await db.collection("boards").doc(currentReadDocId).delete();
+                        
+                        Swal.fire({ icon: 'success', title: '삭제 완료', html: '게시글이 삭제되었습니다.<br><br><span style="color:#ff5e00; font-size:0.85rem;">* 버튼이 클릭되지 않으면 엔터(Enter) 키를 눌러주세요.</span>', background: '#111', color: '#fff', confirmButtonColor: '#ff5e00' });
+                        closeModal('read-modal');
+                    } catch (error) { Swal.fire({ icon: 'error', title: '삭제 오류', text: error.message, background: '#111', color: '#fff' }); }
+                }
+            });
         }
 
-        function logout() { if(confirm("로그아웃 하시겠습니까?")) auth.signOut().then(() => location.href = 'index.html'); }
+        function logout() {
+            Swal.fire({
+                title: 'LOGOUT', html: "로그아웃 하시겠습니까?<br><br><span style='color:#ff5e00; font-size:0.85rem;'>* 버튼이 클릭되지 않으면 엔터(Enter) 키를 눌러주세요.</span>", icon: 'question',
+                showCancelButton: true, confirmButtonColor: '#ff5e00', cancelButtonColor: '#333',
+                confirmButtonText: '로그아웃', cancelButtonText: '취소', background: '#111', color: '#fff'
+            }).then((result) => {
+                if (result.isConfirmed) { auth.signOut().then(() => location.href = 'index.html'); }
+            });
+        }
     </script>
 </body>
 </html>
