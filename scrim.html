@@ -225,13 +225,13 @@
             } else { overlay.style.display = 'flex'; }
         });
 
-        // 1. 스크림 목록 불러오기
+        // 1. 스크림 목록 불러오기 (복합 색인 에러 방지를 위해 JavaScript 정렬 사용)
         function loadScrims() {
             const grid = document.getElementById('scrim-grid');
             const countSpan = document.getElementById('count-upcoming');
 
-            // 날짜순으로 정렬 (최신 일정이 먼저 오도록)
-            db.collection("scrims").orderBy("date", "desc").orderBy("time", "desc").onSnapshot((snapshot) => {
+            // db.collection에서 orderBy를 제거하고 가져옵니다.
+            db.collection("scrims").onSnapshot((snapshot) => {
                 if (snapshot.empty) {
                     grid.innerHTML = '<div class="empty-scrim">등록된 스크림 일정이 없습니다.</div>';
                     countSpan.innerText = "0";
@@ -239,26 +239,47 @@
                     return;
                 }
 
-                grid.innerHTML = "";
-                scrimsDataList = [];
-                let upcomingCount = 0;
-
-                // 오늘 날짜 계산 (비교용)
                 const todayStr = new Date().toISOString().split('T')[0];
+                let upcomingCount = 0;
+                let tempArray = [];
 
                 snapshot.forEach((doc) => {
                     const data = doc.data();
-                    const docId = doc.id;
-                    const roster = data.roster || [];
-                    
-                    // 날짜가 지났는지 체크하여 상태 결정
                     const isCompleted = data.date < todayStr;
-                    if(!isCompleted) upcomingCount++;
+                    if (!isCompleted) upcomingCount++;
+                    
+                    tempArray.push({
+                        id: doc.id,
+                        isCompleted: isCompleted,
+                        roster: data.roster || [],
+                        ...data
+                    });
+                });
 
-                    scrimsDataList.push({ id: docId, isCompleted, roster, ...data });
+                // 자바스크립트로 정렬 처리
+                tempArray.sort((a, b) => {
+                    if (a.isCompleted !== b.isCompleted) {
+                        return a.isCompleted ? 1 : -1; // UPCOMING을 위로, COMPLETED를 아래로
+                    }
+                    
+                    if (!a.isCompleted) {
+                        // 둘 다 예정된 일정일 경우: 날짜 오름차순
+                        if (a.date !== b.date) return a.date.localeCompare(b.date);
+                        return (a.time || "").localeCompare(b.time || "");
+                    } else {
+                        // 둘 다 완료된 일정일 경우: 날짜 내림차순
+                        if (a.date !== b.date) return b.date.localeCompare(a.date);
+                        return (b.time || "").localeCompare(a.time || "");
+                    }
+                });
 
-                    const badgeClass = isCompleted ? 'badge-completed' : 'badge-upcoming';
-                    const badgeText = isCompleted ? 'COMPLETED' : 'UPCOMING';
+                grid.innerHTML = "";
+                scrimsDataList = tempArray;
+
+                // 정렬된 배열을 화면에 출력
+                tempArray.forEach((data) => {
+                    const badgeClass = data.isCompleted ? 'badge-completed' : 'badge-upcoming';
+                    const badgeText = data.isCompleted ? 'COMPLETED' : 'UPCOMING';
 
                     const cardHtml = `
                         <div class="scrim-card">
@@ -267,23 +288,19 @@
                             <h3 class="scrim-vs">CLIX <span>vs</span> ${data.opponent}</h3>
                             <div class="scrim-info">
                                 <p>🗺️ <strong>MAP:</strong> ${data.maps}</p>
-                                <p>👥 <strong>참가자:</strong> <span class="roster-count">${roster.length}</span>명 대기 중</p>
+                                <p>👥 <strong>참가자:</strong> <span class="roster-count">${data.roster.length}</span>명 대기 중</p>
                             </div>
-                            <button class="btn-detail" onclick="readScrim('${docId}')">자세히 보기</button>
+                            <button class="btn-detail" onclick="readScrim('${data.id}')">자세히 보기</button>
                         </div>
                     `;
-                    // 진행 예정인 것을 위로 올리기 위해 (DOM 삽입 위치 조정)
-                    if(isCompleted) {
-                        grid.insertAdjacentHTML('beforeend', cardHtml);
-                    } else {
-                        grid.insertAdjacentHTML('afterbegin', cardHtml);
-                    }
+                    grid.insertAdjacentHTML('beforeend', cardHtml);
                 });
 
                 countSpan.innerText = upcomingCount;
 
             }, (error) => {
-                grid.innerHTML = `<div class="empty-scrim" style="color:#ff3333;">에러 발생: 콘솔(F12)을 확인하세요.</div>`;
+                console.error("Firestore 에러:", error);
+                grid.innerHTML = `<div class="empty-scrim" style="color:#ff3333;">데이터를 불러오지 못했습니다.<br><span style="font-size:12px;color:#aaa;">${error.message}</span></div>`;
             });
         }
 
@@ -432,5 +449,7 @@
             if(confirm("로그아웃 하시겠습니까?")) { auth.signOut().then(() => { location.href = 'index.html'; }); }
         }
     </script>
+</body>
+</html>
 </body>
 </html>
