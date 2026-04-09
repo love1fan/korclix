@@ -10,17 +10,34 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 
-    <!-- AOS (Animate On Scroll) CSS -->
+    <!-- AOS CSS & SweetAlert2 -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         /* 기본 스타일 및 커스텀 커서 */
         body { margin: 0; font-family: 'Inter', 'Segoe UI', sans-serif; background-color: #0a0a0a; color: #ffffff; line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth; -webkit-user-select: none; user-select: none; cursor: url('data:image/svg+xml;utf8,<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4 L22 11 L13 14 L9 24 Z" fill="%23ffffff" stroke="%23000000" stroke-width="1.5"/></svg>') 4 4, auto; }
         a, button, .logout-link, .member-card { cursor: url('data:image/svg+xml;utf8,<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4 L22 11 L13 14 L9 24 Z" fill="%23ff5e00" stroke="%23ffffff" stroke-width="1.5"/></svg>') 4 4, pointer !important; }
 
+        /* 🚀 커스텀 알림창(SweetAlert2) CLIX 스타일 */
+        .swal2-container { z-index: 99999 !important; }
+        .swal2-popup { background: #111 !important; border: 1px solid #333 !important; border-top: 4px solid #ff5e00 !important; color: #fff !important; border-radius: 8px !important; }
+        .swal2-title { color: #fff !important; font-weight: 900 !important; font-size: 1.5rem !important; }
+        .swal2-html-container { color: #aaa !important; font-weight: bold !important; line-height: 1.6 !important; }
+        .swal2-confirm { background: #ff5e00 !important; color: #fff !important; font-weight: 900 !important; border-radius: 4px !important; padding: 12px 25px !important; }
+        .swal2-cancel { background: #333 !important; color: #fff !important; font-weight: 900 !important; border-radius: 4px !important; padding: 12px 25px !important; }
+        .swal2-confirm:hover { background: #e65500 !important; }
+        .swal2-cancel:hover { background: #444 !important; }
+
+        /* 스크롤바 */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; border-left: 1px solid #1a1a1a; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ff5e00; }
+
         /* 로그인 잠금 화면 */
         #lock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        #lock-overlay h2 { font-size: 3.5rem; color: #ff5e00; margin-bottom: 20px; letter-spacing: 5px; font-weight: 900; }
+        #lock-overlay h2 { font-size: 3.5rem; color: #ff5e00; margin-bottom: 20px; letter-spacing: 5px; font-weight: 900; text-transform: uppercase; }
         .auth-container { background: #111; padding: 40px; border-radius: 8px; border: 1px solid #222; width: 350px; }
         .auth-btn { width: 100%; padding: 15px; background: #ff5e00; color: white; border: none; font-weight: 800; font-size: 1rem; text-transform: uppercase; transition: 0.3s; }
         .auth-btn:hover { background: #e65500; box-shadow: 0 0 15px rgba(255,94,0,0.4); }
@@ -36,47 +53,56 @@
         .logout-link { margin-left: 10px; font-size: 10px; color: #ff3333 !important; border: 1px solid #444; padding: 5px 10px; border-radius: 4px; font-weight: bold; }
         .logout-link:hover { background: rgba(255,255,255,0.1); }
 
-        /* 페이지 헤더 */
-        .page-header { margin-top: 130px; padding: 60px 8% 40px; text-align: center; background: linear-gradient(to bottom, #111, #0a0a0a); border-bottom: 1px solid #222; }
-        .page-title { font-size: 3.5rem; font-weight: 900; color: #ff5e00; letter-spacing: 8px; margin: 0; text-transform: uppercase; text-shadow: 0 0 20px rgba(255,94,0,0.3); }
-        .page-subtitle { color: #888; font-size: 1rem; letter-spacing: 2px; margin-top: 10px; }
+        /* 💎 고급스러운 페이지 헤더 */
+        .page-header { margin-top: 130px; padding: 80px 8% 60px; text-align: center; background: radial-gradient(circle at center, #1a0a00 0%, #0a0a0a 70%); border-bottom: 1px solid #222; position: relative; overflow: hidden; }
+        .page-header::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px); background-size: 30px 30px; z-index: 1; pointer-events: none; }
+        .page-title { position: relative; z-index: 2; font-size: 4rem; font-weight: 900; color: #ff5e00; letter-spacing: 10px; margin: 0; text-transform: uppercase; text-shadow: 0 0 30px rgba(255,94,0,0.4); }
+        .page-subtitle { position: relative; z-index: 2; color: #aaa; font-size: 1.1rem; letter-spacing: 3px; margin-top: 15px; font-weight: 600; }
 
         /* 메인 컨테이너 */
-        .members-container { max-width: 1200px; margin: 40px auto 80px auto; padding: 0 8%; min-height: 50vh; }
-        .members-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #222; padding-bottom: 20px; }
-        .members-count { font-size: 1.2rem; font-weight: 900; color: #fff; letter-spacing: 1px; }
+        .members-container { max-width: 1400px; margin: 50px auto 100px auto; padding: 0 8%; min-height: 50vh; position: relative; z-index: 10; }
+        
+        .members-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 15px; border-bottom: 1px solid #222; }
+        .members-count { color: #fff; font-size: 1.2rem; font-weight: 800; letter-spacing: 1px; }
         .members-count span { color: #ff5e00; font-size: 1.5rem; }
 
-        /* 멤버 카드 그리드 */
-        .members-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; }
+        /* 💎 eSports 로스터 카드 스타일 (가로형) */
+        .members-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px; }
         
-        .member-card { background: linear-gradient(145deg, #151515, #0a0a0a); border: 1px solid #222; border-radius: 12px; padding: 30px 20px; text-align: center; position: relative; overflow: hidden; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .member-card:hover { transform: translateY(-10px); border-color: #ff5e00; box-shadow: 0 15px 40px rgba(255, 94, 0, 0.15); }
+        .member-card { display: flex; align-items: center; gap: 20px; background: linear-gradient(145deg, #151515, #0a0a0a); border: 1px solid #222; border-radius: 12px; padding: 25px; position: relative; overflow: hidden; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .member-card:hover { transform: translateY(-8px) scale(1.02); border-color: #ff5e00; box-shadow: 0 20px 40px rgba(255, 94, 0, 0.2); }
         
-        /* 어드민 전용 카드 스타일 */
-        .member-card.admin-card { border-color: #ffcc00; background: linear-gradient(145deg, #1a1600, #0a0a0a); }
-        .member-card.admin-card:hover { box-shadow: 0 15px 40px rgba(255, 204, 0, 0.15); transform: translateY(-10px); border-color: #ffcc00; }
-        .member-card.admin-card::before { content: '👑'; position: absolute; top: 15px; left: 15px; font-size: 1.5rem; opacity: 0.8; }
+        /* 백그라운드 넘버 워터마크 효과 */
+        .member-card::before { content: attr(data-index); position: absolute; right: 10px; bottom: -20px; font-size: 6rem; font-weight: 900; font-style: italic; color: rgba(255,255,255,0.02); pointer-events: none; transition: 0.4s; line-height: 1; }
+        .member-card:hover::before { color: rgba(255,94,0,0.05); transform: scale(1.1); }
 
-        .avatar-box { width: 90px; height: 90px; margin: 0 auto 20px auto; border-radius: 50%; border: 2px solid #333; overflow: hidden; background: #000; transition: 0.3s; }
-        .member-card:hover .avatar-box { border-color: #ff5e00; transform: scale(1.05); }
+        /* 어드민 전용 카드 스타일 (골드 에디션) */
+        .member-card.admin-card { border-color: #5a4b00; background: linear-gradient(145deg, #1a1600, #050505); }
+        .member-card.admin-card:hover { border-color: #ffcc00; box-shadow: 0 20px 40px rgba(255, 204, 0, 0.15); }
+        .member-card.admin-card::after { content: '👑 LEADER'; position: absolute; top: 15px; right: -25px; font-size: 0.65rem; font-weight: 900; background: #ffcc00; color: #000; padding: 3px 30px; transform: rotate(45deg); letter-spacing: 2px; }
+
+        .avatar-box { flex-shrink: 0; width: 100px; height: 100px; border-radius: 50%; border: 3px solid #333; overflow: hidden; background: #000; transition: 0.4s; position: relative; z-index: 2; box-shadow: 0 5px 15px rgba(0,0,0,0.8); }
+        .member-card:hover .avatar-box { border-color: #ff5e00; transform: scale(1.08); box-shadow: 0 0 20px rgba(255,94,0,0.5); }
         .admin-card .avatar-box { border-color: #ffcc00; }
-        .admin-card:hover .avatar-box { transform: scale(1.05); border-color: #ffcc00; }
+        .admin-card:hover .avatar-box { border-color: #ffcc00; box-shadow: 0 0 20px rgba(255,204,0,0.5); }
         .avatar-box img { width: 100%; height: 100%; object-fit: cover; }
 
-        .member-role { display: inline-block; font-size: 0.7rem; font-weight: 900; padding: 4px 12px; border-radius: 20px; margin-bottom: 10px; letter-spacing: 1px; }
+        .member-info { flex-grow: 1; z-index: 2; position: relative; }
+        
+        .member-role { display: inline-block; font-size: 0.7rem; font-weight: 900; padding: 4px 10px; border-radius: 4px; margin-bottom: 8px; letter-spacing: 1px; }
         .role-admin { background: rgba(255, 204, 0, 0.1); color: #ffcc00; border: 1px solid rgba(255, 204, 0, 0.3); }
         .role-member { background: rgba(255, 94, 0, 0.1); color: #ff5e00; border: 1px solid rgba(255, 94, 0, 0.3); }
 
-        .member-name { font-size: 1.5rem; font-weight: 900; color: #fff; margin: 0 0 15px 0; letter-spacing: 1px; text-transform: uppercase; }
+        .member-name { font-size: 1.6rem; font-weight: 900; color: #fff; margin: 0 0 10px 0; letter-spacing: 1px; text-transform: uppercase; line-height: 1.2; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
         
-        .member-info-row { display: flex; justify-content: space-between; align-items: center; background: #0d0d0d; padding: 10px 15px; border-radius: 6px; border: 1px solid #1a1a1a; margin-bottom: 8px; font-size: 0.85rem; }
-        .info-label { color: #666; font-weight: bold; }
-        .info-value { color: #ccc; font-weight: bold; }
+        .stat-row { display: flex; gap: 20px; font-size: 0.85rem; color: #aaa; font-weight: bold; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; }
+        .stat-item { display: flex; flex-direction: column; }
+        .stat-label { font-size: 0.65rem; color: #666; text-transform: uppercase; margin-bottom: 2px; }
+        .stat-value { color: #ddd; }
 
-        .empty-grid { grid-column: 1 / -1; text-align: center; padding: 80px 0; color: #666; font-weight: bold; background: #111; border-radius: 8px; border: 1px dashed #333; }
+        .empty-grid { grid-column: 1 / -1; text-align: center; padding: 100px 0; color: #666; font-weight: bold; font-size: 1.2rem; background: #111; border-radius: 12px; border: 1px dashed #333; }
 
-        footer { padding: 40px; text-align: center; color: #444; border-top: 1px solid #222; text-transform: uppercase; }
+        footer { padding: 60px; text-align: center; color: #444; border-top: 1px solid #222; text-transform: uppercase; font-weight: bold; font-size: 0.9rem; letter-spacing: 2px; background: #050505; }
     </style>
 </head>
 <body>
@@ -118,12 +144,12 @@
 
     <div class="members-container" data-aos="fade-up" data-aos-delay="100">
         <div class="members-top">
-            <div class="members-count">총 클랜원: <span id="total-members">0</span>명</div>
-            <div style="font-size: 0.8rem; color: #666; font-weight: bold;">* 가입일 순으로 정렬됩니다.</div>
+            <div class="members-count">TOTAL MEMBERS : <span id="total-members">0</span></div>
+            <div style="font-size: 0.85rem; color: #666; font-weight: bold; background: #1a1a1a; padding: 6px 15px; border-radius: 20px;">* 가입일 순으로 자동 정렬됩니다.</div>
         </div>
 
         <div class="members-grid" id="members-grid">
-            <div class="empty-grid">클랜원 정보를 불러오는 중입니다...</div>
+            <div class="empty-grid">클랜원 데이터 베이스를 연동 중입니다...</div>
         </div>
     </div>
 
@@ -144,7 +170,7 @@
         let isUserAdmin = false; 
         let userNick = "";
 
-        // 인증 상태 확인
+        // 1. 인증 상태 확인
         auth.onAuthStateChanged((user) => {
             const overlay = document.getElementById('lock-overlay');
             if (user && user.emailVerified) {
@@ -160,12 +186,12 @@
                     }
                     document.getElementById('nav-user-info').innerText = userNick + "님"; 
                     
-                    loadMembers(); // 인증 완료 후 멤버 목록 로드
+                    loadMembers(); 
                 });
             } else { overlay.style.display = 'flex'; }
         });
 
-        // 멤버 목록 불러오기 로직 (JavaScript 정렬 사용)
+        // 2. 멤버 목록 불러오기 (자바스크립트 정렬 처리)
         function loadMembers() {
             const grid = document.getElementById('members-grid');
             const totalCount = document.getElementById('total-members');
@@ -182,20 +208,19 @@
                 snapshot.forEach((doc) => {
                     const data = doc.data();
                     
-                    // 닉네임이 없는 비정상 데이터 방어
+                    // 닉네임 없는 불완전 데이터 제외
                     if(!data.nickname) return;
 
                     membersArray.push({
                         id: doc.id,
                         nickname: data.nickname,
-                        age: data.age || '비공개',
+                        age: data.age || 'SECRET',
                         isAdmin: data.isAdmin === true,
-                        // joinedAt이 없을 경우 대비
                         joinedAtRaw: data.joinedAt ? data.joinedAt.toDate() : new Date("2020-01-01")
                     });
                 });
 
-                // 운영진(Admin)을 최상단에, 그 다음은 가입일(오래된 순) 정렬
+                // 운영진(Admin) 최상단, 그 다음은 가입일(오래된 순)
                 membersArray.sort((a, b) => {
                     if (a.isAdmin !== b.isAdmin) {
                         return a.isAdmin ? -1 : 1;
@@ -206,33 +231,39 @@
                 grid.innerHTML = "";
                 totalCount.innerText = membersArray.length;
 
+                let indexCounter = 1;
+
                 membersArray.forEach(member => {
                     const dateStr = `${member.joinedAtRaw.getFullYear()}.${String(member.joinedAtRaw.getMonth() + 1).padStart(2, '0')}.${String(member.joinedAtRaw.getDate()).padStart(2, '0')}`;
                     
-                    // 권한에 따른 스타일 및 텍스트 설정
                     const cardClass = member.isAdmin ? "member-card admin-card" : "member-card";
                     const roleClass = member.isAdmin ? "role-admin" : "role-member";
                     const roleText = member.isAdmin ? "운영진" : "클랜원";
+                    const displayIndex = String(indexCounter++).padStart(2, '0');
 
-                    // 닉네임 첫 글자를 이용한 다이내믹 아바타 생성 (ui-avatars.com API 활용)
+                    // 닉네임 이니셜을 활용한 다이내믹 아바타 (ui-avatars.com)
                     const avatarColor = member.isAdmin ? "ffcc00" : "ff5e00";
-                    const avatarUrl = `https://ui-avatars.com/api/?name=${member.nickname}&background=111111&color=${avatarColor}&bold=true&size=150`;
+                    const avatarUrl = `https://ui-avatars.com/api/?name=${member.nickname}&background=111111&color=${avatarColor}&bold=true&size=200`;
 
                     const cardHtml = `
-                        <div class="${cardClass}" data-aos="fade-up">
+                        <div class="${cardClass}" data-index="${displayIndex}" data-aos="fade-up">
                             <div class="avatar-box">
-                                <img src="${avatarUrl}" alt="${member.nickname} profile">
+                                <img src="${avatarUrl}" alt="${member.nickname}">
                             </div>
-                            <div class="member-role ${roleClass}">${roleText}</div>
-                            <h3 class="member-name">${member.nickname}</h3>
-                            
-                            <div class="member-info-row">
-                                <span class="info-label">AGE</span>
-                                <span class="info-value">${member.age}</span>
-                            </div>
-                            <div class="member-info-row">
-                                <span class="info-label">JOIN DATE</span>
-                                <span class="info-value" style="color:#888;">${dateStr}</span>
+                            <div class="member-info">
+                                <div class="member-role ${roleClass}">${roleText}</div>
+                                <h3 class="member-name">${member.nickname}</h3>
+                                
+                                <div class="stat-row">
+                                    <div class="stat-item">
+                                        <span class="stat-label">AGE</span>
+                                        <span class="stat-value">${member.age}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">JOINED</span>
+                                        <span class="stat-value">${dateStr}</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -241,12 +272,19 @@
 
             }, (error) => {
                 console.error("멤버 로드 에러:", error);
-                grid.innerHTML = `<div class="empty-grid" style="color:#ff3333;">데이터를 불러오지 못했습니다.<br><span style="font-size:12px;">${error.message}</span></div>`;
+                grid.innerHTML = `<div class="empty-grid" style="color:#ff3333;">데이터를 연동하지 못했습니다.<br><span style="font-size:12px;">${error.message}</span></div>`;
             });
         }
 
+        // 3. 로그아웃 (SweetAlert 적용)
         function logout() {
-            if(confirm("로그아웃 하시겠습니까?")) { auth.signOut().then(() => { location.href = 'index.html'; }); }
+            Swal.fire({
+                title: 'LOGOUT', html: "로그아웃 하시겠습니까?<br><br><span style='color:#ff5e00; font-size:0.85rem;'>* 버튼이 클릭되지 않으면 엔터(Enter) 키를 눌러주세요.</span>", icon: 'question',
+                showCancelButton: true, confirmButtonColor: '#ff5e00', cancelButtonColor: '#333',
+                confirmButtonText: '로그아웃', cancelButtonText: '취소', background: '#111', color: '#fff'
+            }).then((result) => {
+                if (result.isConfirmed) { auth.signOut().then(() => { location.href = 'index.html'; }); }
+            });
         }
     </script>
 </body>
