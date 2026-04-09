@@ -26,11 +26,18 @@
             cursor: url('data:image/svg+xml;utf8,<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4 L22 11 L13 14 L9 24 Z" fill="%23ff5e00" stroke="%23ffffff" stroke-width="1.5"/></svg>') 4 4, pointer !important;
         }
 
+        /* 스크롤바 세련되게 */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; border-left: 1px solid #1a1a1a; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ff5e00; }
+
         /* 로그인 잠금 화면 */
         #lock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        #lock-overlay h2 { font-size: 3.5rem; color: #ff5e00; margin-bottom: 20px; letter-spacing: 5px; font-weight: 900; }
+        #lock-overlay h2 { font-size: 3.5rem; color: #ff5e00; margin-bottom: 20px; letter-spacing: 5px; font-weight: 900; text-transform: uppercase; }
         .auth-container { background: #111; padding: 40px; border-radius: 8px; border: 1px solid #222; width: 350px; }
-        .auth-btn { width: 100%; padding: 15px; background: #ff5e00; color: white; border: none; font-weight: 800; font-size: 1rem; text-transform: uppercase; }
+        .auth-btn { width: 100%; padding: 15px; background: #ff5e00; color: white; border: none; font-weight: 800; font-size: 1rem; text-transform: uppercase; transition: 0.3s; }
+        .auth-btn:hover { background: #e65500; box-shadow: 0 0 15px rgba(255,94,0,0.4); }
 
         /* 상태바 & 네비게이션 */
         .live-status-bar { background: #1a1a1a; padding: 12px; text-align: center; border-bottom: 2px solid #ff5e00; font-size: 0.9rem; position: fixed; width: 100%; z-index: 101; top: 0; }
@@ -44,54 +51,75 @@
         .logout-link { margin-left: 10px; font-size: 10px; color: #ff3333 !important; border: 1px solid #444; padding: 5px 10px; border-radius: 4px; font-weight: bold; }
         .logout-link:hover { background: rgba(255,255,255,0.1); }
 
-        /* 서브페이지 헤더 (여백 수정됨) */
-        .page-header { margin-top: 130px; padding: 60px 8% 40px; text-align: center; background: linear-gradient(to bottom, #111, #0a0a0a); border-bottom: 1px solid #222; position: relative; z-index: 10; }
-        .page-title { font-size: 3.5rem; font-weight: 900; color: #ff5e00; letter-spacing: 8px; margin: 0; text-transform: uppercase; text-shadow: 0 0 20px rgba(255,94,0,0.3); }
-        .page-subtitle { color: #888; font-size: 1rem; letter-spacing: 2px; margin-top: 10px; }
+        /* 💎 고급스러운 페이지 헤더 */
+        .page-header { margin-top: 130px; padding: 80px 8% 60px; text-align: center; background: radial-gradient(circle at center, #1a0a00 0%, #0a0a0a 70%); border-bottom: 1px solid #222; position: relative; overflow: hidden; }
+        .page-header::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px); background-size: 30px 30px; z-index: 1; pointer-events: none; }
+        .page-title { position: relative; z-index: 2; font-size: 4rem; font-weight: 900; color: #ff5e00; letter-spacing: 10px; margin: 0; text-transform: uppercase; text-shadow: 0 0 30px rgba(255,94,0,0.4); }
+        .page-subtitle { position: relative; z-index: 2; color: #aaa; font-size: 1.1rem; letter-spacing: 3px; margin-top: 15px; font-weight: 600; }
 
         /* 게시판 스타일 */
-        .board-container { max-width: 1200px; margin: 40px auto 80px auto; padding: 0 8%; min-height: 50vh; position: relative; z-index: 10; }
+        .board-container { max-width: 1200px; margin: 50px auto 100px auto; padding: 0 8%; min-height: 50vh; position: relative; z-index: 10; }
         
-        .board-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .board-count { color: #888; font-size: 0.9rem; }
-        .btn-write { display: none; background: #ff5e00; color: #fff; border: none; padding: 10px 20px; font-weight: 800; border-radius: 4px; transition: 0.3s; }
-        .btn-write:hover { background: #e65500; box-shadow: 0 0 15px rgba(255,94,0,0.5); }
-
-        .board-list { border-top: 2px solid #ff5e00; background: #111; border-radius: 0 0 8px 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .board-header-row { display: grid; grid-template-columns: 80px 1fr 120px 120px; padding: 15px 20px; background: #1a1a1a; font-weight: 800; color: #888; font-size: 0.85rem; text-align: center; border-bottom: 1px solid #333; }
+        .board-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .board-count { color: #fff; font-size: 1.2rem; font-weight: 800; letter-spacing: 1px; }
+        .board-count span { color: #ff5e00; font-size: 1.5rem; }
         
-        .board-row { display: grid; grid-template-columns: 80px 1fr 120px 120px; padding: 18px 20px; border-bottom: 1px solid #222; align-items: center; text-align: center; transition: all 0.2s; background: #0d0d0d; }
-        .board-row:hover { background: rgba(255, 94, 0, 0.05); border-left: 3px solid #ff5e00; transform: translateX(5px); }
-        .board-row.notice-pin { background: rgba(255, 94, 0, 0.15); border-left: 3px solid #ff5e00; }
-        .board-row.notice-pin .col-id { color: #ff5e00; font-weight: 900; }
-        .board-row.notice-pin .col-title { font-weight: 900; color: #ff5e00; }
+        .btn-write { display: none; background: #222; color: #fff; border: 1px solid #ff5e00; padding: 10px 25px; font-weight: 800; border-radius: 4px; transition: 0.3s; letter-spacing: 1px; }
+        .btn-write:hover { background: #ff5e00; box-shadow: 0 0 20px rgba(255,94,0,0.4); }
+
+        /* 💎 게시판 리스트 디자인 */
+        .board-list { border-top: 3px solid #ff5e00; background: linear-gradient(145deg, #121212, #050505); border-radius: 0 0 12px 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.5); overflow: hidden; }
         
-        .col-id { color: #666; font-size: 0.9rem; }
-        .col-title { text-align: left; font-weight: 700; color: #eee; padding: 0 20px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .col-author { color: #aaa; font-size: 0.85rem; font-weight: 600; }
-        .col-date { color: #666; font-size: 0.8rem; }
+        .board-header-row { display: grid; grid-template-columns: 80px 1fr 150px 120px; padding: 18px 20px; background: rgba(0,0,0,0.6); font-weight: 900; color: #888; font-size: 0.85rem; text-align: center; border-bottom: 2px solid #222; letter-spacing: 1px; }
+        
+        .board-row { display: grid; grid-template-columns: 80px 1fr 150px 120px; padding: 22px 20px; border-bottom: 1px solid #1a1a1a; align-items: center; text-align: center; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); background: transparent; position: relative; }
+        .board-row:last-child { border-bottom: none; }
+        
+        .board-row:hover { background: rgba(255, 94, 0, 0.05); transform: translateX(8px); }
+        .board-row:hover::before { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 4px; background: #ff5e00; box-shadow: 0 0 15px #ff5e00; }
 
-        .empty-board { text-align: center; padding: 60px 0; color: #666; font-weight: bold; }
+        /* 상단 고정(필독) 디자인 */
+        .board-row.notice-pin { background: linear-gradient(90deg, rgba(255,94,0,0.12) 0%, transparent 100%); border-left: 4px solid #ff5e00; }
+        .board-row.notice-pin:hover { transform: translateX(8px); background: linear-gradient(90deg, rgba(255,94,0,0.2) 0%, transparent 100%); }
+        .board-row.notice-pin .col-title { font-weight: 900; color: #fff; }
+        
+        .pin-badge { display: inline-flex; align-items: center; justify-content: center; background: #ff5e00; color: #fff; font-size: 0.7rem; font-weight: 900; padding: 4px 8px; border-radius: 4px; letter-spacing: 1px; box-shadow: 0 0 10px rgba(255,94,0,0.4); animation: pulsePin 2s infinite; }
+        @keyframes pulsePin { 0% { box-shadow: 0 0 0 0 rgba(255, 94, 0, 0.4); } 70% { box-shadow: 0 0 0 6px rgba(255, 94, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 94, 0, 0); } }
 
-        /* 모달 스타일 (글 읽기/쓰기) */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
-        .modal-content { background: #111; border: 1px solid #333; border-radius: 8px; width: 90%; max-width: 800px; max-height: 90vh; overflow-y: auto; padding: 40px; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .modal-close { position: absolute; top: 20px; right: 25px; background: none; border: none; color: #888; font-size: 2rem; transition: 0.3s; line-height: 1; }
-        .modal-close:hover { color: #ff5e00; transform: scale(1.1); }
+        .col-id { color: #666; font-size: 0.95rem; font-weight: bold; }
+        .col-title { text-align: left; font-weight: 700; color: #ccc; padding: 0 20px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: color 0.3s; }
+        .board-row:hover .col-title { color: #ff5e00; }
+        .col-author { color: #aaa; font-size: 0.85rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .col-author::before { content: ''; display: inline-block; width: 6px; height: 6px; background: #ffcc00; border-radius: 50%; }
+        .col-date { color: #666; font-size: 0.85rem; font-weight: bold; }
 
-        /* 글 읽기 모달 */
-        #read-title { font-size: 2rem; color: #ff5e00; font-weight: 900; margin: 0 0 15px 0; word-break: keep-all; }
-        .read-info { display: flex; gap: 15px; color: #888; font-size: 0.85rem; padding-bottom: 20px; border-bottom: 1px solid #333; margin-bottom: 30px; }
-        #read-body { color: #ddd; line-height: 1.8; white-space: pre-wrap; font-size: 1rem; min-height: 200px; }
-        .admin-controls { margin-top: 30px; padding-top: 20px; border-top: 1px solid #333; display: none; text-align: right; }
+        .empty-board { text-align: center; padding: 80px 0; color: #666; font-weight: bold; font-size: 1.1rem; }
+
+        /* 💎 모달 스타일 고급화 */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
+        .modal-content { background: linear-gradient(to bottom, #151515, #0a0a0a); border: 1px solid #333; border-top: 4px solid #ff5e00; border-radius: 12px; width: 90%; max-width: 800px; max-height: 90vh; overflow-y: auto; padding: 0; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.8); }
+        
+        .modal-header { padding: 40px 40px 20px 40px; border-bottom: 1px solid #222; position: relative; }
+        .modal-body { padding: 30px 40px 40px 40px; }
+        
+        .modal-close { position: absolute; top: 25px; right: 30px; background: none; border: none; color: #666; font-size: 2.5rem; transition: 0.3s; line-height: 1; }
+        .modal-close:hover { color: #ff5e00; transform: scale(1.1) rotate(90deg); }
+
+        /* 글 읽기 모달 내용 */
+        .read-badge-top { display: inline-block; background: rgba(255,94,0,0.1); color: #ff5e00; border: 1px solid rgba(255,94,0,0.3); font-size: 0.75rem; font-weight: 900; padding: 4px 10px; border-radius: 4px; margin-bottom: 15px; letter-spacing: 2px; }
+        #read-title { font-size: 2.2rem; color: #fff; font-weight: 900; margin: 0 0 15px 0; word-break: keep-all; line-height: 1.3; }
+        .read-info { display: flex; gap: 20px; color: #888; font-size: 0.9rem; font-weight: bold; }
+        #read-body { color: #ccc; line-height: 1.8; white-space: pre-wrap; font-size: 1.05rem; min-height: 200px; padding: 10px 0; }
+        .admin-controls { margin-top: 40px; padding-top: 20px; border-top: 1px solid #222; display: none; text-align: right; }
 
         /* 글 쓰기 모달 */
-        .write-input { width: 100%; background: #0a0a0a; border: 1px solid #333; color: #fff; padding: 15px; font-family: inherit; font-size: 1rem; margin-bottom: 20px; border-radius: 4px; box-sizing: border-box; }
+        .write-input { width: 100%; background: #000; border: 1px solid #333; color: #fff; padding: 15px; font-family: inherit; font-size: 1rem; margin-bottom: 20px; border-radius: 6px; box-sizing: border-box; transition: 0.3s; }
         .write-input:focus { outline: none; border-color: #ff5e00; box-shadow: 0 0 10px rgba(255,94,0,0.2); }
-        textarea.write-input { height: 300px; resize: none; }
-        .pin-check { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; color: #aaa; font-size: 0.9rem; }
+        textarea.write-input { height: 350px; resize: none; }
+        .pin-check { display: flex; align-items: center; gap: 10px; margin-bottom: 25px; color: #aaa; font-size: 0.95rem; font-weight: bold; cursor: pointer; }
+        .pin-check input[type="checkbox"] { width: 18px; height: 18px; accent-color: #ff5e00; cursor: pointer; }
 
-        footer { padding: 40px; text-align: center; color: #444; border-top: 1px solid #222; text-transform: uppercase; }
+        footer { padding: 60px; text-align: center; color: #444; border-top: 1px solid #222; text-transform: uppercase; font-weight: bold; font-size: 0.9rem; letter-spacing: 2px; background: #050505; }
     </style>
 </head>
 <body>
@@ -110,7 +138,7 @@
         <span class="status-tag">LIVE</span> 서버 상태: <span style="color: #4ee29d;">정상</span> | 오늘의 맵: <span style="color: #fff;">에란겔 / 미라마 / 비켄디 / 테이고 / 론도</span>
     </div>
 
-    <!-- 네비게이션 (NOTICE 강조) -->
+    <!-- 네비게이션 -->
     <nav>
         <a href="index.html" class="logo">CLAN CLIX</a>
         <ul>
@@ -132,57 +160,73 @@
     <!-- 페이지 헤더 -->
     <header class="page-header" data-aos="fade-down">
         <h1 class="page-title">NOTICE</h1>
-        <p class="page-subtitle">클랜 주요 소식 및 필독 공지사항</p>
+        <p class="page-subtitle">클릭스 클랜 주요 소식 및 필독 공지사항</p>
     </header>
 
     <!-- 게시판 영역 -->
     <div class="board-container" data-aos="fade-up" data-aos-delay="100">
         <div class="board-top">
-            <div class="board-count">전체 공지 <span id="total-count" style="color:#ff5e00; font-weight:bold;">0</span>건</div>
-            <button class="btn-write" id="btn-write-open" onclick="openWriteModal()">공지사항 작성</button>
+            <div class="board-count">ANNOUNCEMENTS: <span id="total-count">0</span></div>
+            <button class="btn-write" id="btn-write-open" onclick="openWriteModal()">+ 공지사항 작성 (운영진)</button>
         </div>
 
         <div class="board-list">
             <div class="board-header-row">
                 <div>NO</div>
-                <div style="text-align: left; padding-left: 20px;">TITLE</div>
+                <div style="text-align: left; padding-left: 20px;">SUBJECT</div>
                 <div>AUTHOR</div>
                 <div>DATE</div>
             </div>
             <div id="board-body">
-                <div class="empty-board">게시글을 불러오는 중입니다...</div>
+                <div class="empty-board">서버에서 공지사항을 동기화 중입니다...</div>
             </div>
         </div>
     </div>
 
-    <!-- 글 읽기 모달 -->
+    <!-- 💎 글 읽기 모달 -->
     <div class="modal-overlay" id="read-modal">
         <div class="modal-content" data-aos="zoom-in" data-aos-duration="300">
             <button class="modal-close" onclick="closeModal('read-modal')">&times;</button>
-            <h2 id="read-title">공지사항 제목</h2>
-            <div class="read-info">
-                <span id="read-author">작성자: CLX_Admin</span>
-                <span id="read-date">작성일: 2026.04.10</span>
-            </div>
-            <div id="read-body">본문 내용이 여기에 표시됩니다.</div>
             
-            <div class="admin-controls" id="read-admin-controls">
-                <button class="auth-btn" style="width:auto; background:#ff3333; padding:10px 20px;" onclick="deleteNotice()">삭제하기</button>
+            <div class="modal-header">
+                <span class="read-badge-top">OFFICIAL NOTICE</span>
+                <h2 id="read-title">공지사항 제목</h2>
+                <div class="read-info">
+                    <span id="read-author" style="color: #ffcc00;">운영진</span>
+                    <span style="color: #444;">|</span>
+                    <span id="read-date">2026.04.10</span>
+                </div>
+            </div>
+            
+            <div class="modal-body">
+                <div id="read-body">본문 내용이 여기에 표시됩니다.</div>
+                
+                <div class="admin-controls" id="read-admin-controls">
+                    <button class="auth-btn" style="width:auto; background:transparent; border:1px solid #ff3333; color:#ff3333; padding:10px 25px;" onclick="deleteNotice()">공지사항 삭제</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- 글 쓰기 모달 (관리자 전용) -->
+    <!-- 💎 글 쓰기 모달 (관리자 전용) -->
     <div class="modal-overlay" id="write-modal">
         <div class="modal-content" data-aos="zoom-in" data-aos-duration="300">
             <button class="modal-close" onclick="closeModal('write-modal')">&times;</button>
-            <h2 style="color:#ff5e00; margin-bottom:20px;">공지사항 작성</h2>
-            <input type="text" id="write-title" class="write-input" placeholder="제목을 입력하세요">
-            <label class="pin-check">
-                <input type="checkbox" id="write-pin"> 상단 고정 (필독 공지)
-            </label>
-            <textarea id="write-content" class="write-input" placeholder="공지 내용을 입력하세요"></textarea>
-            <button class="auth-btn" onclick="submitNotice()">등록하기</button>
+            
+            <div class="modal-body" style="padding-top: 50px;">
+                <h2 style="color:#ff5e00; margin-top:0; margin-bottom:30px; font-size: 2rem; font-weight: 900; letter-spacing: 2px;">NEW NOTICE</h2>
+                
+                <input type="text" id="write-title" class="write-input" placeholder="공지사항 제목을 입력하세요">
+                
+                <label class="pin-check">
+                    <input type="checkbox" id="write-pin"> 
+                    <span style="color:#ff5e00;">[중요]</span> 상단 고정 필독 공지로 등록
+                </label>
+                
+                <textarea id="write-content" class="write-input" placeholder="공지 내용을 상세히 입력하세요"></textarea>
+                
+                <button class="auth-btn" style="margin-top: 10px;" onclick="submitNotice()">공지사항 게시</button>
+            </div>
         </div>
     </div>
 
@@ -235,7 +279,7 @@
             } else { overlay.style.display = 'flex'; }
         });
 
-        // 🟢 복합 색인 에러 방지용: 최신순으로만 불러온 후 JS로 '상단고정' 정렬 처리
+        // 데이터 로드
         function loadNotices() {
             const boardBody = document.getElementById('board-body');
             const totalCountSpan = document.getElementById('total-count');
@@ -247,13 +291,10 @@
                     return;
                 }
 
-                // 데이터를 배열로 빼내서 JS로 정렬
                 let noticesArray = [];
-                snapshot.forEach(doc => {
-                    noticesArray.push({ id: doc.id, ...doc.data() });
-                });
+                snapshot.forEach(doc => { noticesArray.push({ id: doc.id, ...doc.data() }); });
 
-                // 상단 고정(isPinned)된 것을 위로, 나머지는 최신순 유지
+                // 상단 고정 우선 정렬
                 noticesArray.sort((a, b) => {
                     if (a.isPinned === b.isPinned) return 0;
                     return a.isPinned ? -1 : 1;
@@ -261,7 +302,7 @@
 
                 boardBody.innerHTML = "";
                 totalCountSpan.innerText = noticesArray.length;
-                let listNum = noticesArray.length; // 상단 고정 제외 일반글 번호 부여용
+                let listNum = noticesArray.filter(n => !n.isPinned).length; 
 
                 noticesArray.forEach((data) => {
                     const docId = data.id;
@@ -270,10 +311,9 @@
                     
                     const rowClass = data.isPinned ? "board-row notice-pin" : "board-row";
                     
-                    // 핀 고정 글은 번호도 고정
                     let displayNum;
                     if(data.isPinned) {
-                        displayNum = `<svg width="14" height="14" viewBox="0 0 24 24" fill="#ff5e00"><path d="M16 11V5.5C16 3.57 14.43 2 12.5 2S9 3.57 9 5.5V11L7 13v2h4v7h2v-7h4v-2l-2-2z"/></svg>`;
+                        displayNum = `<div class="pin-badge">NOTICE</div>`;
                     } else {
                         displayNum = listNum--;
                     }
@@ -290,7 +330,7 @@
                 });
             }, (error) => {
                 console.error("공지사항 로드 에러:", error);
-                boardBody.innerHTML = `<div class="empty-board" style="color:#ff3333;">에러 발생: 콘솔(F12)을 확인하세요.</div>`;
+                boardBody.innerHTML = `<div class="empty-board" style="color:#ff3333;">데이터를 불러오지 못했습니다.</div>`;
             });
         }
 
@@ -299,8 +339,8 @@
         function readNotice(id, title, author, date, content) {
             currentReadId = id;
             document.getElementById('read-title').innerText = title;
-            document.getElementById('read-author').innerText = "작성자: " + author;
-            document.getElementById('read-date').innerText = "작성일: " + date;
+            document.getElementById('read-author').innerText = author;
+            document.getElementById('read-date').innerText = date;
             document.getElementById('read-body').innerText = content;
             document.getElementById('read-admin-controls').style.display = isUserAdmin ? 'block' : 'none';
             document.getElementById('read-modal').style.display = 'flex';
@@ -327,7 +367,7 @@
                 isPinned: isPinned,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => {
-                alert("공지사항이 등록되었습니다.");
+                alert("공지사항이 성공적으로 등록되었습니다.");
                 closeModal('write-modal');
             }).catch((error) => {
                 alert("등록 실패: " + error.message);
@@ -336,9 +376,9 @@
 
         function deleteNotice() {
             if(!currentReadId) return;
-            if(confirm("정말 이 공지사항을 삭제하시겠습니까?")) {
+            if(confirm("정말 이 공지사항을 삭제하시겠습니까? (복구 불가)")) {
                 db.collection("notices").doc(currentReadId).delete().then(() => {
-                    alert("삭제되었습니다.");
+                    alert("삭제 완료되었습니다.");
                     closeModal('read-modal');
                 }).catch((error) => {
                     alert("삭제 실패: " + error.message);
