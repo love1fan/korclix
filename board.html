@@ -17,7 +17,7 @@
     <style>
         /* ⭐️ 고급스러운 커스텀 스크롤바 적용 */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; border-left: 1px solid #1a1a1a; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #ff5e00; }
 
@@ -51,20 +51,22 @@
         .board-container { max-width: 1200px; margin: 40px auto 80px auto; padding: 0 8%; min-height: 50vh; }
         .board-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .board-count { color: #888; font-size: 0.9rem; }
-        .btn-write { background: #ff5e00; color: #fff; border: none; padding: 10px 20px; font-weight: 800; border-radius: 4px; transition: 0.3s; }
-        .btn-write:hover { background: #e65500; box-shadow: 0 0 15px rgba(255,94,0,0.5); }
+        .btn-write { background: #ff5e00; color: #fff; border: none; padding: 10px 20px; font-weight: 800; border-radius: 4px; transition: 0.3s; box-shadow: 0 5px 15px rgba(255,94,0,0.2); }
+        .btn-write:hover { background: #e65500; box-shadow: 0 8px 25px rgba(255,94,0,0.5); transform: translateY(-2px); }
 
         .board-list { border-top: 2px solid #ff5e00; background: #111; border-radius: 0 0 8px 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .board-header-row { display: grid; grid-template-columns: 80px 1fr 100px 120px 80px; padding: 15px 20px; background: #1a1a1a; font-weight: 800; color: #888; font-size: 0.85rem; text-align: center; border-bottom: 1px solid #333; }
-        .board-row { display: grid; grid-template-columns: 80px 1fr 100px 120px 80px; padding: 18px 20px; border-bottom: 1px solid #222; align-items: center; text-align: center; transition: all 0.2s; background: #0d0d0d; }
+        .board-header-row { display: grid; grid-template-columns: 80px 1fr 120px 120px 100px; padding: 15px 20px; background: #1a1a1a; font-weight: 800; color: #888; font-size: 0.85rem; text-align: center; border-bottom: 1px solid #333; }
+        .board-row { display: grid; grid-template-columns: 80px 1fr 120px 120px 100px; padding: 18px 20px; border-bottom: 1px solid #222; align-items: center; text-align: center; transition: all 0.2s; background: #0d0d0d; }
         .board-row:hover { background: rgba(255, 94, 0, 0.05); border-left: 3px solid #ff5e00; transform: translateX(5px); }
         
-        .col-id { color: #666; font-size: 0.9rem; }
+        .col-id { color: #666; font-size: 0.9rem; font-weight: bold; }
         .col-title { text-align: left; font-weight: 700; color: #eee; padding: 0 20px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 8px; }
         .col-author { color: #aaa; font-size: 0.85rem; font-weight: 600; }
         .col-date { color: #666; font-size: 0.8rem; }
-        .col-likes { color: #ff5e00; font-weight: bold; font-size: 0.85rem; }
-        .empty-board { text-align: center; padding: 60px 0; color: #666; font-weight: bold; }
+        .col-likes { color: #ff5e00; font-weight: 900; font-size: 0.85rem; background: rgba(255,94,0,0.1); padding: 4px 10px; border-radius: 20px; display: inline-block; margin: 0 auto; }
+        
+        .empty-board { text-align: center; padding: 80px 0; color: #666; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        .empty-icon { font-size: 3rem; opacity: 0.3; }
 
         .attach-icon { display: inline-block; background: #333; color: #aaa; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
         .comment-count-badge { color: #4ee29d; font-size: 0.8rem; font-weight: 900; margin-left: 5px; }
@@ -88,7 +90,7 @@
         .action-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #222; }
         .btn-like { background: transparent; border: 1px solid #ff5e00; color: #ff5e00; padding: 8px 20px; border-radius: 20px; font-weight: 900; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
         .btn-like:hover { background: rgba(255, 94, 0, 0.1); }
-        .btn-like.liked { background: #ff5e00; color: #fff; }
+        .btn-like.liked { background: #ff5e00; color: #fff; box-shadow: 0 0 15px rgba(255,94,0,0.3); }
 
         /* ⭐️ 댓글 섹션 */
         .comments-section { margin-top: 30px; background: #0a0a0a; border-radius: 8px; border: 1px solid #222; overflow: hidden; }
@@ -99,7 +101,8 @@
         .comment-author { font-weight: 900; color: #4ee29d; font-size: 0.85rem; margin-bottom: 5px; display: flex; align-items: center; gap: 8px;}
         .comment-text { color: #ccc; font-size: 0.9rem; word-break: break-all; }
         .comment-date { font-size: 0.7rem; color: #666; }
-        .btn-del-comment { background: none; border: none; color: #ff3333; font-size: 0.7rem; font-weight: bold; cursor: pointer; }
+        .btn-del-comment { background: none; border: none; color: #ff3333; font-size: 0.7rem; font-weight: bold; cursor: pointer; opacity: 0.7; }
+        .btn-del-comment:hover { opacity: 1; }
         
         .comment-input-area { display: flex; border-top: 1px solid #222; background: #111; }
         .comment-input { flex-grow: 1; background: transparent; border: none; padding: 15px; color: #fff; font-family: inherit; outline: none; }
@@ -107,7 +110,7 @@
         .btn-comment-submit:hover { background: #e65500; }
 
         /* 글 쓰기 모달 */
-        .write-input { width: 100%; background: #0a0a0a; border: 1px solid #333; color: #fff; padding: 15px; font-family: inherit; font-size: 1rem; margin-bottom: 15px; border-radius: 4px; box-sizing: border-box; outline: none; }
+        .write-input { width: 100%; background: #0a0a0a; border: 1px solid #333; color: #fff; padding: 15px; font-family: inherit; font-size: 1rem; margin-bottom: 15px; border-radius: 4px; box-sizing: border-box; outline: none; transition: border-color 0.3s; }
         .write-input:focus { border-color: #ff5e00; }
         textarea.write-input { height: 200px; resize: none; }
         .file-upload-wrapper { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; background: #1a1a1a; padding: 10px; border-radius: 4px; border: 1px dashed #444; }
@@ -161,7 +164,7 @@
     <div class="board-container" data-aos="fade-up" data-aos-delay="100">
         <div class="board-top">
             <div class="board-count">전체 게시글 <span id="total-count" style="color:#ff5e00; font-weight:bold;">0</span>건</div>
-            <button class="btn-write" onclick="openWriteModal()">게시글 작성</button>
+            <button class="btn-write" onclick="openWriteModal()">새 게시글 작성</button>
         </div>
 
         <div class="board-list">
@@ -285,7 +288,13 @@
 
             db.collection("boards").orderBy("createdAt", "desc").onSnapshot((snapshot) => {
                 if (snapshot.empty) {
-                    boardBody.innerHTML = '<div class="empty-board">등록된 게시글이 없습니다. 첫 글의 주인공이 되어보세요!</div>';
+                    boardBody.innerHTML = `
+                        <div class="empty-board">
+                            <div class="empty-icon">📝</div>
+                            <div style="font-weight:bold; font-size:1.1rem;">등록된 게시글이 없습니다.</div>
+                            <div style="font-size:0.9rem; color:#888;">첫 글의 주인공이 되어보세요!</div>
+                        </div>
+                    `;
                     totalCountSpan.innerText = "0";
                     boardsDataList = [];
                     return;
@@ -323,7 +332,7 @@
                             <div class="col-title">${data.title} ${attachIcon} ${commentBadge}</div>
                             <div class="col-author">${data.author}</div>
                             <div class="col-date">${dateStr}</div>
-                            <div class="col-likes">❤️ ${likeCount}</div>
+                            <div><span class="col-likes">❤️ ${likeCount}</span></div>
                         </div>
                     `;
                     boardBody.insertAdjacentHTML('beforeend', rowHtml);
@@ -402,7 +411,7 @@
                     commentTotal.innerText = snapshot.docs.length;
 
                     if(snapshot.empty) {
-                        commentsList.innerHTML = `<div style="padding:20px; text-align:center; color:#666; font-size:0.85rem;">가장 먼저 댓글을 남겨보세요!</div>`;
+                        commentsList.innerHTML = `<div style="padding:30px; text-align:center; color:#666; font-size:0.85rem; font-weight:bold;">가장 먼저 댓글을 남겨보세요!</div>`;
                         return;
                     }
 
@@ -412,7 +421,7 @@
                         const dateStr = `${dateObj.getMonth()+1}/${dateObj.getDate()} ${String(dateObj.getHours()).padStart(2,'0')}:${String(dateObj.getMinutes()).padStart(2,'0')}`;
                         
                         const isMyComment = data.uid === userId || isUserAdmin;
-                        const deleteBtnHtml = isMyComment ? `<button class="btn-del-comment" onclick="deleteComment('${doc.id}')">삭제</button>` : '';
+                        const deleteBtnHtml = isMyComment ? `<button class="btn-del-comment" onclick="deleteComment('${doc.id}')">[삭제]</button>` : '';
 
                         const html = `
                             <div class="comment-item">
