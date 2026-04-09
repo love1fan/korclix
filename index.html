@@ -21,16 +21,12 @@
             cursor: url('data:image/svg+xml;utf8,<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4 L22 11 L13 14 L9 24 Z" fill="%23ffffff" stroke="%23000000" stroke-width="1.5"/></svg>') 4 4, auto;
         }
 
-        a, button, .auth-switch, .logout-link, .play-toggle, label {
+        a, button, .auth-switch, .logout-link, .play-toggle, label, .quick-card {
             cursor: url('data:image/svg+xml;utf8,<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4 L22 11 L13 14 L9 24 Z" fill="%23ff5e00" stroke="%23ffffff" stroke-width="1.5"/></svg>') 4 4, pointer !important;
         }
 
-        #splash-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #050505; z-index: 100000;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 0.8s cubic-bezier(0.8, 0, 0.2, 1), visibility 0.8s;
-        }
+        /* --- 기존 로딩, 로그인, 네비게이션 CSS 유지 --- */
+        #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #050505; z-index: 100000; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s, visibility 0.8s; }
         #splash-screen.hidden { opacity: 0; visibility: hidden; }
         .loading-bar-container { width: 250px; height: 2px; background: #222; margin-top: 40px; position: relative; overflow: hidden; }
         .loading-bar { position: absolute; top: 0; left: 0; height: 100%; width: 50%; background: #ff5e00; animation: loadingAnim 1.5s infinite ease-in-out; }
@@ -39,7 +35,6 @@
         
         #lock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.98); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; overflow-y: auto; padding: 20px 0; }
         #lock-overlay h2 { font-size: 3.5rem; color: #ff5e00; margin-bottom: 20px; letter-spacing: 5px; font-weight: 900; text-transform: uppercase; }
-        
         .auth-container { background: #111; padding: 40px; border-radius: 8px; border: 1px solid #222; width: 350px; box-sizing: border-box; }
         .auth-input { width: 100%; padding: 12px; margin-bottom: 10px; background: #1a1a1a; border: 1px solid #333; color: #fff; box-sizing: border-box; font-family: inherit; }
         .auth-btn { width: 100%; padding: 15px; background: #ff5e00; color: white; border: none; font-weight: 800; margin-bottom: 10px; font-size: 1rem; text-transform: uppercase; transition: 0.3s;}
@@ -58,28 +53,68 @@
         .logout-link { margin-left: 10px; font-size: 10px; color: #ff3333 !important; border: 1px solid #444; padding: 5px 10px; border-radius: 4px; font-weight: bold; }
         .logout-link:hover { background: rgba(255,255,255,0.1); }
 
+        #music-player { position: fixed; bottom: 30px; left: 30px; background: rgba(0, 0, 0, 0.85); border: 1px solid #222; padding: 12px 20px; border-radius: 12px; display: flex; align-items: center; gap: 15px; z-index: 1000; backdrop-filter: blur(5px); transition: 0.3s; }
+        #music-player:hover { border-color: #ff5e00; }
+        .play-toggle { background: #ff5e00; border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .music-on { animation: pulse 1.5s infinite; box-shadow: 0 0 15px #ff5e00 !important; }
+
+        /* 🔥 새롭게 꾸며진 히어로(메인) 섹션 */
         .hero { 
             position: relative; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; 
-            background: linear-gradient(to bottom, rgba(10, 10, 10, 0.7), #0a0a0a), url('bg-main.jpg'); 
-            background-size: cover; background-position: center; background-attachment: fixed; 
+            background: linear-gradient(to bottom, rgba(10, 10, 10, 0.6), rgba(5,5,5,1)), url('bg-main.jpg'); 
+            background-size: cover; background-position: center; background-attachment: fixed; overflow: hidden;
         }
 
+        /* 스캔라인 및 닷(Dot) 패턴 오버레이 */
         .hero::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px); background-size: 40px 40px; z-index: 1; pointer-events: none; }
-        #particles-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
-        .hero-content { position: relative; z-index: 2; }
-        .glitch { font-size: 8rem; margin: 0; letter-spacing: 20px; font-weight: 900; text-transform: uppercase; position: relative; color: white; text-shadow: 0 0 30px rgba(255, 94, 0, 0.8); }
+        .scanlines { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2)); background-size: 100% 4px; z-index: 2; pointer-events: none; }
+        
+        #particles-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
+        
+        /* 모서리 HUD 장식 */
+        .hud-corner { position: absolute; width: 50px; height: 50px; border: 2px solid #ff5e00; z-index: 3; pointer-events: none; opacity: 0.5; }
+        .hud-tl { top: 120px; left: 5%; border-right: none; border-bottom: none; }
+        .hud-tr { top: 120px; right: 5%; border-left: none; border-bottom: none; }
+        .hud-bl { bottom: 50px; left: 5%; border-right: none; border-top: none; }
+        .hud-br { bottom: 50px; right: 5%; border-left: none; border-top: none; }
+
+        .hero-content { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; margin-top: -50px; }
+        
+        /* 메인 로고 글리치 효과 */
+        .glitch { font-size: 8.5rem; margin: 0; letter-spacing: 25px; font-weight: 900; text-transform: uppercase; position: relative; color: white; text-shadow: 0 0 40px rgba(255, 94, 0, 0.5); }
         .glitch::before, .glitch::after { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: transparent; }
         .glitch::before { left: 4px; text-shadow: -2px 0 #ff00c1; clip: rect(44px, 450px, 56px, 0); animation: glitch-anim 5s infinite linear alternate-reverse; }
         .glitch::after { left: -4px; text-shadow: -2px 0 #00fff9, 2px 2px #ff5e00; clip: rect(44px, 450px, 56px, 0); animation: glitch-anim2 5s infinite linear alternate-reverse; }
         @keyframes glitch-anim { 0% { clip: rect(10px, 9999px, 86px, 0); } 20% { clip: rect(32px, 9999px, 12px, 0); } 40% { clip: rect(74px, 9999px, 43px, 0); } 60% { clip: rect(21px, 9999px, 98px, 0); } 80% { clip: rect(54px, 9999px, 32px, 0); } 100% { clip: rect(89px, 9999px, 65px, 0); } }
         @keyframes glitch-anim2 { 0% { clip: rect(65px, 9999px, 100px, 0); } 20% { clip: rect(12px, 9999px, 78px, 0); } 40% { clip: rect(43px, 9999px, 21px, 0); } 60% { clip: rect(87px, 9999px, 54px, 0); } 80% { clip: rect(34px, 9999px, 99px, 0); } 100% { clip: rect(11px, 9999px, 44px, 0); } }
-        .hero p { font-size: 1.2rem; letter-spacing: 5px; font-weight: bold; color: #ccc; margin-top: 10px; text-transform: uppercase; }
+        
+        /* 타이핑 효과 텍스트 */
+        .typing-text { font-size: 1.2rem; letter-spacing: 5px; font-weight: bold; color: #4ee29d; margin-top: 10px; text-transform: uppercase; white-space: nowrap; overflow: hidden; border-right: 3px solid #ff5e00; width: 0; animation: typing 3.5s steps(40, end) forwards, blink-caret 0.75s step-end infinite; text-shadow: 0 0 10px rgba(78, 226, 157, 0.5); }
+        @keyframes typing { from { width: 0 } to { width: 440px } } /* 글자 길이에 맞춰 조절됨 */
+        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: #ff5e00; } }
 
-        #music-player { position: fixed; bottom: 30px; left: 30px; background: rgba(0, 0, 0, 0.85); border: 1px solid #222; padding: 12px 20px; border-radius: 12px; display: flex; align-items: center; gap: 15px; z-index: 1000; backdrop-filter: blur(5px); transition: 0.3s; }
-        #music-player:hover { border-color: #ff5e00; }
-        .play-toggle { background: #ff5e00; border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
-        .music-on { animation: pulse 1.5s infinite; box-shadow: 0 0 15px #ff5e00 !important; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        /* 🔥 퀵 런치(바로가기) 메뉴 카드 */
+        .quick-nav { display: flex; gap: 25px; margin-top: 80px; }
+        .quick-card { 
+            background: rgba(10, 10, 10, 0.6); border: 1px solid rgba(255, 94, 0, 0.3); backdrop-filter: blur(5px);
+            padding: 25px 40px; border-radius: 8px; text-decoration: none; color: #fff; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden;
+            width: 140px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .quick-card::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 3px; background: #ff5e00; transition: left 0.4s; }
+        .quick-card:hover { transform: translateY(-10px); border-color: #ff5e00; background: rgba(255, 94, 0, 0.05); box-shadow: 0 15px 40px rgba(255, 94, 0, 0.2); }
+        .quick-card:hover::before { left: 0; }
+        .quick-card svg { width: 35px; height: 35px; fill: #ff5e00; transition: transform 0.4s; }
+        .quick-card:hover svg { transform: scale(1.1); }
+        .quick-card span { font-weight: 900; letter-spacing: 2px; font-size: 0.9rem; margin-top: 5px; }
+
+        @media (max-width: 900px) { 
+            .glitch { font-size: 4rem; } 
+            .quick-nav { flex-direction: column; gap: 15px; margin-top: 50px; }
+            .quick-card { width: 250px; padding: 20px; flex-direction: row; justify-content: flex-start; padding-left: 50px; }
+            @keyframes typing { from { width: 0 } to { width: 100% } }
+        }
     </style>
 </head>
 <body oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
@@ -93,7 +128,7 @@
     </div>
 
     <div class="live-status-bar">
-        <span class="status-tag">LIVE</span> 서버 상태: <span style="color: #4ee29d;">정상</span> | 오늘의 맵: <span style="color: #fff;">에란겔 / 미라마 / 테이고 / 카라킨 / 론도</span>
+        <span class="status-tag">LIVE</span> 서버 상태: <span style="color: #4ee29d;">정상</span> | 오늘의 맵: <span style="color: #fff;">에란겔 / 미라마 / 비켄디 / 테이고 / 론도</span>
     </div>
 
     <div id="music-player">
@@ -131,7 +166,6 @@
         </div>
     </div>
 
-    <!-- 네비게이션이 모두 개별 링크로 업데이트 되었습니다 -->
     <nav>
         <a href="index.html" class="logo">CLAN CLIX</a>
         <ul>
@@ -150,11 +184,37 @@
         </ul>
     </nav>
 
+    <!-- 🔥 업그레이드된 메인 히어로 섹션 -->
     <section class="hero" id="home">
+        <div class="scanlines"></div>
         <canvas id="particles-canvas"></canvas>
+        
+        <!-- HUD 장식 -->
+        <div class="hud-corner hud-tl"></div>
+        <div class="hud-corner hud-tr"></div>
+        <div class="hud-corner hud-bl"></div>
+        <div class="hud-corner hud-br"></div>
+
         <div class="hero-content">
             <h1 class="glitch" data-text="CLIX">CLIX</h1>
-            <p>BATTLEGROUND KOR CLIX</p>
+            <!-- 타이핑 이펙트 -->
+            <div class="typing-text">PUBG ESPORTS KOR CLAN SYSTEM READY...</div>
+
+            <!-- 홀로그램 퀵 런치 메뉴 -->
+            <div class="quick-nav" data-aos="fade-up" data-aos-delay="200">
+                <a href="scrim.html" class="quick-card">
+                    <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z"/></svg>
+                    <span>SCRIM</span>
+                </a>
+                <a href="stats.html" class="quick-card">
+                    <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                    <span>STATS</span>
+                </a>
+                <a href="tactics.html" class="quick-card">
+                    <svg viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2zm0 3.83L18.17 19H5.83L12 5.83zM11 10h2v5h-2zm0 6h2v2h-2z"/></svg>
+                    <span>TACTICS</span>
+                </a>
+            </div>
         </div>
     </section>
 
@@ -176,6 +236,8 @@
                 }
             }
         });
+
+        AOS.init({ duration: 800, once: true, offset: 100, easing: 'ease-out-cubic' });
 
         const firebaseConfig = { apiKey: "AIzaSyAFSAu2aynX6YPiJEatWy9IQgWgUuTx8ds", authDomain: "korclix.firebaseapp.com", projectId: "korclix", storageBucket: "korclix.firebasestorage.app", messagingSenderId: "472792477536", appId: "1:472792477536:web:14907e228c343b72fd7805" };
         firebase.initializeApp(firebaseConfig);
