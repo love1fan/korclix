@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PUBG CLIX CLAN | LIVE</title>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body { margin: 0; font-family: 'Inter', 'Segoe UI', sans-serif; background-color: #0a0a0a; color: #ffffff; line-height: 1.6; overflow-x: hidden; -webkit-user-select: none; user-select: none; cursor: url('data:image/svg+xml;utf8,<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4 L22 11 L13 14 L9 24 Z" fill="%23ffffff" stroke="%23000000" stroke-width="1.5"/></svg>') 4 4, auto; }
+        a, button, .logout-link { cursor: url('data:image/svg+xml;utf8,<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4 L22 11 L13 14 L9 24 Z" fill="%23ff5e00" stroke="%23ffffff" stroke-width="1.5"/></svg>') 4 4, pointer !important; }
+        ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-track { background: #0a0a0a; } ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; } ::-webkit-scrollbar-thumb:hover { background: #ff5e00; }
+        .live-status-bar { background: #1a1a1a; padding: 12px; text-align: center; border-bottom: 2px solid #ff5e00; font-size: 0.9rem; position: fixed; width: 100%; z-index: 101; top: 0; }
+        .status-tag { background: #ff5e00; color: #fff; padding: 2px 8px; border-radius: 3px; font-weight: 800; margin-right: 10px; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(0,0,0,0.95) !important; position: fixed; width: 100%; box-sizing: border-box; z-index: 100; border-bottom: 1px solid #222; top: 45px; }
+        nav .logo { font-weight: 900; font-size: 26px; color: #ff5e00 !important; letter-spacing: 2px; text-transform: uppercase; text-decoration: none !important; }
+        nav ul { list-style: none; display: flex; margin: 0; padding: 0; align-items: center; }
+        nav ul li a { margin-left: 20px; font-size: 12px; font-weight: 600; color: #999 !important; text-decoration: none !important; text-transform: uppercase; transition: color 0.3s; }
+        nav ul li a:hover { color: #ff5e00 !important; }
+        .logout-link { margin-left: 10px; font-size: 10px; color: #ff3333 !important; border: 1px solid #444; padding: 5px 10px; border-radius: 4px; font-weight: bold; }
+        
+        .page-header { margin-top: 130px; padding: 80px 8% 60px; text-align: center; background: radial-gradient(circle at center, #1a0a00 0%, #0a0a0a 70%); border-bottom: 1px solid #222; position: relative; overflow: hidden; }
+        .page-title { position: relative; z-index: 2; font-size: 4rem; font-weight: 900; color: #ff5e00; letter-spacing: 10px; margin: 0; text-transform: uppercase; text-shadow: 0 0 30px rgba(255,94,0,0.4); }
+        .page-subtitle { position: relative; z-index: 2; color: #aaa; font-size: 1.1rem; letter-spacing: 3px; margin-top: 15px; font-weight: 600; }
+        
+        .section { padding: 80px 8%; max-width: 1400px; margin: 0 auto 100px auto; min-height: 50vh; }
+        
+        .stream-tabs { display: flex; gap: 10px; margin-bottom: 30px; justify-content: center; }
+        .stream-tab-btn { background: #111; border: 1px solid #333; color: #888; padding: 12px 25px; font-weight: 800; border-radius: 4px; transition: 0.3s; font-size: 0.8rem; }
+        .stream-tab-btn.active { background: #ff5e00; color: #fff; border-color: #ff5e00; box-shadow: 0 0 15px rgba(255, 94, 0, 0.3); }
+        .stream-tab-btn:hover { border-color: #ff5e00; color: #fff; }
+
+        .stream-container { display: grid; grid-template-columns: 2.5fr 1fr; gap: 20px; background: #0d0d0d; padding: 25px; border-radius: 12px; border: 1px solid #222; align-items: stretch; height: 600px; }
+        .video-wrapper { background: #000; border-radius: 8px; overflow: hidden; border: 1px solid #333; position: relative; width: 100%; height: 100%; }
+        #live-iframe { width: 100%; height: 100%; border: none; }
+
+        .chat-box-wrapper { background: #111; border: 1px solid #222; border-radius: 8px; display: flex; flex-direction: column; height: 100%; min-width: 350px; overflow: hidden; }
+        #chat-messages { flex: 1; padding: 15px; overflow-y: auto; font-size: 0.85rem; color: #ccc; scroll-behavior: smooth; background: #080808; }
+        .chat-msg-item { margin-bottom: 12px; padding: 10px 15px; background: rgba(255, 255, 255, 0.03); border-radius: 8px; border-left: 3px solid #333; transition: 0.2s; word-break: break-all; }
+        .chat-msg-item:hover { background: rgba(255, 94, 0, 0.05); border-left-color: #ff5e00; }
+        .chat-nickname { display: flex; align-items: center; gap: 5px; font-weight: 900; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 1px; }
+        .chat-badge { font-size: 0.8rem; }
+        .chat-input-area { padding: 10px; border-top: 1px solid #222; display: flex; gap: 8px; background: #151515; }
+        #chat-input { flex: 1; background: #000; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 4px; font-size: 0.85rem; outline: none; transition: border-color 0.3s; }
+        #chat-input:focus { border-color: #ff5e00; }
+        .chat-send-btn { background: #ff5e00; color: #fff; border: none; padding: 0 15px; border-radius: 4px; font-weight: 800; font-size: 0.8rem; transition: background 0.3s; }
+        .chat-send-btn:hover { background: #e65500; }
+        footer { padding: 60px; text-align: center; color: #444; border-top: 1px solid #222; text-transform: uppercase; }
+        @media (max-width: 900px) { .stream-container { grid-template-columns: 1fr; height: auto; } }
+    </style>
+</head>
+<body>
+    <div class="live-status-bar"><span class="status-tag">LIVE</span> 서버 상태: <span style="color: #4ee29d;">정상</span> | 오늘의 맵: 에란겔 / 미라마 / 비켄디 / 테이고 / 론도</div>
+    <nav>
+        <a href="index.html" class="logo">CLAN CLIX</a>
+        <ul>
+            <li><a href="about.html">ABOUT</a></li>
+            <li><a href="hall-of-fame.html">HALL OF FAME</a></li>
+            <li><a href="live.html" style="color:#ff5e00 !important; font-weight:800;">LIVE</a></li>
+            <li><a href="discord.html">DISCORD</a></li>
+            <li><a href="notice.html">NOTICE</a></li>
+            <li><a href="board.html">BOARD</a></li>
+            <li><a href="scrim.html">SCRIM</a></li>
+            <li><a href="tactics.html">TACTICS</a></li>
+            <li><a href="stats.html">STATS</a></li>
+            <li><a href="members.html">MEMBERS</a></li>
+            <li id="nav-user-info" style="color:#ff5e00; font-size:10px; margin-left:20px; font-weight: bold;"></li>
+            <li><span class="logout-link" onclick="logout()">LOGOUT</span></li>
+        </ul>
+    </nav>
+    <header class="page-header" data-aos="fade-down"><h1 class="page-title">CLIX LIVE</h1><p class="page-subtitle">클랜원들의 실시간 스트리밍 및 응원 채팅방</p></header>
+    
+    <section class="section">
+        <div class="stream-tabs" data-aos="fade-up">
+            <button class="stream-tab-btn active" onclick="changeStream('chzzk', '스트리머UID', this)">CHZZK</button>
+            <button class="stream-tab-btn" onclick="changeStream('soop', '스트리머ID', this)">SOOP</button>
+            <button class="stream-tab-btn" onclick="changeStream('youtube', 'UCfcHk_zLlYAM8tqdwX8uVlQ', this)">YOUTUBE</button>
+        </div>
+        
+        <div class="stream-container" data-aos="fade-up" data-aos-delay="100">
+            <div class="video-wrapper">
+                <iframe id="live-iframe" src="https://chzzk.naver.com/live/스트리머UID/embed" frameborder="0" allowfullscreen="true" width="100%" height="100%"></iframe>
+            </div>
+            
+            <div class="chat-box-wrapper">
+                <div style="padding: 12px; border-bottom: 1px solid #222; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="width: 8px; height: 8px; background: #ff5e00; border-radius: 50%; box-shadow: 0 0 5px #ff5e00;"></span>
+                        <span style="font-size: 0.8rem; font-weight: 900; letter-spacing: 1px;">CLIX LIVE CHAT</span>
+                    </div>
+                    <button id="clear-all-btn" onclick="clearAllChats()" style="display:none; background:none; border:none; color:#ff3333; font-size:10px; font-weight:bold; cursor:pointer;">CLEAR ALL</button>
+                </div>
+                <div id="chat-messages"></div>
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" placeholder="로그인 후 채팅 가능..." autocomplete="off">
+                    <button class="chat-send-btn" onclick="sendMessage()">SEND</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer>&copy; 2026 CLAN CLIX. ALL RIGHTS RESERVED.</footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+        const firebaseConfig = { apiKey: "AIzaSyAFSAu2aynX6YPiJEatWy9IQgWgUuTx8ds", authDomain: "korclix.firebaseapp.com", projectId: "korclix", storageBucket: "korclix.firebasestorage.app", messagingSenderId: "472792477536", appId: "1:472792477536:web:14907e228c343b72fd7805" };
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        const auth = firebase.auth(); const db = firebase.firestore();
+        let isUserAdmin = false; let userNick = "익명";
+        
+        const CLAN_MEMBERS = [{ nickname: "CLX_0dB" }, { nickname: "Viper789456" }, { nickname: "joa1013" }];
+
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                db.collection("users").doc(user.uid).get().then((doc) => {
+                    if (doc.exists) { const data = doc.data(); userNick = data.nickname || user.email.split('@')[0]; isUserAdmin = data.isAdmin === true; } 
+                    else { userNick = user.email.split('@')[0]; isUserAdmin = false; }
+                    document.getElementById('nav-user-info').innerText = userNick + "님"; 
+                    document.getElementById('clear-all-btn').style.display = isUserAdmin ? 'block' : 'none'; 
+                    loadMessages();
+                });
+            } else { Swal.fire({title:'로그인 필요', text:'채팅을 보려면 로그인해주세요.', icon:'info', background:'#111', color:'#fff'}).then(()=>location.href='index.html'); }
+        });
+
+        function changeStream(platform, id, btn) { const iframe = document.getElementById('live-iframe'); const btns = document.querySelectorAll('.stream-tab-btn'); btns.forEach(b => b.classList.remove('active')); btn.classList.add('active'); if (platform === 'chzzk') iframe.src = `https://chzzk.naver.com/live/${id}/embed`; else if (platform === 'soop') iframe.src = `https://play.soop.st/embed/station/${id}`; else if (platform === 'youtube') iframe.src = `https://www.youtube.com/embed/live_stream?channel=${id}&autoplay=1&mute=1`; }
+        function getNicknameColor(nickname) { const colors = ['#ff5e00', '#4ee29d', '#00d4ff', '#ffcc00', '#ff4e50', '#8e44ad', '#3498db', '#f1c40f']; let hash = 0; for (let i = 0; i < nickname.length; i++) { hash = nickname.charCodeAt(i) + ((hash << 5) - hash); } return colors[Math.abs(hash) % colors.length]; }
+        function loadMessages() {
+            const chatBox = document.getElementById('chat-messages');
+            db.collection("chats").orderBy("createdAt", "asc").limitToLast(50).onSnapshot((snapshot) => {
+                chatBox.innerHTML = "";
+                snapshot.forEach((doc) => {
+                    const data = doc.data(); const msgId = doc.id; const div = document.createElement('div'); div.className = 'chat-msg-item';
+                    const deleteBtn = isUserAdmin ? `<span onclick="deleteMessage('${msgId}')" style="color:#ff3333; cursor:pointer; float:right; font-size:10px; font-weight:bold;">[X]</span>` : "";
+                    const nickColor = getNicknameColor(data.nickname); let badge = '🔰'; 
+                    if (data.nickname === 'CLX_0dB' || data.isAdmin) badge = '👑'; else if (data.nickname.startsWith('CLX_') || CLAN_MEMBERS.some(m => m.nickname === data.nickname)) badge = '🔫'; 
+                    div.innerHTML = `${deleteBtn}<span class="chat-nickname" style="color: ${nickColor};"><span class="chat-badge">${badge}</span> ${data.nickname}</span><div class="chat-text" style="color: #eee;">${data.text}</div>`;
+                    chatBox.appendChild(div);
+                });
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+        }
+        function sendMessage() { const user = auth.currentUser; const input = document.getElementById('chat-input'); const message = input.value.trim(); if (!user) return alert("로그인 후 이용 가능합니다."); if (!message) return; db.collection("chats").add({ nickname: userNick, text: message, createdAt: firebase.firestore.FieldValue.serverTimestamp() }).then(() => { input.value = ""; }); }
+        document.getElementById('chat-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+        function deleteMessage(msgId) { if (!confirm("이 메시지를 삭제하시겠습니까?")) return; db.collection("chats").doc(msgId).delete(); }
+        async function clearAllChats() { if (!isUserAdmin) return; if (!confirm("모든 채팅 기록을 삭제하시겠습니까?")) return; try { const snapshot = await db.collection("chats").get(); const batch = db.batch(); snapshot.docs.forEach((doc) => { batch.delete(doc.ref); }); await batch.commit(); alert("초기화 완료"); } catch (err) { alert(err.message); } }
+        function logout() { if(confirm("로그아웃 하시겠습니까?")) auth.signOut().then(()=>location.href='index.html'); }
+    </script>
+</body>
+</html>
