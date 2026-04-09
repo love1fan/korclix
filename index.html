@@ -21,7 +21,7 @@
             cursor: url('data:image/svg+xml;utf8,<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4 L22 11 L13 14 L9 24 Z" fill="%23ffffff" stroke="%23000000" stroke-width="1.5"/></svg>') 4 4, auto;
         }
 
-        a, button, .auth-switch, .logout-link, .play-toggle, label, .gallery-item, .match-type-btn, .mode-btn {
+        a, button, .auth-switch, .logout-link, .play-toggle, label, .gallery-item {
             cursor: url('data:image/svg+xml;utf8,<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4 L22 11 L13 14 L9 24 Z" fill="%23ff5e00" stroke="%23ffffff" stroke-width="1.5"/></svg>') 4 4, pointer !important;
         }
 
@@ -57,13 +57,11 @@
         .logout-link { margin-left: 10px; font-size: 10px; color: #ff3333 !important; border: 1px solid #444; padding: 5px 10px; border-radius: 4px; font-weight: bold; }
         .logout-link:hover { background: rgba(255,255,255,0.1); }
 
-        /* ======== 메인 배경 이미지 변경 (bg-main.jpg) ======== */
         .hero { 
             position: relative; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; 
             background: linear-gradient(to bottom, rgba(10, 10, 10, 0.7), #0a0a0a), url('bg-main.jpg'); 
             background-size: cover; background-position: center; background-attachment: fixed; 
         }
-        /* ====================================================== */
 
         .hero::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px); background-size: 40px 40px; z-index: 1; pointer-events: none; }
         #particles-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
@@ -134,33 +132,8 @@
 
         .discord-container { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; background: #0d0d0d; padding: 40px; border-radius: 12px; border: 1px solid #222; align-items: center; }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-top: 50px; }
-        
-        .stat-card { background: rgba(20, 20, 20, 0.95); border: 1px solid #222; border-radius: 12px; padding: 35px; position: relative; overflow: hidden; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); }
-        .stat-card:hover { transform: translateY(-8px); border-color: #ff5e00; box-shadow: 0 15px 35px rgba(255, 94, 0, 0.2), 0 0 15px rgba(255, 94, 0, 0.1) inset; }
-        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #ff5e00; }
-        
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #222; }
-        .player-name { font-size: 1.5rem; font-weight: 900; color: #fff; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
-        .player-role { font-size: 0.75rem; color: #ff5e00; font-weight: 700; text-transform: uppercase; background: rgba(255, 94, 0, 0.1); padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(255, 94, 0, 0.2); }
-        .data-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .data-item { background: #000; border: 1px solid #222; padding: 18px; border-radius: 8px; text-align: center; }
-        .data-label { font-size: 0.7rem; color: #666; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; display: block; }
-        .data-value { font-size: 1.8rem; font-weight: 900; color: #ff5e00; line-height: 1; }
-        .data-unit { font-size: 0.8rem; color: #fff; font-weight: 700; margin-left: 2px; }
-        .rank-badge { position: absolute; top: 15px; right: 15px; font-size: 0.7rem; font-weight: 900; padding: 3px 8px; border: 1px solid; border-radius: 4px; }
-        
-        .match-type-tabs { display: flex; gap: 5px; margin-bottom: 10px; }
-        .match-type-btn { flex: 1; padding: 6px; background: #1a1a1a; border: 1px solid #333; color: #888; font-size: 0.75rem; font-weight: 800; border-radius: 4px; transition: 0.2s; }
-        .match-type-btn.active { background: #ff5e00; color: #fff; border-color: #ff5e00; }
-        .mode-tabs { display: flex; gap: 5px; margin-bottom: 15px; background: #000; padding: 5px; border-radius: 6px; border: 1px solid #222; }
-        .mode-btn { flex: 1; padding: 5px; background: transparent; border: none; color: #666; font-size: 0.7rem; font-weight: 800; border-radius: 4px; transition: 0.2s; text-transform: uppercase; }
-        .mode-btn.active { background: #333; color: #ff5e00; }
-        .loading-text { font-size: 0.8rem; color: #888; text-align: center; padding: 20px 0; font-weight: bold; animation: blink 1s infinite; grid-column: 1 / -1; }
-        @keyframes blink { 50% { opacity: 0.5; } }
-
         footer { padding: 80px; text-align: center; color: #444; border-top: 1px solid #222; text-transform: uppercase; }
-        @media (max-width: 900px) { .about-wrapper, .stats-grid, .stream-container, .discord-container { grid-template-columns: 1fr; } .glitch { font-size: 4rem; } .stream-container { height: auto; max-height: none; } }
+        @media (max-width: 900px) { .about-wrapper, .stream-container, .discord-container { grid-template-columns: 1fr; } .glitch { font-size: 4rem; } .stream-container { height: auto; max-height: none; } }
 
         #music-player { position: fixed; bottom: 30px; left: 30px; background: rgba(0, 0, 0, 0.85); border: 1px solid #222; padding: 12px 20px; border-radius: 12px; display: flex; align-items: center; gap: 15px; z-index: 1000; backdrop-filter: blur(5px); transition: 0.3s; }
         #music-player:hover { border-color: #ff5e00; }
@@ -230,7 +203,7 @@
             <li><a href="board.html">BOARD</a></li>
             <li><a href="scrim.html">SCRIM</a></li>
             <li><a href="tactics.html">TACTICS</a></li>
-            <li><a href="#members">STATS</a></li>
+            <li><a href="stats.html">STATS</a></li>
             <li><a href="members.html">MEMBERS</a></li>
             <li id="nav-user-info" style="color:#ff5e00; font-size:10px; margin-left:20px; font-weight: bold;"></li>
             <li><span class="logout-link" onclick="logout()">LOGOUT</span></li>
@@ -257,7 +230,6 @@
                 </div>
             </div>
             <div class="about-image-box">
-                <!-- ======== 어바웃 스쿼드 이미지 (about-bg.jpg) ======== -->
                 <img src="about-bg.jpg" alt="PUBG CLIX SQUAD" onerror="this.src='https://placehold.co/800x450/111/333?text=ABOUT+IMAGE'">
             </div>
         </div>
@@ -290,7 +262,6 @@
         <h2 class="section-title" data-aos="fade-up" style="font-size: 2rem; margin-top: 40px; margin-bottom: 40px; color: #fff;">CLIX HIGHLIGHTS</h2>
         <div class="gallery-grid" data-aos="fade-up" data-aos-delay="200">
             <div class="gallery-item" onclick="alert('영상 재생 기능 연결 예정입니다.')">
-                <!-- ======== 하이라이트 1번 이미지 (highlight1.jpg) ======== -->
                 <img src="highlight1.jpg" alt="Highlight 1" onerror="this.src='https://placehold.co/800x450/111/333?text=HIGHLIGHT+1'">
                 <div class="play-icon"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
                 <div class="gallery-overlay">
@@ -299,7 +270,6 @@
                 </div>
             </div>
             <div class="gallery-item" onclick="alert('영상 재생 기능 연결 예정입니다.')">
-                <!-- ======== 하이라이트 2번 이미지 (highlight2.jpg) ======== -->
                 <img src="highlight2.jpg" alt="Highlight 2" onerror="this.src='https://placehold.co/800x450/111/333?text=HIGHLIGHT+2'">
                 <div class="play-icon"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
                 <div class="gallery-overlay">
@@ -308,7 +278,6 @@
                 </div>
             </div>
             <div class="gallery-item" onclick="alert('영상 재생 기능 연결 예정입니다.')">
-                <!-- ======== 하이라이트 3번 이미지 (highlight3.jpg) ======== -->
                 <img src="highlight3.jpg" alt="Highlight 3" onerror="this.src='https://placehold.co/800x450/111/333?text=HIGHLIGHT+3'">
                 <div class="play-icon"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
                 <div class="gallery-overlay">
@@ -365,14 +334,6 @@
         </div>
     </section>
 
-    <section class="section" id="members">
-        <h2 class="section-title" data-aos="fade-up">CLIX SQUAD STATS</h2>
-        <div class="stats-grid" id="stats-grid" data-aos="fade-up"></div>
-        <div data-aos="fade-up" style="margin-top:50px; text-align:center;">
-            <a href="https://pubg.op.gg" target="_blank" style="color:#ff5e00; text-decoration:none; font-weight:800; border: 1px solid #ff5e00; padding: 10px 20px; border-radius: 4px;">PUBG.OP.GG 바로가기</a>
-        </div>
-    </section>
-
     <footer data-aos="fade-up">&copy; 2026 CLAN CLIX. ALL RIGHTS RESERVED.</footer>
 
     <!-- AOS Script -->
@@ -401,144 +362,15 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        let isUserAdmin = false; let userNick = "익명";
-
-        const PUBG_API_KEY = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIyZDM0N2Y2MC0xNGJjLTAxM2YtMjljYy01MmJjZWJmMWUzMTYiLCJpc3MiOiJnYW1lbG9ja2VyIiwiaWF0IjoxNzc1NTcyMTk3LCJwdWIiOiJibHVlaG9sZSIsInRpdGxlIjoicHViZyIsImFwcCI6ImNsaXgtY2xhbi1zdGF0In0.uV5HbysN7Yb8MtfPNFWxxTz1o62sCS60thT5uy8MsUM"; 
-        const PLATFORM = "steam"; 
+        let isUserAdmin = false; 
+        let userNick = "익명";
         
+        // 채팅방용 관리자 확인 멤버리스트 (스탯은 별도 페이지로 갔으므로 여기선 관리자 뱃지용으로만 씀)
         const CLAN_MEMBERS = [
-            { nickname: "CLX_0dB", role: "Main Order" },
-            { nickname: "Viper789456", role: "Sub Order" },
-            { nickname: "joa1013", role: "Back Up" }
+            { nickname: "CLX_0dB" },
+            { nickname: "Viper789456" },
+            { nickname: "joa1013" }
         ];
-
-        let statsState = {};
-
-        function initStatCards() {
-            const grid = document.getElementById('stats-grid');
-            let htmlContent = '';
-            CLAN_MEMBERS.forEach(member => {
-                const nick = member.nickname;
-                const safeId = nick.toLowerCase().replace(/[^a-z0-9]/g, '');
-                if (!statsState[nick]) { statsState[nick] = { type: 'ranked', mode: 'squad', data: { ranked: { solo: null, duo: null, squad: null }, normal: { solo: null, duo: null, squad: null } } }; }
-
-                htmlContent += `
-                    <div class="stat-card" id="card-${safeId}">
-                        <span class="rank-badge" id="badge-${safeId}">Loading...</span>
-                        <div class="card-header">
-                            <h3 class="player-name">${nick}</h3><span class="player-role">${member.role}</span>
-                        </div>
-                        <div class="match-type-tabs">
-                            <button class="match-type-btn active" onclick="changeMatchType('${nick}', 'ranked', this)">경쟁전</button>
-                            <button class="match-type-btn" onclick="changeMatchType('${nick}', 'normal', this)">일반전</button>
-                        </div>
-                        <div class="mode-tabs">
-                            <button class="mode-btn active" onclick="changeTeamMode('${nick}', 'squad', this)">스쿼드</button>
-                            <button class="mode-btn" onclick="changeTeamMode('${nick}', 'duo', this)">듀오</button>
-                            <button class="mode-btn" onclick="changeTeamMode('${nick}', 'solo', this)">솔로</button>
-                        </div>
-                        <div class="data-row" id="stats-${safeId}">
-                            <div class="loading-text">PUBG API 연동 중...</div>
-                        </div>
-                    </div>
-                `;
-            });
-            grid.innerHTML = htmlContent;
-        }
-
-        async function fetchAllPubgStats() {
-            const cachedData = sessionStorage.getItem('pubg_stats_cache');
-            const cachedTime = sessionStorage.getItem('pubg_stats_time');
-            if (cachedData && cachedTime && (Date.now() - cachedTime < 5 * 60 * 1000)) {
-                statsState = JSON.parse(cachedData); CLAN_MEMBERS.forEach(member => renderStats(member.nickname)); return;
-            }
-            const headers = { "Authorization": `Bearer ${PUBG_API_KEY}`, "Accept": "application/vnd.api+json" };
-            let currentSeason;
-            try {
-                const seasonRes = await fetch(`https://api.pubg.com/shards/${PLATFORM}/seasons`, { headers });
-                if (!seasonRes.ok) throw new Error("API 요청 한도 초과(429). 1분 후 새로고침 하세요.");
-                const seasonData = await seasonRes.json();
-                currentSeason = seasonData.data.find(s => s.attributes.isCurrentSeason).id;
-
-                const nicknames = CLAN_MEMBERS.map(m => m.nickname).join(',');
-                const playersRes = await fetch(`https://api.pubg.com/shards/${PLATFORM}/players?filter[playerNames]=${nicknames}`, { headers });
-                if (!playersRes.ok) throw new Error("유저 정보를 찾을 수 없습니다.");
-                const playersData = await playersRes.json();
-                const accountMap = {};
-                playersData.data.forEach(p => { accountMap[p.attributes.name.toLowerCase()] = p.id; });
-
-                for (let member of CLAN_MEMBERS) {
-                    const nick = member.nickname; const safeId = nick.toLowerCase().replace(/[^a-z0-9]/g, ''); const accountId = accountMap[nick.toLowerCase()];
-                    if(!accountId) { showErrorMsg(safeId, "닉네임/플랫폼 확인 필요"); continue; }
-                    try {
-                        await new Promise(resolve => setTimeout(resolve, 500)); 
-                        const rankedRes = await fetch(`https://api.pubg.com/shards/${PLATFORM}/players/${accountId}/seasons/${currentSeason}/ranked`, { headers });
-                        let rModes = {}; if(rankedRes.ok) { const rData = await rankedRes.json(); rModes = rData.data.attributes.rankedGameModeStats || {}; }
-                        statsState[nick].data.ranked.solo = getBestMode(rModes, 'solo', 'solo-fpp');
-                        statsState[nick].data.ranked.duo = getBestMode(rModes, 'duo', 'duo-fpp');
-                        statsState[nick].data.ranked.squad = getBestMode(rModes, 'squad', 'squad-fpp');
-
-                        await new Promise(resolve => setTimeout(resolve, 300)); 
-                        const normalRes = await fetch(`https://api.pubg.com/shards/${PLATFORM}/players/${accountId}/seasons/${currentSeason}`, { headers });
-                        let nModes = {}; if(normalRes.ok) { const nData = await normalRes.json(); nModes = nData.data.attributes.gameModeStats || {}; }
-                        statsState[nick].data.normal.solo = getBestMode(nModes, 'solo', 'solo-fpp');
-                        statsState[nick].data.normal.duo = getBestMode(nModes, 'duo', 'duo-fpp');
-                        statsState[nick].data.normal.squad = getBestMode(nModes, 'squad', 'squad-fpp');
-
-                        renderStats(nick);
-                    } catch (err) { showErrorMsg(safeId, err.message); }
-                }
-                sessionStorage.setItem('pubg_stats_cache', JSON.stringify(statsState)); sessionStorage.setItem('pubg_stats_time', Date.now().toString());
-            } catch (error) { CLAN_MEMBERS.forEach(member => { const safeId = member.nickname.toLowerCase().replace(/[^a-z0-9]/g, ''); showErrorMsg(safeId, error.message); }); }
-        }
-
-        function showErrorMsg(safeId, msg) {
-            const statsContainer = document.getElementById(`stats-${safeId}`); const badgeContainer = document.getElementById(`badge-${safeId}`);
-            if(statsContainer) statsContainer.innerHTML = `<div class="loading-text" style="color:#ff3333; animation:none; line-height:1.4; padding-top:40px;">API 에러<br><span style="font-size:0.65rem; color:#aaa;">${msg}</span></div>`;
-            if(badgeContainer) { badgeContainer.innerText = "ERROR"; badgeContainer.style.color = "#ff3333"; badgeContainer.style.borderColor = "#ff3333"; }
-        }
-
-        function getBestMode(modes, tppKey, fppKey) {
-            const tpp = modes[tppKey] || { roundsPlayed: 0 }; const fpp = modes[fppKey] || { roundsPlayed: 0 };
-            return (tpp.roundsPlayed >= fpp.roundsPlayed) ? tpp : fpp;
-        }
-
-        function changeMatchType(nick, type, btn) {
-            statsState[nick].type = type; const safeId = nick.toLowerCase().replace(/[^a-z0-9]/g, '');
-            const card = document.getElementById(`card-${safeId}`); card.querySelectorAll('.match-type-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderStats(nick);
-        }
-
-        function changeTeamMode(nick, mode, btn) {
-            statsState[nick].mode = mode; const safeId = nick.toLowerCase().replace(/[^a-z0-9]/g, '');
-            const card = document.getElementById(`card-${safeId}`); card.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderStats(nick);
-        }
-
-        function renderStats(nick) {
-            const safeId = nick.toLowerCase().replace(/[^a-z0-9]/g, ''); const state = statsState[nick]; const currentData = state.data[state.type][state.mode];
-            const statsContainer = document.getElementById(`stats-${safeId}`); const badgeContainer = document.getElementById(`badge-${safeId}`);
-
-            if (!currentData || currentData.roundsPlayed === 0) {
-                badgeContainer.innerText = state.type === 'ranked' ? "Unranked" : "No Record"; badgeContainer.style.color = "#888"; badgeContainer.style.borderColor = "#888";
-                statsContainer.innerHTML = `<div class="loading-text" style="animation:none; padding-top:40px;">해당 모드의 플레이 기록이 없습니다.</div>`; return;
-            }
-
-            const deaths = currentData.roundsPlayed - currentData.wins; const kd = deaths === 0 ? currentData.kills : (currentData.kills / deaths); 
-            const avgDmg = currentData.damageDealt / currentData.roundsPlayed; const winRate = ((currentData.wins / currentData.roundsPlayed) * 100).toFixed(1);
-
-            if (state.type === 'ranked') {
-                const rp = currentData.currentRankPoint || 0; const tierName = currentData.currentTier ? currentData.currentTier.tier : "Unranked"; const subTier = currentData.currentTier ? currentData.currentTier.subTier : "";
-                let tierColor = "#fff";
-                if (tierName === "Bronze") tierColor = "#cd7f32"; else if (tierName === "Silver") tierColor = "#c0c0c0"; else if (tierName === "Gold") tierColor = "#ffcc00";
-                else if (tierName === "Platinum") tierColor = "#4ee29d"; else if (tierName === "Diamond") tierColor = "#00d4ff"; else if (tierName === "Master") tierColor = "#ff5e00";
-
-                badgeContainer.innerText = `${tierName} ${subTier}`; badgeContainer.style.color = tierColor; badgeContainer.style.borderColor = tierColor;
-                statsContainer.innerHTML = `<div class="data-item"><span class="data-label">Rank Points</span><span class="data-value">${rp}</span></div><div class="data-item"><span class="data-label">K/D</span><span class="data-value">${kd.toFixed(2)}</span></div><div class="data-item"><span class="data-label">Avg Damage</span><span class="data-value">${Math.round(avgDmg)}</span></div><div class="data-item"><span class="data-label">Win Rate</span><span class="data-value">${winRate}<span class="data-unit">%</span></span></div>`;
-            } else {
-                badgeContainer.innerText = "Casual"; badgeContainer.style.color = "#ccc"; badgeContainer.style.borderColor = "#ccc";
-                const top10s = currentData.top10s || 0; const top10Rate = ((top10s / currentData.roundsPlayed) * 100).toFixed(1);
-                statsContainer.innerHTML = `<div class="data-item"><span class="data-label">Win Rate</span><span class="data-value">${winRate}<span class="data-unit">%</span></span></div><div class="data-item"><span class="data-label">K/D</span><span class="data-value">${kd.toFixed(2)}</span></div><div class="data-item"><span class="data-label">Avg Damage</span><span class="data-value">${Math.round(avgDmg)}</span></div><div class="data-item"><span class="data-label">Top 10</span><span class="data-value">${top10Rate}<span class="data-unit">%</span></span></div>`;
-            }
-        }
 
         function initParticles() {
             const particleCanvas = document.getElementById('particles-canvas'); if (!particleCanvas) return;
@@ -558,7 +390,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const savedEmail = localStorage.getItem('clix_saved_email');
             if (savedEmail) { document.getElementById('auth-email').value = savedEmail; document.getElementById('remember-email').checked = true; }
-            initStatCards(); fetchAllPubgStats(); initParticles();
+            initParticles();
         });
 
         auth.onAuthStateChanged((user) => {
