@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PUBG CLIX CLAN | ABOUT</title>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body { margin: 0; font-family: 'Inter', 'Segoe UI', sans-serif; background-color: #0a0a0a; color: #ffffff; line-height: 1.6; overflow-x: hidden; -webkit-user-select: none; user-select: none; cursor: url('data:image/svg+xml;utf8,<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4 L22 11 L13 14 L9 24 Z" fill="%23ffffff" stroke="%23000000" stroke-width="1.5"/></svg>') 4 4, auto; }
+        a, button, .logout-link { cursor: url('data:image/svg+xml;utf8,<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4 L22 11 L13 14 L9 24 Z" fill="%23ff5e00" stroke="%23ffffff" stroke-width="1.5"/></svg>') 4 4, pointer !important; }
+        ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-track { background: #0a0a0a; } ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; } ::-webkit-scrollbar-thumb:hover { background: #ff5e00; }
+        .live-status-bar { background: #1a1a1a; padding: 12px; text-align: center; border-bottom: 2px solid #ff5e00; font-size: 0.9rem; position: fixed; width: 100%; z-index: 101; top: 0; }
+        .status-tag { background: #ff5e00; color: #fff; padding: 2px 8px; border-radius: 3px; font-weight: 800; margin-right: 10px; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(0,0,0,0.95) !important; position: fixed; width: 100%; box-sizing: border-box; z-index: 100; border-bottom: 1px solid #222; top: 45px; }
+        nav .logo { font-weight: 900; font-size: 26px; color: #ff5e00 !important; letter-spacing: 2px; text-transform: uppercase; text-decoration: none !important; }
+        nav ul { list-style: none; display: flex; margin: 0; padding: 0; align-items: center; }
+        nav ul li a { margin-left: 20px; font-size: 12px; font-weight: 600; color: #999 !important; text-decoration: none !important; text-transform: uppercase; transition: color 0.3s; }
+        nav ul li a:hover { color: #ff5e00 !important; }
+        .logout-link { margin-left: 10px; font-size: 10px; color: #ff3333 !important; border: 1px solid #444; padding: 5px 10px; border-radius: 4px; font-weight: bold; }
+        .page-header { margin-top: 130px; padding: 80px 8% 60px; text-align: center; background: radial-gradient(circle at center, #1a0a00 0%, #0a0a0a 70%); border-bottom: 1px solid #222; position: relative; overflow: hidden; }
+        .page-title { position: relative; z-index: 2; font-size: 4rem; font-weight: 900; color: #ff5e00; letter-spacing: 10px; margin: 0; text-transform: uppercase; text-shadow: 0 0 30px rgba(255,94,0,0.4); }
+        .page-subtitle { position: relative; z-index: 2; color: #aaa; font-size: 1.1rem; letter-spacing: 3px; margin-top: 15px; font-weight: 600; }
+        .section { padding: 80px 8%; max-width: 1200px; margin: 0 auto 100px auto; min-height: 40vh;}
+        .about-wrapper { display: flex; gap: 60px; align-items: center; flex-wrap: wrap; justify-content: space-between; }
+        .about-intro-box { flex: 1; min-width: 300px; }
+        .about-image-box { flex: 1; min-width: 300px; display: flex; justify-content: center; }
+        .about-image-box img { width: 100%; max-width: 600px; border-radius: 12px; border: 1px solid #333; box-shadow: 0 15px 40px rgba(0,0,0,0.8); transition: transform 0.3s; }
+        .about-image-box img:hover { transform: scale(1.02); border-color: #ff5e00; }
+        .tag { padding: 15px 25px; background: #111; border-left: 3px solid #ff5e00; font-weight: 700; margin-right: 10px; display: inline-block; margin-bottom: 10px; }
+        .auth-btn { width: 100%; padding: 15px; background: #ff5e00; color: white; border: none; font-weight: 800; margin-bottom: 10px; font-size: 1rem; text-transform: uppercase; transition:0.3s;}
+        .auth-btn:hover { background: #e65500; }
+        footer { padding: 60px; text-align: center; color: #444; border-top: 1px solid #222; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+    <div class="live-status-bar"><span class="status-tag">LIVE</span> 서버 상태: <span style="color: #4ee29d;">정상</span> | 오늘의 맵: 에란겔 / 미라마 / 비켄디 / 테이고 / 론도</div>
+    <nav>
+        <a href="index.html" class="logo">CLAN CLIX</a>
+        <ul>
+            <li><a href="about.html" style="color:#ff5e00 !important; font-weight:800;">ABOUT</a></li>
+            <li><a href="hall-of-fame.html">HALL OF FAME</a></li>
+            <li><a href="live.html">LIVE</a></li>
+            <li><a href="discord.html">DISCORD</a></li>
+            <li><a href="notice.html">NOTICE</a></li>
+            <li><a href="board.html">BOARD</a></li>
+            <li><a href="scrim.html">SCRIM</a></li>
+            <li><a href="tactics.html">TACTICS</a></li>
+            <li><a href="stats.html">STATS</a></li>
+            <li><a href="members.html">MEMBERS</a></li>
+            <li id="nav-user-info" style="color:#ff5e00; font-size:10px; margin-left:20px; font-weight: bold;"></li>
+            <li><span class="logout-link" onclick="logout()">LOGOUT</span></li>
+        </ul>
+    </nav>
+    <header class="page-header" data-aos="fade-down"><h1 class="page-title">ABOUT CLIX</h1><p class="page-subtitle">클릭스 클랜의 소개 및 지향점</p></header>
+    <section class="section">
+        <div class="about-wrapper" data-aos="fade-up">
+            <div class="about-intro-box">
+                <h3 style="color:#888; letter-spacing:2px;">Who We Are</h3>
+                <h2 style="font-size:3.5rem; margin:10px 0;">WE ARE THE<br><span style="color: #ff5e00;">CLIX CLAN</span></h2>
+                <p style="color:#aaa; margin-bottom:30px;">성숙한 매너와 체계적인 전술을 지향하는 배틀그라운드 성인 클랜입니다.<br>최고의 팀워크를 위해 끊임없이 소통합니다.</p>
+                <div class="tag">매너 중요시</div><div class="tag">재미와 웃음</div>
+                <div style="margin-top: 40px;">
+                    <a href="tactics.html" class="auth-btn" style="text-decoration:none; display:inline-block; text-align:center; width:250px; padding:18px; border-radius:8px; box-shadow: 0 10px 20px rgba(255, 94, 0, 0.2);">작전반(TACTICS) 입장하기</a>
+                </div>
+            </div>
+            <div class="about-image-box">
+                <img src="about-bg.jpg" alt="PUBG CLIX SQUAD" onerror="this.src='https://placehold.co/800x450/111/333?text=ABOUT+IMAGE'">
+            </div>
+        </div>
+    </section>
+    <footer>&copy; 2026 CLAN CLIX. ALL RIGHTS RESERVED.</footer>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+        const firebaseConfig = { apiKey: "AIzaSyAFSAu2aynX6YPiJEatWy9IQgWgUuTx8ds", authDomain: "korclix.firebaseapp.com", projectId: "korclix", storageBucket: "korclix.firebasestorage.app", messagingSenderId: "472792477536", appId: "1:472792477536:web:14907e228c343b72fd7805" };
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                firebase.firestore().collection("users").doc(user.uid).get().then((doc) => {
+                    let nick = doc.exists ? (doc.data().nickname || user.email.split('@')[0]) : user.email.split('@')[0];
+                    document.getElementById('nav-user-info').innerText = nick + "님";
+                });
+            }
+        });
+        function logout() { if(confirm("로그아웃 하시겠습니까?")) firebase.auth().signOut().then(() => location.href='index.html'); }
+    </script>
+</body>
+</html>
